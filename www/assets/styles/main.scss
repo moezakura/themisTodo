@@ -1,0 +1,27 @@
+$backgroundColor: rgb(30, 30, 30);
+$accentColor: rgb(67, 160, 71);
+$linkColor: rgb(187, 222, 251);
+$floatBoxSize: 480px;
+$buttonHeight: 45px;
+$lineTextHeight: 40px;
+
+@function accentColor($alpha){
+    @return rgba(67, 160, 71, $alpha);
+}
+
+body {
+    background-color: $backgroundColor;
+    color: white;
+    font-size: 12px;
+}
+
+* {
+    font-family: "游ゴシック体", "Yu Gothic", YuGothic, 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+}
+
+a {
+    color: $linkColor;
+}
+
+@import "welcome.scss";
+@import "login.scss";

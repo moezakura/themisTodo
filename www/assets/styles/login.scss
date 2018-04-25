@@ -1,0 +1,14 @@
+#login {
+    width: $floatBoxSize;
+}
+
+#login input {
+    display: block;
+    width: 100%;
+    height: $lineTextHeight;
+    line-height: $lineTextHeight;
+    box-sizing: border-box;
+    border:1px solid white;
+    color: white;
+    background-color: transparent;
+}

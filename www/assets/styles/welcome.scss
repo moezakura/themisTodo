@@ -1,0 +1,49 @@
+#welcome {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    width: $floatBoxSize;
+    transform: translate(-50%, -50%);
+
+    h2 {
+        font-size: 22px;
+        letter-spacing: 1.8px;
+    }
+    h3 {
+        font-size: 16px;
+        letter-spacing: 1.2px;
+        font-weight: normal;
+    }
+    a {
+        display: block;
+        width: 200px;
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        letter-spacing: 1.4px;
+        font-size: 14px;
+        color: white;
+        text-decoration: none;
+        border: 1px solid $accentColor;
+        background-color: accentColor(.05);
+        margin-left: $floatBoxSize - 200px;
+        overflow-y: hidden;
+
+
+        &::after {
+            width: 100%;
+            height: 5px;
+            content: " ";
+            display: block;
+            opacity: 0;
+            background-color: $accentColor;
+            transition: ease all .3s;
+
+
+            &::after {
+                margin-top: -5px;
+                opacity: 1;
+            }
+        }
+    }
+}
