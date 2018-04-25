@@ -8,8 +8,8 @@ import (
 func main() {
 	r := gin.New()
 
-
 	r.LoadHTMLGlob("www/*.html")
+	r.Static("/assets", "./www/assets")
 
 	r.GET("/", GetRoot)
 	r.Run(":31204")
