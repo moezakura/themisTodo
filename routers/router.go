@@ -12,6 +12,7 @@ func Init() *gin.Engine {
 	r.Static("/assets", "./www/assets")
 
 	r.GET("/", themsController.IndexController{}.GetIndex)
+	r.GET("/login", themsController.LoginController{}.GetLogin)
 
 	return r
 }
