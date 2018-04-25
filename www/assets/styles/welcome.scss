@@ -29,6 +29,10 @@
         margin-left: $floatBoxSize - 200px;
         overflow-y: hidden;
 
+        &:hover::after {
+            margin-top: -5px;
+            opacity: 1;
+        }
 
         &::after {
             width: 100%;
@@ -38,12 +42,6 @@
             opacity: 0;
             background-color: $accentColor;
             transition: ease all .3s;
-
-
-            &::after {
-                margin-top: -5px;
-                opacity: 1;
-            }
         }
     }
 }
