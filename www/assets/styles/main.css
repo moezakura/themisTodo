@@ -1,6 +1,7 @@
 body {
     background-color: rgb(30, 30, 30);
     color: white;
+    font-size: 12px;
 }
 
 * {
@@ -9,4 +10,54 @@ body {
 
 a {
     color: rgb(187, 222, 251);
+}
+
+#welcome {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    width: 480px;
+    transform: translate(-50%, -50%);
+}
+
+#welcome>h2 {
+    font-size: 22px;
+    letter-spacing: 1.8px;
+}
+
+#welcome>h3 {
+    font-size: 16px;
+    letter-spacing: 1.2px;
+    font-weight: normal;
+}
+
+#welcome>a {
+    display: block;
+    width: 200px;
+    height: 45px;
+    line-height: 45px;
+    letter-spacing: 1.4px;
+    font-size: 14px;
+    color: white;
+    text-decoration: none;
+    border: 1px solid rgb(67, 160, 71);
+    background-color: rgba(67, 160, 71, .05);
+    margin-left: calc(480px - 200px);
+    overflow-y: hidden;
+}
+
+#welcome>a::after {
+    width: 100%;
+    height: 5px;
+    content: " ";
+    display: block;
+    opacity: 0;
+    background-color: rgb(67, 160, 71);
+    transition: ease all .3s;
+}
+
+#welcome>a:hover::after {
+    margin-top: -5px;
+    opacity: 1;
 }
