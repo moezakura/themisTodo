@@ -9,7 +9,7 @@ func main() {
 	r := gin.New()
 
 
-	r.LoadHTMLGlob("www/*")
+	r.LoadHTMLGlob("www/*.html")
 
 	r.GET("/", GetRoot)
 	r.Run(":31204")
