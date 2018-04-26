@@ -6,8 +6,9 @@ import (
 )
 
 type IndexView struct {
+	*BaseView
 }
 
 func (self IndexView) GetIndex(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", gin.H{})
+	c.HTML(http.StatusOK, "index", gin.H{})
 }

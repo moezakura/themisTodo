@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+{{if .Title}}
+    <title>{{.Title}} -Themis Todo</title>
+{{else}}
+    <title>Themis Todo</title>
+{{end}}
+    <link rel="stylesheet" type="text/css" href="assets/styles/main.css">
+</head>
+<body>
+{{template "content"}}
+</body>
+</html>

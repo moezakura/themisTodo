@@ -10,5 +10,5 @@ type IndexController struct {
 }
 
 func (self IndexController) GetIndex(c *gin.Context){
-	themisView.IndexView{}.GetIndex(c)
+	themisView.IndexView{self.BaseView}.GetIndex(c)
 }

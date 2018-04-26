@@ -14,7 +14,7 @@ type LoginController struct {
 }
 
 func (self LoginController) GetLogin(c *gin.Context) {
-	themisView.LoginView{}.GetLogin(c)
+	themisView.LoginView{self.BaseView}.GetLogin(c)
 }
 
 func (self LoginController) PostLogin(c *gin.Context) {
