@@ -33,11 +33,18 @@ func (self LoginController) PostLogin(c *gin.Context) {
 
 	err, uuid := loginModule.IsLogin(loginRequest.Id, loginRequest.Password)
 
-	if err{
+	if err {
 		loginResult.Message = "invalid id or password"
 		themisView.LoginView{}.PostLogin(c, loginResult)
 		return
 	}
 
-	c.JSON(http.StatusOK, uuid)
+	authToken := utils.RandomString(64)
+	self.Session.Add(authToken, uuid, 30*60)
+
+	c.SetCookie("token", authToken, 30*60, "/", "", false, true)
+	loginResult.Success = true
+	loginResult.Message = authToken
+
+	c.JSON(http.StatusOK, loginResult)
 }

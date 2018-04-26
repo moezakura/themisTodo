@@ -3,7 +3,6 @@ package module
 import (
 	"database/sql"
 	"log"
-	"fmt"
 )
 
 type LoginModule struct {
@@ -14,16 +13,15 @@ func NewLoginModule(db *sql.DB) *LoginModule {
 	return &LoginModule{db}
 }
 
-func (self *LoginModule) IsLogin(name, password string) (error bool, authToken string) {
-	var uuid int
+func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
 	if err := self.db.QueryRow("SELECT count(`uuid`) FROM `users` WHERE `name` = ? AND `password` = ?;", name, password).Scan(&uuid); err != nil {
 		log.Fatal(err)
-		return true, ""
+		return true, 0
 	}
 
 	if uuid < 1 {
-		return true, ""
+		return true, 0
 	} else {
-		return false, fmt.Sprintf("%d", uuid)
+		return false, uuid
 	}
 }

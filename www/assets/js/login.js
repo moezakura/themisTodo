@@ -23,6 +23,9 @@ function postLogin(e) {
         if(!json.success){
             errorElem.style.display = "block";
             errorElem.innerText = json.message;
+        }else{
+            errorElem.style.display = "none";
+            location.href = "home";
         }
     });
 }
