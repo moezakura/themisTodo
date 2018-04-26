@@ -33,6 +33,7 @@
         &[type=submit] {
             height: $buttonHeight;
             line-height: $buttonHeight;
+            letter-spacing: 1.5px;
             border: 1px solid accentColor(.5);
             background-color: accentColor(.05);
             transition: ease background-color .3s;
