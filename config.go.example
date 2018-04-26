@@ -1,0 +1,7 @@
+package main
+
+const (
+	MYSQL_USERNAME = "your mysql user id"
+	MYSQL_PASSWORD = "your mysql password"
+	MYSQL_DB_NAME  = "your mysql database name"
+)
