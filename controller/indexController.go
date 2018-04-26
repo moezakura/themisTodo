@@ -6,6 +6,7 @@ import (
 )
 
 type IndexController struct {
+	*BaseController
 }
 
 func (self IndexController) GetIndex(c *gin.Context){
