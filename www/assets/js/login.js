@@ -16,7 +16,8 @@ function postLogin(e) {
 
     fetch("", {
         method: 'POST',
-        body: JSON.stringify(loginJson)
+        body: JSON.stringify(loginJson),
+        credentials: "same-origin"
     }).then(function (response) {
         return response.json();
     }).then(function (json) {
