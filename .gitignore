@@ -92,3 +92,6 @@ Temporary Items
 
 # config
 config.go
+
+# scss
+main.css
