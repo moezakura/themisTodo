@@ -1,0 +1,30 @@
+{{define "content"}}
+<header>
+    <a href="/"><img src="assets/images/logo.png"></a>
+    <a href="/home">
+        <div>Home</div>
+    </a>
+    <a href="/setting">
+        <div>My Setting</div>
+    </a>
+</header>
+<div id="home">
+   <section>
+       <div class="sectionTitle">Join Project<a href="/project/add"><i class="fas fa-plus-circle"></i></a></div>
+       <ul class="joinProject">
+           <li><a>Test Project</a></li>
+       </ul>
+   </section>
+    <section>
+        <div class="sectionTitle">My Task</div>
+        <ul class="taskList">
+            <li>
+                <div class="taskTitle">Title</div>
+                <div class="taskId">test#1</div>
+                <div class="taskAssign"><i class="fas fa-user"></i>&nbsp;test</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i>&nbsp;5/2 (あとn日)</div>
+            </li>
+        </ul>
+    </section>
+</div>
+{{end}}

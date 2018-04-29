@@ -5,6 +5,7 @@ $redColor: rgb(239,83,80);
 $floatBoxSize: 480px;
 $buttonHeight: 45px;
 $lineTextHeight: 40px;
+$headerHeight: 65px;
 
 @function accentColor($alpha){
     @return rgba(67, 160, 71, $alpha);
