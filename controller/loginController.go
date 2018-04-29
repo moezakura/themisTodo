@@ -23,7 +23,7 @@ func (self LoginController) PostLogin(c *gin.Context) {
 
 	loginResult := &models.LoginResultJson{}
 	if len(loginRequest.Password) < 1 || len(loginRequest.Id) < 1 {
-		loginResult.Message = "invalid id or password"
+		loginResult.Message = "id and password is not allowed empty"
 		themisView.LoginView{}.PostLogin(c, loginResult)
 		return
 	}
