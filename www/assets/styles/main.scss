@@ -24,5 +24,9 @@ a {
     color: $linkColor;
 }
 
+@import "cssreset-min.css";
+@import "header.scss";
 @import "welcome.scss";
 @import "login.scss";
+@import "taskList.scss";
+@import "home.scss"
