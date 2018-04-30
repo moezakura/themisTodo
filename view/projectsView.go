@@ -12,7 +12,7 @@ type ProjectsView struct {
 
 func (self ProjectsView) GetAdd(c *gin.Context) {
 	c.HTML(http.StatusOK, "projectAdd", gin.H{
-		"Title": "Home",
+		"Title": "New Project",
 	})
 }
 
