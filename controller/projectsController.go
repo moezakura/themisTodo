@@ -22,7 +22,6 @@ func (self ProjectsController) PostAdd(c *gin.Context) {
 
 	if err != nil {
 		addResult.Message = "invalid token"
-		log.Fatal(err)
 		themisView.ProjectsView{}.PostAdd(c, addResult)
 		return
 	}
