@@ -1,13 +1,13 @@
 $backgroundColor: rgb(30, 30, 30);
 $accentColor: rgb(67, 160, 71);
 $linkColor: rgb(187, 222, 251);
-$redColor: rgb(239,83,80);
+$redColor: rgb(239, 83, 80);
 $floatBoxSize: 480px;
 $buttonHeight: 45px;
 $lineTextHeight: 40px;
 $headerHeight: 65px;
 
-@function accentColor($alpha){
+@function accentColor($alpha) {
     @return rgba(67, 160, 71, $alpha);
 }
 
@@ -40,4 +40,3 @@ a {
 
 // Project系
 @import "projectsAdd.scss";
-

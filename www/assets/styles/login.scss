@@ -4,30 +4,4 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
-    #error {
-        background-color: $redColor;
-        box-sizing: border-box;
-        height: $lineTextHeight;
-        line-height: $lineTextHeight;
-        padding: 0 8px;
-        letter-spacing: 1.5px;
-        font-size: 14px;
-        display: none;
-
-        &::after {
-            display: block;
-            font-size: 16px;
-            content: "×";
-            height: $lineTextHeight;
-            line-height: $lineTextHeight;
-            margin-top: -$lineTextHeight;
-            text-align: right;
-            transition: ease opacity .3s;
-        }
-
-        &:hover::after {
-            opacity: .7;
-        }
-    }
 }
