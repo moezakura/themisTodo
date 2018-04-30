@@ -11,6 +11,7 @@ func Init(db *sql.DB) *gin.Engine {
 	r := gin.New()
 
 	r.LoadHTMLGlob("www/*.html")
+	r.Static("/fontawesome", "./www/assets/fontawesome/web-fonts-with-css/")
 	r.Static("/assets", "./www/assets")
 	r.HTMLRender = InitRender()
 
