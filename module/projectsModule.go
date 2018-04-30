@@ -16,7 +16,7 @@ func NewProjectsModule(db *sql.DB) *ProjectsModule {
 func (self *ProjectsModule) Add(name, description string) (error bool, uuid int) {
 	stmt, err := self.db.Prepare("INSERT INTO `projects` (`name`, `description`) VALUES(?, ?);")
 
-	if err != nil{
+	if err != nil {
 		log.Printf("ProjectsModule.Add Error: %+v", err)
 		return true, -1
 	}
@@ -25,17 +25,36 @@ func (self *ProjectsModule) Add(name, description string) (error bool, uuid int)
 
 	ins, err := stmt.Exec(name, description)
 
-	if err != nil{
+	if err != nil {
 		log.Printf("ProjectsModule.Add Error: %+v", err)
 		return true, -1
 	}
 
 	insId, err := ins.LastInsertId()
 
-	if err != nil{
+	if err != nil {
 		log.Printf("ProjectsModule.Add Error: %+v", err)
 		return true, -1
 	}
 
-	return false , int(insId)
+	return false, int(insId)
+}
+
+func (self *ProjectsModule) AddUser(userId, projectId int) bool {
+	stmt, err := self.db.Prepare("INSERT INTO `users_in_projects` (`user_id`, `project_id`, `enable`, `expiration`) VALUES(?, ?, TRUE, NULL);")
+
+	if err != nil {
+		log.Printf("ProjectsModule.AddUser Error: %+v", err)
+		return true
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(userId, projectId)
+	if err != nil {
+		log.Printf("ProjectsModule.AddUser Error: %+v", err)
+		return true
+	}
+
+	return false
 }
