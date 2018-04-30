@@ -25,9 +25,19 @@ a {
     color: $linkColor;
 }
 
+
 @import "cssreset-min.css";
 @import "header.scss";
 @import "welcome.scss";
 @import "login.scss";
+
+//共通パーツ
+@import "basicForm.scss";
+
+// タスク系
+@import "home.scss";
 @import "taskList.scss";
-@import "home.scss"
+
+// Project系
+@import "projectsAdd.scss";
+
