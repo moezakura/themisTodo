@@ -22,6 +22,7 @@ func Init(db *sql.DB) *gin.Engine {
 	r.GET("/login", themsController.LoginController{baseController}.GetLogin)
 	r.POST("/login", themsController.LoginController{baseController}.PostLogin)
 
+	// メイン画面
 	r.GET("/home", themsController.HomeController{baseController}.GetHome)
 
 	return r
@@ -29,9 +30,9 @@ func Init(db *sql.DB) *gin.Engine {
 
 func InitRender() multitemplate.Render {
 	r := multitemplate.New()
-	r.AddFromFiles("index","www/base.html", "www/index.html")
-	r.AddFromFiles("login","www/base.html", "www/login.html")
-	r.AddFromFiles("home","www/base.html", "www/home.html")
+	r.AddFromFiles("index", "www/base.html", "www/index.html")
+	r.AddFromFiles("login", "www/base.html", "www/login.html")
+	r.AddFromFiles("home", "www/base.html", "www/header.html", "www/home.html")
 
 	return r
 }
