@@ -5,45 +5,6 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
-    h2 {
-        text-align: center;
-        letter-spacing: 1.4px;
-    }
-
-    input {
-        display: block;
-        width: 80%;
-        height: $lineTextHeight;
-        line-height: $lineTextHeight;
-        box-sizing: border-box;
-        border: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, .7);
-        color: white;
-        font-size: 16px;
-        padding: 0 10px;
-        margin: 15px auto;
-        letter-spacing: 1.1px;
-        background-color: rgba(0, 0, 0, .1);
-        transition: ease border-color .3s;
-
-        &:focus {
-            border-color: accentColor(.8);
-        }
-
-        &[type=submit] {
-            height: $buttonHeight;
-            line-height: $buttonHeight;
-            letter-spacing: 1.5px;
-            border: 1px solid accentColor(.5);
-            background-color: accentColor(.05);
-            transition: ease background-color .3s;
-
-            &:hover {
-                background-color: accentColor(.2);
-            }
-        }
-    }
-
     #error {
         background-color: $redColor;
         box-sizing: border-box;
