@@ -11,22 +11,6 @@ $headerHeight: 65px;
     @return rgba(67, 160, 71, $alpha);
 }
 
-body {
-    background-color: $backgroundColor;
-    color: white;
-    font-size: 12px;
-}
-
-* {
-    font-family: "游ゴシック体", "Yu Gothic", YuGothic, 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
-}
-
-a {
-    color: $linkColor;
-}
-
-
-@import "cssreset-min.css";
 @import "header.scss";
 @import "welcome.scss";
 @import "login.scss";
