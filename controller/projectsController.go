@@ -5,7 +5,6 @@ import (
 	themisView "../view"
 	"../models"
 	"../module"
-	"github.com/labstack/gommon/log"
 )
 
 type ProjectsController struct {
