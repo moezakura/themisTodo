@@ -34,7 +34,7 @@ func (self *SessionModule) background() {
 
 		self.Session.Range(func(key, _value interface{}) bool {
 			value := _value.(*Session)
-			if value.Limit > now {
+			if value.Limit < now {
 				self.Session.Delete(key)
 			}
 			return true
@@ -54,7 +54,7 @@ func (self *SessionModule) GetUuid(key string) (isExist bool, uuid int) {
 
 	if _value, ok := self.Session.Load(key); ok {
 		value := _value.(*Session)
-		if value.Limit <= now {
+		if value.Limit >= now {
 			return true, value.Uuid
 		} else {
 			return false, 0
@@ -68,7 +68,7 @@ func (self *SessionModule) UpdateTime(key string) {
 
 	if _value, ok := self.Session.Load(key); ok {
 		value := _value.(*Session)
-		if value.Limit <= now {
+		if value.Limit >= now {
 			value.Limit = now + value.LifeTime
 			self.Session.Store(key, value)
 		}
