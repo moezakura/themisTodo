@@ -9,11 +9,12 @@
 {{end}}
     <style>
         html,
-        body{
+        body {
             background-color: rgb(30, 30, 30);
             color: white;
             font-size: 12px;
         }
+
         * {
             font-family: "游ゴシック体", "Yu Gothic", YuGothic, 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
         }
@@ -22,9 +23,12 @@
             color: rgb(239, 83, 80);
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="/assets/styles/cssreset-min.css">
-    <link rel="stylesheet" type="text/css" href="/assets/styles/main.css">
-    <link rel="stylesheet" type="text/css" href="/fontawesome/css/fontawesome-all.min.css">
+    <link rel="preload" as="style" href="/assets/styles/cssreset-min.css">
+    <link rel="preload" as="style" href="/assets/styles/main.css">
+    <link rel="preload" as="style" href="/fontawesome/css/fontawesome-all.min.css">
+    <link rel="stylesheet" as="style" href="/assets/styles/cssreset-min.css">
+    <link rel="stylesheet" as="style" href="/assets/styles/main.css">
+    <link rel="stylesheet" as="style" href="/fontawesome/css/fontawesome-all.min.css">
 </head>
 <body>
 {{template "header"}}
