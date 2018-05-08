@@ -3,6 +3,7 @@ package module
 import (
 	"database/sql"
 	"log"
+	"github.com/gin-gonic/gin"
 )
 
 type LoginModule struct {
@@ -24,4 +25,19 @@ func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
 	} else {
 		return false, uuid
 	}
+}
+
+func (self *LoginModule) GetUserId(c *gin.Context, session *SessionModule) (error bool, uuid int){
+	token, err := c.Cookie("token")
+
+	if err != nil {
+		return true, -1
+	}
+
+	exist, userUuid := session.GetUuid(token)
+	if !exist {
+		return true, -1
+	}
+
+	return false, userUuid
 }

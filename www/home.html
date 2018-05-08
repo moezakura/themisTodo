@@ -1,11 +1,13 @@
 {{define "content"}}
 <div id="home">
-   <section>
-       <div class="sectionTitle">Join Project<a href="/project/add"><i class="fas fa-plus-circle"></i></a></div>
-       <ul class="joinProject">
-           <li><a>Test Project</a></li>
-       </ul>
-   </section>
+    <section>
+        <div class="sectionTitle">Join Project<a href="/project/add"><i class="fas fa-plus-circle"></i></a></div>
+        <ul class="joinProject">
+        {{range .Projects}}
+            <li><a href="{{.Uuid}}">{{.Name}}</a></li>
+        {{end}}
+        </ul>
+    </section>
     <section>
         <div class="sectionTitle">My Task</div>
         <ul class="taskList">

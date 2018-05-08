@@ -16,17 +16,11 @@ func (self ProjectsController) GetAdd(c *gin.Context) {
 }
 
 func (self ProjectsController) PostAdd(c *gin.Context) {
-	token, err := c.Cookie("token")
 	addResult := &models.ProjectAddResultJson{}
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
 
-	if err != nil {
-		addResult.Message = "invalid token"
-		themisView.ProjectsView{}.PostAdd(c, addResult)
-		return
-	}
-
-	exist, uuid := self.Session.GetUuid(token)
-	if !exist {
+	if isError {
 		addResult.Message = "invalid token"
 		themisView.ProjectsView{}.PostAdd(c, addResult)
 		return
@@ -61,7 +55,7 @@ func (self ProjectsController) PostAdd(c *gin.Context) {
 		themisView.ProjectsView{}.PostAdd(c, addResult)
 		return
 	}
-	projectsModule.AddUser(uuid, id)
+	projectsModule.AddUser(userUuid, id)
 
 	addResult.Success = true
 	addResult.Id = id

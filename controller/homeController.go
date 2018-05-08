@@ -3,6 +3,8 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	themisView "../view"
+	"../module"
+	"net/http"
 )
 
 type HomeController struct {
@@ -10,5 +12,17 @@ type HomeController struct {
 }
 
 func (self HomeController) GetHome(c *gin.Context) {
-	themisView.HomeView{self.BaseView}.GetHome(c)
+	projectsModule := module.NewProjectsModule(self.DB)
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	isError, projects := projectsModule.GetProject(userUuid)
+
+	themisView.HomeView{self.BaseView}.GetHome(c, projects)
 }

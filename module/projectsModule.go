@@ -3,6 +3,7 @@ package module
 import (
 	"database/sql"
 	"log"
+	"../models"
 )
 
 type ProjectsModule struct {
@@ -57,4 +58,25 @@ func (self *ProjectsModule) AddUser(userId, projectId int) bool {
 	}
 
 	return false
+}
+
+func (self *ProjectsModule) GetProject(userId int) (error bool, project []models.Project) {
+	project = []models.Project{}
+
+	rows, err := self.db.Query("SELECT `uuid`,`name`,`description` FROM `projects` WHERE `projects`.`uuid` IN (SELECT `project_id` FROM `users_in_projects` WHERE `user_id` = ? ORDER BY `user_id`);", userId)
+
+	if err != nil {
+		return true, nil
+	}
+
+	for  rows.Next() {
+		projectOne := models.Project{}
+		if err := rows.Scan(&projectOne.Uuid, &projectOne.Name, &projectOne.Description); err != nil {
+			log.Printf("ProjectsModule.GetProject Error: %+v\n", err)
+			return true, nil
+		}
+		project = append(project, projectOne)
+	}
+
+	return false, project
 }
