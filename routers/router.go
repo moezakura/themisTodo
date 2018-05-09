@@ -40,6 +40,7 @@ func Init(db *sql.DB) *gin.Engine {
 	account := r.Group("/account")
 	{
 		account.GET("/add", themsController.AccountController{baseController}.GetAdd)
+		account.POST("/add", themsController.AccountController{baseController}.PostAdd)
 	}
 	return r
 }

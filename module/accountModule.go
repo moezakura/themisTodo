@@ -32,3 +32,28 @@ func (self *AccountModule) Add(name, password string) bool {
 
 	return false
 }
+
+func (self *AccountModule) Get(name string) int {
+	rows, err := self.db.Query("SELECT `uuid` FROM `users` WHERE `name` = ?;", name)
+
+	if err != nil {
+		log.Printf("ProjectsModule.AddUser Error: %+v", err)
+		return 0
+	}
+
+	defer rows.Close()
+
+	var userId int
+
+	if rows.Next() {
+		err = rows.Scan(&userId)
+		if err != nil {
+			log.Printf("ProjectsModule.AddUser Error: %+v", err)
+			return 0
+		}
+
+		return userId
+	}
+
+	return 0
+}

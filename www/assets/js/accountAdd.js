@@ -1,5 +1,8 @@
 var accountAddForm = document.querySelector("#accountAdd"),
-    errorElem = document.querySelector("#error");
+    errorElem = document.querySelector("#error"),
+    accountAddedElem = accountAddForm.querySelector("#accountAdded"),
+    accountAddedIdInput = accountAddedElem.querySelector("#accountAddedId"),
+    accountAddedPwInput = accountAddedElem.querySelector("#accountAddedPassword");
 
 accountAddForm.addEventListener("submit", postLogin, true);
 errorElem.addEventListener("click", clickError, true);
@@ -25,8 +28,15 @@ function postLogin(e) {
             errorElem.innerText = json.message;
         } else {
             errorElem.style.display = "none";
+            accountAddedElem.style.display = "block";
+            setAdded(json.name, json.password)
         }
     });
+}
+
+function setAdded(id, password) {
+    accountAddedIdInput.value = id;
+    accountAddedPwInput.value = password;
 }
 
 function clickError() {
