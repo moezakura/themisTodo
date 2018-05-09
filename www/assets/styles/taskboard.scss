@@ -1,3 +1,9 @@
+html,
+body {
+    display: block;
+    height: 100%;
+}
+
 #taskboardTitle {
     display: block;
     height: 35px;
@@ -31,12 +37,28 @@
     display: flex;
     justify-content: flex-start;
     margin: 0 15px;
+    height: calc(100% -125px);
 
     section {
         flex-shrink: 1;
         flex-grow: 1;
         width: 100%;
         margin: 0 8px;
+
+        ul {
+            height: 100%;
+
+            li {
+                user-select: none;
+                -moz-user-select: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+
+                &.drag {
+                    z-index: 1000;
+                }
+            }
+        }
 
         .statusName {
             height: $buttonHeight;
