@@ -26,7 +26,7 @@ function postLogin(e) {
             errorElem.innerText = json.message;
         } else {
             errorElem.style.display = "none";
-            location.href = "/project/" + json.id;
+            location.href = "/project/view/" + json.id;
         }
     });
 }
