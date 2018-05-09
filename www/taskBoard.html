@@ -1,0 +1,85 @@
+{{define "content"}}
+<h2 id="taskboardTitle"><i class="fas fa-tasks"></i>{{.Project.Name}}</h2>
+<a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
+<div id="taskboard">
+    <section id="todo">
+        <div class="statusName">Todo</div>
+        <ul class="taskList">
+        {{range .TaskList}}
+        {{if eq .Status 0}}
+            <li>
+                <div class="taskTitle">{{.Name}}</div>
+                <div class="taskId">#{{.TaskId}}</div>
+                <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+            </li>
+        {{end}}
+        {{end}}
+        </ul>
+    </section>
+    <section id="doing">
+        <div class="statusName">Doing</div>
+        <ul class="taskList">
+        {{range .TaskList}}
+        {{if eq .Status 1}}
+            <li>
+                <div class="taskTitle">{{.Name}}</div>
+                <div class="taskId">#{{.TaskId}}</div>
+                <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+            </li>
+        {{end}}
+        {{end}}
+        </ul>
+    </section>
+    <section id="pr">
+        <div class="statusName">PullRequest</div>
+        <ul class="taskList">
+        {{range .TaskList}}
+        {{if eq .Status 2}}
+            <li>
+                <div class="taskTitle">{{.Name}}</div>
+                <div class="taskId">#{{.TaskId}}</div>
+                <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+            </li>
+        {{end}}
+        {{end}}
+        </ul>
+    </section>
+    <section id="done">
+        <div class="statusName">Done</div>
+        <ul class="taskList">
+        {{range .TaskList}}
+        {{if eq .Status 3}}
+            <li>
+                <div class="taskTitle">{{.Name}}</div>
+                <div class="taskId">#{{.TaskId}}</div>
+                <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+            </li>
+        {{end}}
+        {{end}}
+        </ul>
+    </section>
+</div>
+
+<form id="taskboardAddForm" class="basicForm">
+    <h3>New Task</h3>
+    <div id="taskboardAddClose"><i class="fas fa-angle-double-right"></i></div>
+    <div id="error"></div>
+    <p>Name</p>
+    <input type="text" name="name">
+    <p>Creator</p>
+    <input type="text" readonly value="">
+    <p>ID</p>
+    <input type="text" readonly value="">
+    <p>Deadline</p>
+    <input type="date" value="" name="deadline">
+    <p>Description</p>
+    <textarea name="description"></textarea>
+    <input type="submit" value="ADD">
+</form>
+<script type="application/javascript" src="/assets/js/taskApi.js"></script>
+<script type="application/javascript" src="/assets/js/taskAdd.js"></script>
+{{end}}

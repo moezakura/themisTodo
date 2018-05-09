@@ -60,7 +60,7 @@ func (self *ProjectsModule) AddUser(userId, projectId int) bool {
 	return false
 }
 
-func (self *ProjectsModule) GetProject(userId int) (error bool, project []models.Project) {
+func (self *ProjectsModule) GetProjects(userId int) (error bool, project []models.Project) {
 	project = []models.Project{}
 
 	rows, err := self.db.Query("SELECT `uuid`,`name`,`description` FROM `projects` WHERE `projects`.`uuid` IN (SELECT `project_id` FROM `users_in_projects` WHERE `user_id` = ? ORDER BY `user_id`);", userId)
@@ -69,13 +69,34 @@ func (self *ProjectsModule) GetProject(userId int) (error bool, project []models
 		return true, nil
 	}
 
-	for  rows.Next() {
+	for rows.Next() {
 		projectOne := models.Project{}
 		if err := rows.Scan(&projectOne.Uuid, &projectOne.Name, &projectOne.Description); err != nil {
 			log.Printf("ProjectsModule.GetProject Error: %+v\n", err)
 			return true, nil
 		}
 		project = append(project, projectOne)
+	}
+
+	return false, project
+}
+
+func (self *ProjectsModule) GetProject(userId int) (error bool, project *models.Project) {
+	project = &models.Project{}
+
+	rows, err := self.db.Query("SELECT `uuid`,`name`,`description` FROM `projects` WHERE `uuid` = ?;", userId)
+
+	if err != nil {
+		return true, nil
+	}
+
+	if !rows.Next() {
+		return true, nil
+	}
+
+	if err := rows.Scan(&project.Uuid, &project.Name, &project.Description); err != nil {
+		log.Printf("ProjectsModule.GetProject Error: %+v\n", err)
+		return true, nil
 	}
 
 	return false, project

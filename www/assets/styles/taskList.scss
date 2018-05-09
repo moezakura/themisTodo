@@ -52,6 +52,10 @@ ul.taskList {
         .taskLimit {
             text-align: right;
             width: 150px;
+
+            span {
+                margin: 0 8px;
+            }
         }
     }
 }

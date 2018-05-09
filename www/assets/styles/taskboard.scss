@@ -1,0 +1,110 @@
+#taskboardTitle {
+    display: block;
+    height: 35px;
+    line-height: 35px;
+    font-size: 18px;
+    margin: 15px 0 0 20px;
+    letter-spacing: 1.2px;
+
+    i {
+        margin-right: 10px;
+    }
+}
+
+#taskboardAdd {
+    display: block;
+    font-size: 16px;
+    height: 35px;
+    width: 140px;
+    line-height: 35px;
+    margin: -35px 40px 15px calc(100% - 175px);
+    text-align: center;
+    letter-spacing: 1.1px;
+    text-decoration: none;
+
+    i {
+        margin-right: 10px;
+    }
+}
+
+#taskboard {
+    display: flex;
+    justify-content: flex-start;
+    margin: 0 15px;
+
+    section {
+        flex-shrink: 1;
+        flex-grow: 1;
+        width: 100%;
+        margin: 0 8px;
+
+        .statusName {
+            height: $buttonHeight;
+            line-height: $buttonHeight;
+            font-size: 18px;
+            padding-left: 15px;
+            background-color: rgba(black, 0.5);
+            letter-spacing: 1.5px;
+
+            &::after {
+                display: block;
+                position: relative;
+                content: " ";
+                width: 5px;
+                height: 100%;
+                top: -100%;
+                left: -15px;
+                background-color: $accentColor;
+            }
+        }
+    }
+}
+
+#taskboardAddForm {
+    display: block;
+    width: 400px;
+    position: fixed;
+    right: -400px;
+    top: 65px;
+    height: calc(100% - 65px);
+    background-color: rgb(50, 50, 50);
+    box-shadow: -2px -2px 5px rgba(black, .6);
+    overflow-y: auto;
+    letter-spacing: 1.2px;
+    transition: right ease .3s;
+    z-index: 99;
+
+    input,
+    textarea {
+        width: 90%;
+        max-width: 90%;
+        min-width: 90%;
+        margin: 5px 0 15px 5%;
+    }
+
+    h3 {
+        font-size: 18px;
+        letter-spacing: 1.1px;
+        text-align: center;
+        height: 45px;
+        line-height: 45px;
+    }
+
+    p {
+        margin-left: 5%;
+        font-size: 14px;
+    }
+
+    #taskboardAddClose {
+        width: 45px;
+        height: 45px;
+        line-height: 45px;
+        margin-top: -45px;
+        text-align: center;
+        font-size: 18px;
+        transition: all ease .3s;
+    }
+    #taskboardAddClose:hover {
+        background-color: rgba(black, .3);
+    }
+}

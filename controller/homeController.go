@@ -22,7 +22,7 @@ func (self HomeController) GetHome(c *gin.Context) {
 		return
 	}
 
-	isError, projects := projectsModule.GetProject(userUuid)
+	isError, projects := projectsModule.GetProjects(userUuid)
 
 	themisView.HomeView{self.BaseView}.GetHome(c, projects)
 }
