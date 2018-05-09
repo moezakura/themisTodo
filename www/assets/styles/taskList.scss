@@ -10,9 +10,14 @@ ul.taskList {
         clear: both;
         margin: 0;
         padding: 8px 10px 0 20px;
+        transition: background-color ease .3s;
 
         &:first-child {
             padding-top: 0;
+        }
+
+        &:hover{
+            background-color: rgba(black, .5);
         }
 
         &::after {
@@ -22,7 +27,7 @@ ul.taskList {
             content: " ";
             width: calc(100% + 20px + 10px);
             height: 1px;
-            margin: 33px 0 0 -15px;
+            margin: 33px 0 0 -20px;
             background-color: rgba(white, .3);
         }
 
