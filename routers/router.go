@@ -36,6 +36,11 @@ func Init(db *sql.DB) *gin.Engine {
 		projects.POST("/view/:projectId", themsController.ProjectsController{baseController}.PostTaskBoard)
 	}
 
+	//アカウント関連
+	account := r.Group("/account")
+	{
+		account.GET("/add", themsController.AccountController{baseController}.GetAdd)
+	}
 	return r
 }
 
@@ -46,6 +51,7 @@ func InitRender() multitemplate.Render {
 	r.AddFromFiles("home", "www/base.html", "www/header.html", "www/home.html")
 	r.AddFromFiles("projectAdd", "www/base.html", "www/header.html", "www/projectAdd.html")
 	r.AddFromFiles("projectTaskBoard", "www/base.html", "www/header.html", "www/taskBoard.html")
+	r.AddFromFiles("accountAdd", "www/base.html", "www/header.html", "www/accountAdd.html")
 
 	return r
 }
