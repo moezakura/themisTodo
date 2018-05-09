@@ -37,7 +37,7 @@ body {
     display: flex;
     justify-content: flex-start;
     margin: 0 15px;
-    height: calc(100% -125px);
+    height: calc(100% - 175px);
 
     section {
         flex-shrink: 1;
@@ -47,6 +47,7 @@ body {
 
         ul {
             height: 100%;
+            overflow-y: auto;
 
             li {
                 user-select: none;
