@@ -25,7 +25,7 @@ class TaskApi {
     }
 
     static GetTaskFromCreateDate(createDate) {
-        return fetch("/task/" + createDate, {
+        return fetch("/tasks/" + createDate, {
             method: 'GET',
             credentials: "same-origin"
         }).then(function (response) {
@@ -34,7 +34,7 @@ class TaskApi {
     }
 
     static Update(createDate, taskApi) {
-        return fetch("/task/" + createDate + "/update", {
+        return fetch("/tasks/" + createDate + "/update", {
             method: 'POST',
             body: JSON.stringify(taskApi),
             credentials: "same-origin"

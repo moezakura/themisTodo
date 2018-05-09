@@ -36,6 +36,12 @@ func Init(db *sql.DB) *gin.Engine {
 		projects.POST("/view/:projectId", themsController.ProjectsController{baseController}.PostTaskBoard)
 	}
 
+	// タスク管理
+	tasks := r.Group("/tasks")
+	{
+		tasks.POST("/:createDate/update", themsController.TasksController{baseController}.PostUpdate)
+	}
+
 	//アカウント関連
 	account := r.Group("/account")
 	{
