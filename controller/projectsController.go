@@ -129,12 +129,6 @@ func (self ProjectsController) PostTaskBoard(c *gin.Context) {
 		return
 	}
 
-	if len(addRequest.Name) < 1 {
-		addResult.Message = "name is not allowed empty"
-		themisView.ProjectsView{}.PostTaskBoard(c, addResult)
-		return
-	}
-
 	if len(addRequest.Name) > 1024 {
 		addResult.Message = "maximum name length is 1024 characters"
 		themisView.ProjectsView{}.PostTaskBoard(c, addResult)
