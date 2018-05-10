@@ -16,7 +16,7 @@ func NewLoginModule(db *sql.DB) *LoginModule {
 
 func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
 	if err := self.db.QueryRow("SELECT `uuid` FROM `users` WHERE `name` = ? AND `password` = ?;", name, password).Scan(&uuid); err != nil {
-		log.Fatal(err)
+		log.Printf("LoginModule.IsLogin Error: %+v", err)
 		return true, 0
 	}
 
