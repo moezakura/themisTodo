@@ -45,7 +45,8 @@ function clickError() {
     errorElem.style.display = "none";
 }
 
-function taskAddShowClick() {
+function taskAddShowClick(e) {
+    e.preventDefault();
     taskAddForm.style.right = "0";
 }
 
