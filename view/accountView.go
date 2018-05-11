@@ -19,3 +19,8 @@ func (self AccountView) GetAdd(c *gin.Context) {
 func (self AccountView) PostAdd(c *gin.Context, json *models.AccountAddResultJson) {
 	c.JSON(http.StatusOK, json)
 }
+
+func (self AccountView) GetSearch(c *gin.Context, statusCode int, json *[]models.AccountSearchResultModel) {
+	c.JSON(statusCode, json)
+}
+

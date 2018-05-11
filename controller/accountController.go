@@ -6,6 +6,9 @@ import (
 	"../models"
 	"../module"
 	"../utils"
+	"net/http"
+	"strconv"
+	"math"
 )
 
 type AccountController struct {
@@ -52,4 +55,32 @@ func (self AccountController) PostAdd(c *gin.Context) {
 	addResult.Success = true
 	addResult.Password = password
 	themisView.AccountView{self.BaseView}.PostAdd(c, addResult)
+}
+
+func (self AccountController) GetSearch(c *gin.Context) {
+	projectIdTmp := c.DefaultQuery("project", "")
+	displayNameTemp := c.DefaultQuery("displayName", "")
+	nameTemp := c.DefaultQuery("name", "")
+
+	searchModel := models.NewAccountSearchModel()
+	if projectIdTmp != "" {
+		projectIdNum, err := strconv.ParseInt(projectIdTmp, 10, 64)
+		if err == nil && projectIdNum < math.MaxInt32 {
+			searchModel.ProjectId = int(projectIdNum)
+		}
+	}
+	if displayNameTemp != "" {
+		searchModel.DisplayName = displayNameTemp
+	}
+	if nameTemp != "" {
+		searchModel.Name = nameTemp
+	}
+
+	accountModule := module.NewAccountModule(self.DB)
+	isError, result := accountModule.Search(searchModel)
+	if !isError {
+		themisView.AccountView{self.BaseView}.GetSearch(c, http.StatusOK, &result)
+	}else{
+		themisView.AccountView{self.BaseView}.GetSearch(c, http.StatusBadRequest, nil)
+	}
 }
