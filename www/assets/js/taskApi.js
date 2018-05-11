@@ -44,7 +44,7 @@ class TaskApi {
     }
 
     static Update(createDate, taskApi) {
-        return fetch("/tasks//update/" + createDate, {
+        return fetch("/tasks/update/" + createDate, {
             method: 'POST',
             body: JSON.stringify(taskApi),
             credentials: "same-origin"
