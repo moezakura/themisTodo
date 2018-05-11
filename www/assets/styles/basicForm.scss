@@ -6,7 +6,8 @@
     }
 
     input,
-    textarea {
+    textarea,
+    .basicCustomizeInput {
         display: block;
         width: 80%;
         height: $lineTextHeight;
@@ -20,9 +21,11 @@
         margin: 15px auto;
         letter-spacing: 1.1px;
         background-color: rgba(0, 0, 0, .1);
+        outline: none;
         transition: ease border-color .3s;
 
         &:focus {
+            outline: none;
             border-color: accentColor(.8);
         }
 
@@ -46,30 +49,31 @@
         max-width: 80%;
         min-width: 80%;
     }
+}
 
-    #error {
-        background-color: $redColor;
-        box-sizing: border-box;
+#error,
+.error {
+    background-color: $redColor;
+    box-sizing: border-box;
+    height: $lineTextHeight;
+    line-height: $lineTextHeight;
+    padding: 0 8px;
+    letter-spacing: 1.5px;
+    font-size: 14px;
+    display: none;
+
+    &::after {
+        display: block;
+        font-size: 16px;
+        content: "×";
         height: $lineTextHeight;
         line-height: $lineTextHeight;
-        padding: 0 8px;
-        letter-spacing: 1.5px;
-        font-size: 14px;
-        display: none;
+        margin-top: -$lineTextHeight;
+        text-align: right;
+        transition: ease opacity .3s;
+    }
 
-        &::after {
-            display: block;
-            font-size: 16px;
-            content: "×";
-            height: $lineTextHeight;
-            line-height: $lineTextHeight;
-            margin-top: -$lineTextHeight;
-            text-align: right;
-            transition: ease opacity .3s;
-        }
-
-        &:hover::after {
-            opacity: .7;
-        }
+    &:hover::after {
+        opacity: .7;
     }
 }

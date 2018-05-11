@@ -3,7 +3,7 @@
     const projectId = {{.Project.Uuid}};
 </script>
 
-<h2 id="taskboardTitle"><i class="fas fa-tasks"></i>{{.Project.Name}}</h2>
+<h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{.Project.Name}}</span></h2>
 <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
 <a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
 <div id="taskboard">
@@ -16,7 +16,9 @@
                 <div class="taskTitle">{{.Name}}</div>
                 <div class="taskId">#{{.TaskId}}</div>
                 <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
-                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}
+                    日)
+                </div>
             </li>
         {{end}}
         {{end}}
@@ -31,7 +33,9 @@
                 <div class="taskTitle">{{.Name}}</div>
                 <div class="taskId">#{{.TaskId}}</div>
                 <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
-                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}
+                    日)
+                </div>
             </li>
         {{end}}
         {{end}}
@@ -39,14 +43,16 @@
     </section>
     <section id="pr">
         <div class="statusName">PullRequest</div>
-        <ul class="taskList"  data-status="pr">
+        <ul class="taskList" data-status="pr">
         {{range .TaskList}}
         {{if eq .Status 2}}
             <li data-id="{{.CreateDate}}">
                 <div class="taskTitle">{{.Name}}</div>
                 <div class="taskId">#{{.TaskId}}</div>
                 <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
-                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}
+                    日)
+                </div>
             </li>
         {{end}}
         {{end}}
@@ -61,7 +67,9 @@
                 <div class="taskTitle">{{.Name}}</div>
                 <div class="taskId">#{{.TaskId}}</div>
                 <div class="taskAssign"><i class="fas fa-user"></i>&nbsp{{.CreatorName}}</div>
-                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}日)</div>
+                <div class="taskLimit"><i class="fas fa-calendar-alt"></i><span>{{.DeadlineMD}}</span>(あと{{.LimitDate}}
+                    日)
+                </div>
             </li>
         {{end}}
         {{end}}
@@ -72,7 +80,7 @@
 <form id="taskboardAddForm" class="basicForm">
     <h3>New Task</h3>
     <div id="taskboardAddClose"><i class="fas fa-angle-double-right"></i></div>
-    <div id="error"></div>
+    <div class="error"></div>
     <p>Name</p>
     <input type="text" name="name">
     <p>Creator</p>
@@ -85,8 +93,35 @@
     <textarea name="description"></textarea>
     <input type="submit" value="ADD">
 </form>
+
+<div id="projectConfigPopup">
+    <h3>Project Config</h3>
+    <div class="error"></div>
+    <form id="projectConfigForm" class="basicForm" autocomplete="off">
+        <p>Name</p>
+        <input type="text" name="name" value="{{.Project.Name}}">
+        <p>Description</p>
+        <textarea name="description">{{.Project.Description}}</textarea>
+        <input type="submit" value="SAVE">
+    </form>
+    <form class="basicForm">
+        <p>Member Invite</p>
+        <input type="text" id="userSelect">
+        <p>Member Manage</p>
+        <ul class="usersList">
+            <li>
+                <div style="background-image: url('https://dummyimage.com/35x35/000/fff')" class="icon"></div>
+                <div>Mox</div>
+                <i class="fas fa-times"></i>
+            </li>
+        </ul>
+    </form>
+</div>
+
+<div id="backViewLayer"></div>
 <script type="application/javascript" src="/assets/js/taskApi.js"></script>
 <script type="application/javascript" src="/assets/js/taskAdd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.6.1/Sortable.min.js"></script>
 <script type="application/javascript" src="/assets/js/taskBoard.js"></script>
+<script type="application/javascript" src="/assets/js/projectConfig.js"></script>
 {{end}}

@@ -101,3 +101,21 @@ func (self *ProjectsModule) GetProject(userId int) (error bool, project *models.
 
 	return false, project
 }
+
+func (self *ProjectsModule) Update(project *models.Project) bool {
+	result, err := self.db.Exec("UPDATE `projects` SET `name` = ?, `description` = ? WHERE `uuid` = ?;",
+		project.Name, project.Description, project.Uuid)
+
+	if err != nil {
+		log.Printf("ProjectsModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		log.Printf("ProjectsModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	return false
+}

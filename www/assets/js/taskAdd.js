@@ -1,10 +1,10 @@
 var taskAddForm = document.querySelector("#taskboardAddForm"),
-    errorElem = document.querySelector("#error"),
+    taskAddFormErrorElem = taskAddForm.querySelector(".error"),
     taskAddShow = document.querySelector("#taskboardAdd"),
     closeFormElem = document.querySelector("#taskboardAddClose");
 
 taskAddForm.addEventListener("submit", postTaskAdd, true);
-errorElem.addEventListener("click", clickError, true);
+taskAddFormErrorElem.addEventListener("click", clickError, true);
 taskAddShow.addEventListener("click", taskAddShowClick, true);
 closeFormElem.addEventListener("click", clickCloseForm, true);
 
@@ -25,10 +25,10 @@ function postTaskAdd(e) {
 
     TaskApi.Create(projectAddJson).then(function (json) {
         if (!json.success) {
-            errorElem.style.display = "block";
-            errorElem.innerText = json.message;
+            taskAddFormErrorElem.style.display = "block";
+            taskAddFormErrorElem.innerText = json.message;
         } else {
-            errorElem.style.display = "none";
+            taskAddFormErrorElem.style.display = "none";
             addFormClear();
             TaskApi.GetTaskFromCreateDate(json.createDate).then(function (json) {
 
@@ -37,8 +37,8 @@ function postTaskAdd(e) {
     });
 }
 
-function clickError() {
-    errorElem.style.display = "none";
+function clickError(e) {
+    e.target.style.display = "none";
 }
 
 function taskAddShowClick(e) {

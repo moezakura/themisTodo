@@ -34,12 +34,16 @@ func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, t
 	}
 
 	c.HTML(http.StatusOK, "projectTaskBoard", gin.H{
-		"Title":   project.Name,
-		"Project": project,
+		"Title":    project.Name,
+		"Project":  project,
 		"TaskList": taskList,
 	})
 }
 
 func (self ProjectsView) PostTaskBoard(c *gin.Context, json *models.TaskAddResultJson) {
+	c.JSON(http.StatusOK, json)
+}
+
+func (self ProjectsView) PostUpdate(c *gin.Context, json *models.ProjectAddResultJson) {
 	c.JSON(http.StatusOK, json)
 }
