@@ -33,13 +33,13 @@ func Init(db *sql.DB) *gin.Engine {
 		projects.POST("/add", themsController.ProjectsController{baseController}.PostAdd)
 
 		projects.GET("/view/:projectId", themsController.ProjectsController{baseController}.GetTaskBoard)
-		projects.POST("/view/:projectId", themsController.ProjectsController{baseController}.PostTaskBoard)
 	}
 
 	// タスク管理
 	tasks := r.Group("/tasks")
 	{
-		tasks.POST("/:createDate/update", themsController.TasksController{baseController}.PostUpdate)
+		tasks.POST("/create", themsController.TasksController{baseController}.PostTaskCreate)
+		tasks.POST("/update/:createDate", themsController.TasksController{baseController}.PostUpdate)
 	}
 
 	//アカウント関連
