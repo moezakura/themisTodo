@@ -94,7 +94,8 @@ func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isEr
 		queryText += "1"
 	}
 
-	queryText += ";"
+	queryText += " LIMIT 0,? ;"
+	execArgs = append(execArgs, searchObject.Max)
 
 	resultModel := make([]models.AccountSearchResultModel, 0)
 	rows, err := self.db.Query(queryText, execArgs...)

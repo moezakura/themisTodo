@@ -61,6 +61,7 @@ func (self AccountController) GetSearch(c *gin.Context) {
 	projectIdTmp := c.DefaultQuery("project", "")
 	displayNameTemp := c.DefaultQuery("displayName", "")
 	nameTemp := c.DefaultQuery("name", "")
+	maxTemp := c.DefaultQuery("max", "")
 
 	searchModel := models.NewAccountSearchModel()
 	if projectIdTmp != "" {
@@ -74,6 +75,12 @@ func (self AccountController) GetSearch(c *gin.Context) {
 	}
 	if nameTemp != "" {
 		searchModel.Name = nameTemp
+	}
+	if maxTemp != "" {
+		maxNum, err := strconv.ParseInt(maxTemp, 10, 64)
+		if err == nil && maxNum < math.MaxInt32 {
+			searchModel.Max = int(maxNum)
+		}
 	}
 
 	accountModule := module.NewAccountModule(self.DB)

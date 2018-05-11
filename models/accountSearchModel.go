@@ -5,13 +5,15 @@ type AccountSearchModel struct {
 	DisplayName string
 	Uuid        int
 	ProjectId   int
+	Max         int
 }
 
-func NewAccountSearchModel() *AccountSearchModel{
+func NewAccountSearchModel() *AccountSearchModel {
 	return &AccountSearchModel{
 		"",
 		"",
 		-1,
 		-1,
+		10,
 	}
 }
