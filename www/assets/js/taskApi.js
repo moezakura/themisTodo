@@ -33,8 +33,18 @@ class TaskApi {
         });
     }
 
+    static Create(taskJson){
+        return fetch("/tasks/create", {
+            method: 'POST',
+            body: JSON.stringify(taskJson),
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        });
+    }
+
     static Update(createDate, taskApi) {
-        return fetch("/tasks/" + createDate + "/update", {
+        return fetch("/tasks//update/" + createDate, {
             method: 'POST',
             body: JSON.stringify(taskApi),
             credentials: "same-origin"

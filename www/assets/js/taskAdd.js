@@ -23,13 +23,7 @@ function postTaskAdd(e) {
         "projectId": projectId
     };
 
-    fetch("/tasks/create", {
-        method: 'POST',
-        body: JSON.stringify(projectAddJson),
-        credentials: "same-origin"
-    }).then(function (response) {
-        return response.json();
-    }).then(function (json) {
+    TaskApi.Create(projectAddJson).then(function (json) {
         if (!json.success) {
             errorElem.style.display = "block";
             errorElem.innerText = json.message;
