@@ -19,10 +19,11 @@ function postTaskAdd(e) {
     let projectAddJson = {
         "name": formData.get("name"),
         "deadline": formData.get("deadline"),
-        "description": formData.get("description")
+        "description": formData.get("description"),
+        "projectId": projectId
     };
 
-    fetch("", {
+    fetch("/tasks/create", {
         method: 'POST',
         body: JSON.stringify(projectAddJson),
         credentials: "same-origin"
@@ -34,8 +35,9 @@ function postTaskAdd(e) {
             errorElem.innerText = json.message;
         } else {
             errorElem.style.display = "none";
+            addFormClear();
             TaskApi.GetTaskFromCreateDate(json.createDate).then(function (json) {
-                alert();
+
             });
         }
     });
@@ -52,6 +54,12 @@ function taskAddShowClick(e) {
 
 function clickCloseForm() {
     taskAddForm.style.right = "-" + taskAddForm.clientWidth + "px";
+}
+
+function addFormClear(){
+    taskAddForm.reset();
+    var nowTime = new Date(Date.now());
+    taskAddForm.querySelector("input[name=deadline]").value = dateFormat(nowTime);
 }
 
 function dateFormat(date) {

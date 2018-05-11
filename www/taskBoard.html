@@ -1,4 +1,8 @@
 {{define "content"}}
+<script>
+    const projectId = {{.Project.Uuid}};
+</script>
+
 <h2 id="taskboardTitle"><i class="fas fa-tasks"></i>{{.Project.Name}}</h2>
 <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
 <a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
