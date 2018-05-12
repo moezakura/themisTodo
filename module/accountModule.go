@@ -69,7 +69,7 @@ func (self *AccountModule) GetAccount(uid int) (isError bool, account *models.Ac
 
 	defer rows.Close()
 
-	var gotAccount *models.Account
+	gotAccount := &models.Account{}
 
 	if rows.Next() {
 		err = rows.Scan(&gotAccount.Uuid, &gotAccount.Name, &gotAccount.DisplayName)
