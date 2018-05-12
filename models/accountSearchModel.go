@@ -5,6 +5,7 @@ type AccountSearchModel struct {
 	DisplayName string
 	Uuid        int
 	ProjectId   int
+	IsInProject bool
 	Max         int
 }
 
@@ -14,6 +15,7 @@ func NewAccountSearchModel() *AccountSearchModel {
 		"",
 		-1,
 		-1,
+		false,
 		10,
 	}
 }

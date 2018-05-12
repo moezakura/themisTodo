@@ -59,13 +59,19 @@ func (self AccountController) PostAdd(c *gin.Context) {
 
 func (self AccountController) GetSearch(c *gin.Context) {
 	projectIdTmp := c.DefaultQuery("project", "")
+	isInProjectTmp := c.DefaultQuery("isInProject", "")
 	displayNameTemp := c.DefaultQuery("displayName", "")
 	nameTemp := c.DefaultQuery("name", "")
+	uuidTemp := c.DefaultQuery("uuid", "")
 	maxTemp := c.DefaultQuery("max", "")
 
 	searchModel := models.NewAccountSearchModel()
 	if projectIdTmp != "" {
 		projectIdNum, err := strconv.ParseInt(projectIdTmp, 10, 64)
+		isInProjectBool, errB := strconv.ParseBool(isInProjectTmp)
+		if errB == nil {
+			searchModel.IsInProject = isInProjectBool
+		}
 		if err == nil && projectIdNum < math.MaxInt32 {
 			searchModel.ProjectId = int(projectIdNum)
 		}
@@ -82,12 +88,18 @@ func (self AccountController) GetSearch(c *gin.Context) {
 			searchModel.Max = int(maxNum)
 		}
 	}
+	if uuidTemp != "" {
+		uuidNum, err := strconv.ParseInt(uuidTemp, 10, 64)
+		if err == nil && uuidNum < math.MaxInt32 {
+			searchModel.Uuid = int(uuidNum)
+		}
+	}
 
 	accountModule := module.NewAccountModule(self.DB)
 	isError, result := accountModule.Search(searchModel)
 	if !isError {
 		themisView.AccountView{self.BaseView}.GetSearch(c, http.StatusOK, &result)
-	}else{
+	} else {
 		themisView.AccountView{self.BaseView}.GetSearch(c, http.StatusBadRequest, nil)
 	}
 }

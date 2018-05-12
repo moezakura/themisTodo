@@ -64,11 +64,15 @@ func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isEr
 	execArgs := []interface{}{}
 
 	if searchObject.ProjectId > 0 {
-		queryText += "`users`.`uuid` NOT IN (SELECT `user_id` FROM `users_in_projects` WHERE `project_id` = ? ORDER BY `user_id`) "
+		isInCmmand := "IN"
+		if !searchObject.IsInProject {
+			isInCmmand = "NOT IN"
+		}
+		queryText += "`users`.`uuid` " + isInCmmand + " (SELECT `user_id` FROM `users_in_projects` WHERE `project_id` = ? ORDER BY `user_id`) "
 		execArgs = append(execArgs, searchObject.ProjectId)
 	}
 
-	if searchObject.ProjectId > 0 && (searchObject.Name != "" || searchObject.DisplayName != "") {
+	if searchObject.ProjectId > 0 && (searchObject.Name != "" || searchObject.DisplayName != "" || searchObject.Uuid > 0) {
 		queryText += " AND ( "
 	}
 
@@ -86,11 +90,20 @@ func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isEr
 		execArgs = append(execArgs, "%"+searchObject.DisplayName+"%")
 	}
 
-	if searchObject.ProjectId > 0 && (searchObject.Name != "" || searchObject.DisplayName != "") {
+	if (searchObject.Name != "" || searchObject.DisplayName != "") && searchObject.Uuid > 0 {
+		queryText += " OR "
+	}
+
+	if searchObject.Uuid > 0 {
+		queryText += "`uuid` = ? "
+		execArgs = append(execArgs, searchObject.Uuid)
+	}
+
+	if searchObject.ProjectId > 0 && (searchObject.Name != "" || searchObject.DisplayName != "" || searchObject.Uuid > 0) {
 		queryText += " ) "
 	}
 
-	if len(execArgs) < 1{
+	if len(execArgs) < 1 {
 		queryText += "1"
 	}
 
