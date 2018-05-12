@@ -24,9 +24,9 @@
         font-size: 14px;
         color: white;
         text-decoration: none;
-        border: 1px solid $accentColor;
+        border: 1.5px solid $accentColor;
         background-color: accentColor(.05);
-        margin-left: $floatBoxSize - 200px;
+        margin:25px auto 0 auto;
         overflow-y: hidden;
 
         &:hover::after {
