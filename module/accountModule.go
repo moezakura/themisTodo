@@ -59,6 +59,31 @@ func (self *AccountModule) Get(name string) int {
 	return 0
 }
 
+func (self *AccountModule) GetAccount(uid int) (isError bool, account *models.Account) {
+	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName` FROM `users` WHERE `uuid` = ?;", uid)
+
+	if err != nil {
+		log.Printf("AccountModule.GetAccount Error: %+v", err)
+		return true, nil
+	}
+
+	defer rows.Close()
+
+	var gotAccount *models.Account
+
+	if rows.Next() {
+		err = rows.Scan(&gotAccount.Uuid, &gotAccount.Name, &gotAccount.DisplayName)
+		if err != nil {
+			log.Printf("AccountModule.GetAccount Error: %+v", err)
+			return true, nil
+		}
+
+		return false, gotAccount
+	}
+
+	return true, nil
+}
+
 func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isError bool, users []models.AccountSearchResultModel) {
 	queryText := "SELECT `uuid`, `name`, `displayName` FROM `users` WHERE "
 	execArgs := []interface{}{}
