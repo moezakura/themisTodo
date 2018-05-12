@@ -19,7 +19,7 @@ func (self *AccountModule) Add(name, password string) bool {
 	stmt, err := self.db.Prepare("INSERT INTO `users` (`displayName`, `name`, `password`) VALUES(?, ?, ?);")
 
 	if err != nil {
-		log.Printf("ProjectsModule.AddUser Error: %+v", err)
+		log.Printf("AccountModule.Add Error: %+v", err)
 		return true
 	}
 
@@ -27,7 +27,7 @@ func (self *AccountModule) Add(name, password string) bool {
 
 	_, err = stmt.Exec(name, name, utils.SHA512(password))
 	if err != nil {
-		log.Printf("ProjectsModule.AddUser Error: %+v", err)
+		log.Printf("AccountModule.Add Error: %+v", err)
 		return true
 	}
 
@@ -38,7 +38,7 @@ func (self *AccountModule) Get(name string) int {
 	rows, err := self.db.Query("SELECT `uuid` FROM `users` WHERE `name` = ?;", name)
 
 	if err != nil {
-		log.Printf("ProjectsModule.AddUser Error: %+v", err)
+		log.Printf("AccountModule.Get Error: %+v", err)
 		return 0
 	}
 
@@ -49,7 +49,7 @@ func (self *AccountModule) Get(name string) int {
 	if rows.Next() {
 		err = rows.Scan(&userId)
 		if err != nil {
-			log.Printf("ProjectsModule.AddUser Error: %+v", err)
+			log.Printf("AccountModule.Get Error: %+v", err)
 			return 0
 		}
 
