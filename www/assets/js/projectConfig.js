@@ -175,8 +175,9 @@ function createUserListLine(uuid, name, displayName) {
     parentLi.id = "searchResult" + uuid;
 
     let iconDiv = document.createElement("div");
+    let nowTime = new Date();
     iconDiv.classList.add("icon");
-    iconDiv.style.backgroundImage = "url(\"https://dummyimage.com/35x35/ff0000/000000&text=" + uuid + "\")";
+    iconDiv.style.backgroundImage = "url(\"/account/icon/" + uuid + "?t=" + nowTime.getTime() + "\")";
     parentLi.appendChild(iconDiv);
 
     let nameLineDiv = document.createElement("div");
