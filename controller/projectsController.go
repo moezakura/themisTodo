@@ -224,6 +224,12 @@ func (self ProjectsController) PostAddUser(c *gin.Context) {
 		themisView.ProjectsView{}.PostAddUser(c, addResult)
 	}
 
+	addResult.AddedAccount = &models.Account{
+		Name:        account.Name,
+		DisplayName: account.DisplayName,
+		Uuid:        account.Uuid,
+	}
+
 	addResult.Success = true
 	themisView.ProjectsView{}.PostAddUser(c, addResult)
 }

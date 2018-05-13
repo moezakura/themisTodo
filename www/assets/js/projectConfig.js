@@ -168,6 +168,9 @@ function projectMemberAddSubmit(e) {
                 projectConfigPopupErrorElem.innerText = json.message;
             } else {
                 projectConfigPopupErrorElem.style.display = "none";
+                userSelectInput.value = "";
+                memberList.push(json.addedAccount);
+                memberUpdate();
             }
         });
     }
