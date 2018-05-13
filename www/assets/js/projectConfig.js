@@ -18,8 +18,12 @@ var selectUserIndex = -1, selectMode = false, oldSearchInput = "", searchResult 
 
 userSelectInput.addEventListener("keyup", userSelectInputKeyUp, true);
 userSelectInput.addEventListener("keydown", userSelectInputKeyDown, true);
-projectMemberAddForm.addEventListener("submit", projectMemberAddSubmit, true)
+projectMemberAddForm.addEventListener("submit", projectMemberAddSubmit, true);
 
+document.querySelector("body").addEventListener("keydown", function (e) {
+    if (e.keyCode === 27 && projectConfigPopup.style.display === "block")
+        backViewLayerElemClick();
+}, true);
 
 function taskConfigShowClick(e) {
     e.preventDefault();

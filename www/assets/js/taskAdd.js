@@ -11,6 +11,10 @@ closeFormElem.addEventListener("click", clickCloseForm, true);
 var nowTime = new Date(Date.now());
 taskAddForm.querySelector("input[name=deadline]").value = dateFormat(nowTime);
 
+document.querySelector("body").addEventListener("keydown", function (e) {
+    if (e.keyCode === 27 && taskAddForm.classList.contains("shown"))
+        clickCloseForm();
+}, true);
 
 function postTaskAdd(e) {
     e.preventDefault();
@@ -43,23 +47,23 @@ function clickError(e) {
 
 function taskAddShowClick(e) {
     e.preventDefault();
-    taskAddForm.style.right = "0";
+    taskAddForm.classList.add("shown");
 }
 
 function clickCloseForm() {
-    taskAddForm.style.right = "-" + taskAddForm.clientWidth + "px";
+    taskAddForm.classList.remove("shown");
 }
 
-function addFormClear(){
+function addFormClear() {
     taskAddForm.reset();
-    var nowTime = new Date(Date.now());
+    let nowTime = new Date(Date.now());
     taskAddForm.querySelector("input[name=deadline]").value = dateFormat(nowTime);
 }
 
 function dateFormat(date) {
-    var y = date.getFullYear();
-    var m = date.getMonth() + 1;
-    var d = date.getDate();
+    let y = date.getFullYear();
+    let m = date.getMonth() + 1;
+    let d = date.getDate();
 
     if (m < 10) {
         m = '0' + m;
