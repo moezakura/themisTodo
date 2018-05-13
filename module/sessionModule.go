@@ -12,7 +12,7 @@ type SessionModule struct {
 type Session struct {
 	Uuid     int
 	Limit    int64
-	LifeTime int64
+	LifeTime int
 }
 
 func NewSessionModule() *SessionModule {
@@ -44,9 +44,9 @@ func (self *SessionModule) background() {
 	}
 }
 
-func (self *SessionModule) Add(key string, uuid int, limit int64) {
+func (self *SessionModule) Add(key string, uuid, limit int) {
 	now := time.Now().Unix()
-	self.Session.Store(key, &Session{uuid, now + limit, limit})
+	self.Session.Store(key, &Session{uuid, now + int64(limit), limit})
 }
 
 func (self *SessionModule) GetUuid(key string) (isExist bool, uuid int) {
@@ -69,7 +69,7 @@ func (self *SessionModule) UpdateTime(key string) {
 	if _value, ok := self.Session.Load(key); ok {
 		value := _value.(*Session)
 		if value.Limit >= now {
-			value.Limit = now + value.LifeTime
+			value.Limit = now + int64(value.LifeTime)
 			self.Session.Store(key, value)
 		}
 	}

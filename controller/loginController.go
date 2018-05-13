@@ -39,10 +39,11 @@ func (self LoginController) PostLogin(c *gin.Context) {
 		return
 	}
 
+	limitSec := 30 * 24 * 60
 	authToken := utils.RandomString(64)
-	self.Session.Add(authToken, uuid, 30*60)
+	self.Session.Add(authToken, uuid, limitSec)
 
-	c.SetCookie("token", authToken, 30*60, "/", "", false, true)
+	c.SetCookie("token", authToken, limitSec, "/", "", false, true)
 	loginResult.Success = true
 	loginResult.Message = authToken
 
