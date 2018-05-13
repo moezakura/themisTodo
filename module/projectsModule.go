@@ -102,6 +102,28 @@ func (self *ProjectsModule) GetProject(userId int) (error bool, project *models.
 	return false, project
 }
 
+func (self *ProjectsModule) GetUser(projectId int) (error bool, accounts []models.Account) {
+	accounts = make([]models.Account, 0)
+
+	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName` FROM `users` WHERE `users`.`uuid` IN (SELECT `user_id` FROM `users_in_projects` WHERE `project_id` = ?);",
+		projectId)
+
+	if err != nil {
+		return true, nil
+	}
+
+	for rows.Next() {
+		accountOne := models.Account{}
+		if err := rows.Scan(&accountOne.Uuid, &accountOne.Name, &accountOne.DisplayName); err != nil {
+			log.Printf("ProjectsModule.GetUser Error: %+v\n", err)
+			return true, nil
+		}
+		accounts = append(accounts, accountOne)
+	}
+
+	return false, accounts
+}
+
 func (self *ProjectsModule) Update(project *models.Project) bool {
 	result, err := self.db.Exec("UPDATE `projects` SET `name` = ?, `description` = ? WHERE `uuid` = ?;",
 		project.Name, project.Description, project.Uuid)
