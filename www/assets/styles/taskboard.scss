@@ -109,7 +109,7 @@ body {
     transition: right ease .3s;
     z-index: 99;
 
-    &.shown{
+    &.shown {
         right: 0;
     }
 
@@ -200,9 +200,13 @@ body {
         width: $lineTextHeight;
         margin: (-15px - $lineTextHeight) 0 10px 95%;
         transform: translateX(-$lineTextHeight);
+        border: 0;
+        background-color: transparent;
     }
-    #userSelect:focus+input {
-        border-color: accentColor(.5);
+
+    #userSelect+input:hover,
+    #userSelect+input:focus {
+        background-color: accentColor(.3);
     }
 }
 
