@@ -104,24 +104,25 @@
         <textarea name="description">{{.Project.Description}}</textarea>
         <input type="submit" value="SAVE">
     </form>
-    <form class="basicForm">
+    <form id="projectMemberAddForm" class="basicForm" autocomplete="off">
         <p>Member Invite</p>
         <input type="text" id="userSelect">
+        <input type="submit" value="&#xf234;" class="fa">
         <p>Member Manage</p>
-        <ul class="usersList">
-            <li>
-                <div style="background-image: url('https://dummyimage.com/35x35/000/fff')" class="icon"></div>
-                <div>Mox</div>
-                <i class="fas fa-times"></i>
-            </li>
-        </ul>
+        <ul class="usersList"></ul>
     </form>
 </div>
+<ul id="usersSearchedList" class="usersList"></ul>
+<script type="application/javascript">
+    var memberList = JSON.parse("{{.AccountJson}}");
+</script>
 
 <div id="backViewLayer"></div>
 <script type="application/javascript" src="/assets/js/taskApi.js"></script>
 <script type="application/javascript" src="/assets/js/taskAdd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.6.1/Sortable.min.js"></script>
 <script type="application/javascript" src="/assets/js/taskBoard.js"></script>
+<script type="application/javascript" src="/assets/js/projectUtils.js"></script>
+<script type="application/javascript" src="/assets/js/projectMemberList.js"></script>
 <script type="application/javascript" src="/assets/js/projectConfig.js"></script>
 {{end}}

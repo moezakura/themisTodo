@@ -208,6 +208,14 @@ body {
     #userSelect+input:focus {
         background-color: accentColor(.3);
     }
+
+    #projectMemberAddForm {
+        .usersList {
+            height: 250px;
+            border: solid 1px rgba(white, .3);
+            overflow-y: auto;
+        }
+    }
 }
 
 .usersList {

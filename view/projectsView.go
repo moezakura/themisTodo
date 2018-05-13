@@ -6,6 +6,7 @@ import (
 	"../models"
 	"../utils"
 	"log"
+	"encoding/json"
 )
 
 type ProjectsView struct {
@@ -22,7 +23,7 @@ func (self ProjectsView) PostAdd(c *gin.Context, json *models.ProjectAddResultJs
 	c.JSON(http.StatusOK, json)
 }
 
-func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, taskList []models.Task) {
+func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, taskList []models.Task, accounts []models.Account) {
 	for key, value := range taskList {
 		var e bool
 		e, taskList[key].DeadlineMD = utils.GetDateMD(value.Deadline)
@@ -33,10 +34,17 @@ func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, t
 		taskList[key].LimitDate = utils.DiffDay(value.Deadline)
 	}
 
+	bytes, err := json.Marshal(accounts)
+	if err != nil {
+		return
+	}
+	accountJson := string(bytes)
+
 	c.HTML(http.StatusOK, "projectTaskBoard", gin.H{
 		"Title":    project.Name,
 		"Project":  project,
 		"TaskList": taskList,
+		"AccountJson": accountJson,
 	})
 }
 

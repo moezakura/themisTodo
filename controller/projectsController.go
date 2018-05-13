@@ -86,13 +86,19 @@ func (self ProjectsController) GetTaskBoard(c *gin.Context) {
 	isError, project := projectsModule.GetProject(projectId)
 	taskModule := module.NewTaskModule(self.DB)
 
-	iserr, taskList := taskModule.GetList(projectId)
-	if iserr {
+	isErr, taskList := taskModule.GetList(projectId)
+	if isErr {
 		c.String(http.StatusBadRequest, "400 Bad Request")
 		return
 	}
 
-	themisView.ProjectsView{self.BaseView}.GetTaskBoard(c, project, taskList)
+	isErr, accounts := projectsModule.GetUser(projectId)
+	if isErr {
+		c.String(http.StatusBadRequest, "400 Bad Request")
+		return
+	}
+
+	themisView.ProjectsView{self.BaseView}.GetTaskBoard(c, project, taskList, accounts)
 }
 
 func (self ProjectsController) PostUpdate(c *gin.Context) {
