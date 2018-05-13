@@ -34,6 +34,7 @@ function taskConfigShowClick(e) {
 function backViewLayerElemClick() {
     projectConfigPopup.style.display = "none";
     backViewLayerElem.style.display = "none";
+    userSelectUserList.style.display = "none";
 }
 
 function postTaskConfig(e) {
