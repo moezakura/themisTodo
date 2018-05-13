@@ -47,3 +47,7 @@ func (self ProjectsView) PostTaskBoard(c *gin.Context, json *models.TaskAddResul
 func (self ProjectsView) PostUpdate(c *gin.Context, json *models.ProjectAddResultJson) {
 	c.JSON(http.StatusOK, json)
 }
+
+func (self ProjectsView) PostAddUser(c *gin.Context, json *models.ProjectAddResultJson) {
+	c.JSON(http.StatusOK, json)
+}

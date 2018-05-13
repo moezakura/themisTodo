@@ -155,3 +155,69 @@ func (self ProjectsController) PostUpdate(c *gin.Context) {
 	addResult.Success = true
 	themisView.ProjectsView{}.PostUpdate(c, addResult)
 }
+
+func (self ProjectsController) PostAddUser(c *gin.Context) {
+	addResult := &models.ProjectAddResultJson{}
+	loginModule := module.NewLoginModule(self.DB)
+	isError, _ := loginModule.GetUserId(c, self.Session)
+
+	projectIdStr := c.Param("projectId")
+	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
+	projectId := int(projectId64)
+	if err != nil {
+		c.String(http.StatusBadRequest, "400 Bad Request")
+		return
+	}
+
+	if isError {
+		addResult.Message = "invalid token"
+		themisView.ProjectsView{}.PostAddUser(c, addResult)
+		return
+	}
+
+	var addRequest models.ProjectsAddUserRequest
+	c.ShouldBindJSON(&addRequest)
+
+	if addRequest.Uuid < 0 {
+		addResult.Message = "invalid user id"
+		themisView.ProjectsView{}.PostAddUser(c, addResult)
+		return
+	}
+
+	accountModule := module.NewAccountModule(self.DB)
+
+	isError, account := accountModule.GetAccount(addRequest.Uuid)
+	if isError || account == nil {
+		addResult.Message = "not found user id"
+		themisView.ProjectsView{}.PostAddUser(c, addResult)
+		return
+	}
+
+	searchObject := models.NewAccountSearchModel()
+	searchObject.ProjectId = projectId
+	searchObject.IsInProject = true
+	searchObject.Uuid = addRequest.Uuid
+
+	isError, searchResult := accountModule.Search(searchObject)
+	if isError {
+		addResult.Message = "server error"
+		themisView.ProjectsView{}.PostAddUser(c, addResult)
+		return
+	}
+
+	if len(searchResult) > 0 {
+		addResult.Message = "this user has already joined the project"
+		themisView.ProjectsView{}.PostAddUser(c, addResult)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	isErrorProjectAdd := projectModule.AddUser(addRequest.Uuid, projectId)
+	if isErrorProjectAdd {
+		addResult.Message = "server error"
+		themisView.ProjectsView{}.PostAddUser(c, addResult)
+	}
+
+	addResult.Success = true
+	themisView.ProjectsView{}.PostAddUser(c, addResult)
+}

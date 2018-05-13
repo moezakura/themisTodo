@@ -184,22 +184,100 @@ body {
         max-width: 90%;
     }
 
-    .icon {
-        width: 35px;
-        height: 35px;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+    #userSelect {
+        padding-right: $buttonHeight + 10px;
     }
 
-    .usersList {
-        width: 90%;
-        list-style: none;
-        margin: 5px auto;
-        padding: 0;
+    #userSelect+input {
+        text-align: center;
+        vertical-align: middle;
+        height: $lineTextHeight;
+        line-height: $lineTextHeight;
+        width: $lineTextHeight;
+        margin: (-15px - $lineTextHeight) 0 10px 95%;
+        transform: translateX(-$lineTextHeight);
+    }
+    #userSelect:focus+input {
+        border-color: accentColor(.5);
     }
 }
 
+.usersList {
+    width: 90%;
+    list-style: none;
+    margin: 5px auto;
+    padding: 0;
+    font-size: 0;
+
+    li {
+        height: $iconSize;
+        line-height: $iconSize;
+        padding: 5px 8px;
+        overflow: hidden;
+
+        &.select {
+            background-color: accentColor(.5);
+        }
+
+        .icon {
+            width: $iconSize;
+            height: $iconSize;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: inline-block;
+            vertical-align: top;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .name {
+            display: inline-block;
+            vertical-align: top;
+            width: calc(100% - #{$iconSize});
+            font-size: 15px;
+
+            .nameId,
+            .displayName {
+                display: inline-block;
+                vertical-align: top;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .nameId {
+                margin: 0 10px;
+                max-width: 50%;
+            }
+
+            .displayName {
+                opacity: 0.5;
+                font-size: 12px;
+                max-width: calc(50% - 20px);
+            }
+
+            .displayName::before {
+                content: "(";
+            }
+
+            .displayName::after {
+                content: ")";
+            }
+        }
+    }
+}
+
+#usersSearchedList {
+    position: fixed;
+    display: none;
+    z-index: 102;
+    background-color: rgb(50, 50, 50);
+    max-height: 180px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 0;
+}
 
 #backViewLayer {
     display: none;
