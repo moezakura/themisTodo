@@ -163,7 +163,12 @@ function projectMemberAddSubmit(e) {
         }).then(function (response) {
             return response.json();
         }).then(function (json) {
-
+            if (!json.success) {
+                projectConfigPopupErrorElem.style.display = "block";
+                projectConfigPopupErrorElem.innerText = json.message;
+            } else {
+                projectConfigPopupErrorElem.style.display = "none";
+            }
         });
     }
 }
