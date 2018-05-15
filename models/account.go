@@ -1,8 +1,8 @@
 package models
 
 type Account struct {
-	Name        string `json:"name"`
-	DisplayName string `json:"displayName"`
-	Uuid        int    `json:"uuid"`
-	Password    string `json:"password"`
+	Name        string `json:"name" binding:"required"`
+	DisplayName string `json:"displayName" binding:"required"`
+	Uuid        int    `json:"uuid" binding:"required"`
+	Password    string `json:"password" binding:"required"`
 }
