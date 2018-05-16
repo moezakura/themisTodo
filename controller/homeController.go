@@ -26,3 +26,16 @@ func (self HomeController) GetHome(c *gin.Context) {
 
 	themisView.HomeView{self.BaseView}.GetHome(c, projects)
 }
+
+func (self HomeController) GetSettings(c *gin.Context){
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	themisView.HomeView{self.BaseView}.GetSettings(c, userUuid)
+}

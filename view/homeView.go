@@ -16,3 +16,10 @@ func (self HomeView) GetHome(c *gin.Context, projects []models.Project) {
 		"Projects": projects,
 	})
 }
+
+func (self HomeView) GetSettings(c *gin.Context, userUuid int) {
+	c.HTML(http.StatusOK, "mySettings", gin.H{
+		"Title": "Settings",
+		"AccountUuid": userUuid,
+	})
+}

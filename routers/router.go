@@ -26,6 +26,9 @@ func Init(db *sql.DB) *gin.Engine {
 	// メイン画面
 	r.GET("/home", themsController.HomeController{baseController}.GetHome)
 
+	//マイページ設定
+	r.GET("/settings", themsController.HomeController{baseController}.GetSettings)
+
 	// プロジェクト関連
 	projects := r.Group("/project")
 	{
@@ -51,6 +54,7 @@ func Init(db *sql.DB) *gin.Engine {
 		account.GET("/add", themsController.AccountController{baseController}.GetAdd)
 		account.POST("/add", themsController.AccountController{baseController}.PostAdd)
 		account.GET("/search", themsController.AccountController{baseController}.GetSearch)
+		account.POST("/update/:accountUuid", themsController.AccountController{baseController}.PostUpdate)
 	}
 	return r
 }
@@ -60,6 +64,7 @@ func InitRender() multitemplate.Render {
 	r.AddFromFiles("index", "www/base.html", "www/index.html")
 	r.AddFromFiles("login", "www/base.html", "www/login.html")
 	r.AddFromFiles("home", "www/base.html", "www/header.html", "www/home.html")
+	r.AddFromFiles("mySettings", "www/base.html", "www/header.html", "www/accountSettings.html")
 	r.AddFromFiles("projectAdd", "www/base.html", "www/header.html", "www/projectAdd.html")
 	r.AddFromFiles("projectTaskBoard", "www/base.html", "www/header.html", "www/taskBoard.html")
 	r.AddFromFiles("accountAdd", "www/base.html", "www/header.html", "www/accountAdd.html")

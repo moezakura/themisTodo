@@ -1,0 +1,33 @@
+{{define "content"}}
+<div id="accountSettings" class="basicForm">
+    <div id="accountSettingsIcon">ICON</div>
+
+    <form id="idChange">
+        <div class="error"></div>
+        <label for="accountSettingsId">ID</label>
+        <input type="text" id="accountSettingsId" name="accountSettingsId">
+        <i class="fas fa-check"></i>
+        <input type="submit">
+    </form>
+    <form id="displayNameChange">
+        <div class="error"></div>
+        <label for="accountSettingsDisplayName">Display name</label>
+        <input type="text" id="accountSettingsDisplayName" name="accountSettingsDisplayName">
+        <i class="fas fa-check"></i>
+        <input type="submit">
+    </form>
+    <form id="passwordChange">
+        <div class="error"></div>
+        <label for="accountSettingsPassword">New Password</label>
+        <input type="password" id="accountSettingsPassword" name="accountSettingsPassword">
+        <label for="accountSettingsPasswordRe">New Password</label>
+        <input type="password" id="accountSettingsPasswordRe" name="accountSettingsPasswordRe">
+        <input type="submit" value="Change">
+    </form>
+</div>
+<script type="application/javascript">
+    const accountUuid = {{.AccountUuid}};
+</script>
+<script type="application/javascript" src="/assets/js/accountApi.js"></script>
+<script type="application/javascript" src="/assets/js/accountConfig.js"></script>
+{{end}}

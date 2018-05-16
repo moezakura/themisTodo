@@ -155,3 +155,28 @@ func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isEr
 
 	return false, resultModel
 }
+
+func (self *AccountModule) Update(account *models.Account) bool {
+	var result sql.Result
+	var err error
+	if len(account.Password) > 0 {
+		result, err = self.db.Exec("UPDATE `users` SET `displayName` = ?, `name` = ?, `password` = ? WHERE `uuid` = ?;",
+			account.DisplayName, account.Name, utils.SHA512(account.Password), account.Uuid)
+	} else {
+		result, err = self.db.Exec("UPDATE `users` SET `displayName` = ?, `name` = ? WHERE `uuid` = ?;",
+			account.DisplayName, account.Name, account.Uuid)
+	}
+
+	if err != nil {
+		log.Printf("AccountModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		log.Printf("AccountModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	return false
+}

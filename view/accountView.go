@@ -24,3 +24,6 @@ func (self AccountView) GetSearch(c *gin.Context, statusCode int, json *[]models
 	c.JSON(statusCode, json)
 }
 
+func (self AccountView) PostUpdate(c *gin.Context, statusCode int, json *models.AccountChangeResultJson)  {
+	c.JSON(statusCode, json)
+}

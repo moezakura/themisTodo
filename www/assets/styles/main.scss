@@ -3,10 +3,13 @@ $accentColor: rgb(67, 160, 71);
 $linkColor: rgb(187, 222, 251);
 $redColor: rgb(239, 83, 80);
 $floatBoxSize: 480px;
+$modanWidth: 500px;
 $buttonHeight: 45px;
+$buttonWidth: 200px;
 $lineTextHeight: 40px;
 $headerHeight: 65px;
 $iconSize: 35px;
+$bigIconSize: 150px;
 
 @function accentColor($alpha) {
     @return rgba(67, 160, 71, $alpha);
@@ -28,4 +31,5 @@ $iconSize: 35px;
 @import "taskboard.scss";
 
 // Account系
-@import "accountAdd.scss"
+@import "accountAdd.scss";
+@import "accountSettings.scss";

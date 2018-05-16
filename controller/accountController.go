@@ -103,3 +103,54 @@ func (self AccountController) GetSearch(c *gin.Context) {
 		themisView.AccountView{self.BaseView}.GetSearch(c, http.StatusBadRequest, nil)
 	}
 }
+
+func (self AccountController) PostUpdate(c *gin.Context) {
+	result := models.AccountChangeResultJson{}
+
+	accountUuidStr := c.Param("accountUuid")
+	accountUuidI64, err := strconv.ParseInt(accountUuidStr, 10, 32)
+	accountUuid := int(accountUuidI64)
+
+	if err != nil {
+		result.Message = "invalid account id"
+		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	accountModule := module.NewAccountModule(self.DB)
+	isErr, account := accountModule.GetAccount(accountUuid)
+
+	if isErr {
+		result.Message = "invalid account id"
+		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	isChange := false
+	var updateRequest models.Account
+	c.ShouldBindJSON(&updateRequest)
+
+	if len(updateRequest.DisplayName) > 0 {
+		account.DisplayName = updateRequest.DisplayName
+		isChange = true
+	}
+	if len(updateRequest.Name) > 0 {
+		account.Name = updateRequest.Name
+		isChange = true
+	}
+	if len(updateRequest.Password) > 0 {
+		account.Password = updateRequest.Password
+		isChange = true
+	}
+
+	if !isChange{
+		result.Message = "no change"
+		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	updateRequest.Uuid = accountUuid
+	accountModule.Update(account)
+	result.Success = true
+	themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+}
