@@ -14,8 +14,12 @@ function idChangeSubmit(e) {
     let changeObj = AccountApi.NewAccountObject(accountUuid);
     changeObj.name = targetForm.get("accountSettingsId")
     AccountApi.Change(changeObj).then(function (json) {
-        if(json.)
-        idChangeFormError.style.display = block;
+        if(!json.success){
+            idChangeFormError.style.display = "block";
+            idChangeFormError.style.innerText = json.message;
+        }else{
+            idChangeFormError.style.display = "none";
+        }
     })
 }
 

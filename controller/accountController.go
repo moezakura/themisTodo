@@ -130,6 +130,18 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 	var updateRequest models.Account
 	c.ShouldBindJSON(&updateRequest)
 
+	if len(updateRequest.Name) > 128 {
+		result.Message = "maximum id length is 128 characters"
+		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	if len(updateRequest.DisplayName) > 128 {
+		result.Message = "maximum display name length is 128 characters"
+		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+		return
+	}
+
 	if len(updateRequest.DisplayName) > 0 {
 		account.DisplayName = updateRequest.DisplayName
 		isChange = true
