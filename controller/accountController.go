@@ -117,6 +117,15 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 		return
 	}
 
+	loginModule := module.NewLoginModule(self.DB)
+
+	isErr, sessionUuid := loginModule.GetUserId(c, self.Session)
+	if sessionUuid != accountUuid || isErr {
+		result.Message = "invalid account id"
+		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+		return
+	}
+
 	accountModule := module.NewAccountModule(self.DB)
 	isErr, account := accountModule.GetAccount(accountUuid)
 
@@ -127,7 +136,7 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 	}
 
 	isChange := false
-	var updateRequest models.Account
+	var updateRequest models.AccountChangeRequestJson
 	c.ShouldBindJSON(&updateRequest)
 
 	if len(updateRequest.Name) > 128 {
@@ -150,19 +159,40 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 		account.Name = updateRequest.Name
 		isChange = true
 	}
+
+	accountChangeRequest := &models.AccountChangeRequestJson{}
+
 	if len(updateRequest.Password) > 0 {
-		account.Password = updateRequest.Password
-		isChange = true
+		if len(updateRequest.Password) < 10 {
+			result.Message = "password must be at least 10 letters"
+			themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+			return
+		}
+
+		passwordHash := utils.SHA512(updateRequest.CurrentPassword)
+		isErr, _ := loginModule.IsLoginFromUuid(accountUuid, passwordHash)
+		if !isErr {
+			accountChangeRequest.Password = updateRequest.Password
+			isChange = true
+		} else {
+			result.Message = "the current password is wrong"
+			themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+			return
+		}
 	}
 
-	if !isChange{
+	accountChangeRequest.DisplayName = account.DisplayName
+	accountChangeRequest.Name = account.Name
+	accountChangeRequest.Uuid = account.Uuid
+
+	if !isChange {
 		result.Message = "no change"
 		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
 		return
 	}
 
 	updateRequest.Uuid = accountUuid
-	accountModule.Update(account)
+	accountModule.Update(accountChangeRequest)
 	result.Success = true
-	themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
+	themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusOK, &result)
 }

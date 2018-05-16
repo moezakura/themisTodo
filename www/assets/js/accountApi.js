@@ -4,11 +4,12 @@ class AccountApi {
             "name": "",
             "displayName": "",
             "uuid": uuid,
-            "password": ""
+            "password": "",
+            "currentPassword": "",
         };
     }
 
-    static Change(accountObject){
+    static Change(accountObject) {
         return fetch("/account/update/" + accountObject.uuid, {
             method: 'POST',
             body: JSON.stringify(accountObject),

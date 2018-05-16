@@ -28,10 +28,14 @@
             padding-right: calc(#{$lineTextHeight} + 5px);
         }
 
-        input[type=submit]:not([value=Change]) {
+        input[type=submit]:not([value=CHANGE]) {
             opacity: 0;
             width: 0;
             height: 0;
+        }
+
+        input[type=submit] {
+            padding: 0 10px;
         }
 
         i.fas {
@@ -59,5 +63,29 @@
         i.fas:not(.aline):hover {
             background-color: accentColor(.3);
         }
+    }
+}
+
+#currentPasswordDialog {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 450px;
+    height: 180px;
+    padding: 10px 0;
+    transform: translate(-50%, -50%);
+    background-color: $backgroundColor;
+    z-index: 99;
+
+    p {
+        text-align: center;
+        font-size: 16px;
+        letter-spacing: 1.2px;
+    }
+
+    input {
+        width: 95%;
+        margin: 25px auto;
     }
 }

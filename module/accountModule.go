@@ -156,7 +156,7 @@ func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isEr
 	return false, resultModel
 }
 
-func (self *AccountModule) Update(account *models.Account) bool {
+func (self *AccountModule) Update(account *models.AccountChangeRequestJson) bool {
 	var result sql.Result
 	var err error
 	if len(account.Password) > 0 {

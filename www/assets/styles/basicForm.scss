@@ -52,7 +52,9 @@
 }
 
 #error,
-.error {
+.error,
+#success,
+.success {
     background-color: $redColor;
     box-sizing: border-box;
     height: $lineTextHeight;
@@ -76,4 +78,9 @@
     &:hover::after {
         opacity: .7;
     }
+}
+
+#success,
+.success {
+    background-color: $accentColor;
 }

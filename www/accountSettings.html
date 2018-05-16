@@ -1,5 +1,7 @@
 {{define "content"}}
 <div id="accountSettings" class="basicForm">
+    <div class="success">Success changed</div>
+
     <div id="accountSettingsIcon">ICON</div>
 
     <form id="idChange">
@@ -22,9 +24,16 @@
         <input type="password" id="accountSettingsPassword" name="accountSettingsPassword">
         <label for="accountSettingsPasswordRe">New Password</label>
         <input type="password" id="accountSettingsPasswordRe" name="accountSettingsPasswordRe">
-        <input type="submit" value="Change">
+        <input type="submit" value="CHANGE">
     </form>
 </div>
+
+<form id="currentPasswordDialog" class="basicForm">
+    <p>Current password</p>
+    <input type="password" id="currentPasswordInput">
+    <input type="submit" value="CONFIRM">
+</form>
+<div id="backViewLayer"></div>
 <script type="application/javascript">
     const accountUuid = {{.AccountUuid}};
 </script>

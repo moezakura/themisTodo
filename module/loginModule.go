@@ -27,6 +27,19 @@ func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
 	}
 }
 
+func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool, _uuid int) {
+	if err := self.db.QueryRow("SELECT `uuid` FROM `users` WHERE `uuid` = ? AND `password` = ?;", uuid, password).Scan(&uuid); err != nil {
+		log.Printf("LoginModule.IsLoginFromUuid Error: %+v", err)
+		return true, 0
+	}
+
+	if uuid < 1 {
+		return true, 0
+	} else {
+		return false, uuid
+	}
+}
+
 func (self *LoginModule) GetUserId(c *gin.Context, session *SessionModule) (error bool, uuid int){
 	token, err := c.Cookie("token")
 
