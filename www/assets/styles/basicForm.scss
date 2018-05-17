@@ -43,6 +43,15 @@
         }
     }
 
+    .label {
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+
+        span {
+            margin-left: 10px;
+        }
+    }
+
     textarea {
         min-height: 180px;
         max-height: 500px;
