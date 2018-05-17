@@ -98,4 +98,4 @@ config.go
 main.css
 
 #accountIcons
-accountIcon/*
+/www/assets/accountIcon/*
