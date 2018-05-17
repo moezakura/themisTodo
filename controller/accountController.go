@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/olahol/go-imageupload"
 	themisView "../view"
 	"../models"
 	"../module"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"math"
+	"fmt"
 )
 
 type AccountController struct {
@@ -195,4 +197,58 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 	accountModule.Update(accountChangeRequest)
 	result.Success = true
 	themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusOK, &result)
+}
+
+func (self AccountController) PostUpdateIcon(c *gin.Context) {
+	result := models.AccountUpdateIconRequest{}
+	iconFile, err := c.FormFile("icon")
+	if err != nil {
+		result.Message = "icon file is not found"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	if iconFile.Size > 3*1024*1024 {
+		result.Message = "maximum file size is 3MB"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	accountUuidStr := c.Param("accountUuid")
+	accountUuidI64, err := strconv.ParseInt(accountUuidStr, 10, 32)
+	accountUuid := int(accountUuidI64)
+
+	if err != nil {
+		result.Message = "invalid account id"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	loginModule := module.NewLoginModule(self.DB)
+
+	isErr, sessionUuid := loginModule.GetUserId(c, self.Session)
+	if sessionUuid != accountUuid || isErr {
+		result.Message = "invalid account id"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
+		return
+	}
+
+	iconSavePath := fmt.Sprintf("www/assets/accountIcon/%d.png", accountUuid)
+
+	img, err := imageupload.Process(c.Request, "icon")
+	if err != nil {
+		result.Message = "invalid image file"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
+		return
+	}
+	thumb, err := imageupload.ThumbnailPNG(img, 500, 500)
+	if err != nil {
+		result.Message = "invalid image file"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
+		return
+	}
+	thumb.Save(iconSavePath)
+
+	result.Success = true
+	themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusOK, &result)
 }

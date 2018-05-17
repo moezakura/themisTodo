@@ -2,7 +2,11 @@
 <div id="accountSettings" class="basicForm">
     <div class="success">Success changed</div>
 
-    <div id="accountSettingsIcon">ICON</div>
+    <form id="accountSettingsIcon" autocomplete="off">
+        <div class="error"></div>
+        <div id="accountSettingsIconFake" style="background-image: url('/assets/accountIcon/{{.AccountUuid}}.png?t={{.Now}}')"></div>
+        <input type="file" id="accountSettingsIconFile" name="icon">
+    </form>
 
     <form id="idChange">
         <div class="error"></div>
@@ -37,6 +41,8 @@
 <script type="application/javascript">
     const accountUuid = {{.AccountUuid}};
 </script>
+<script src="/assets/js/libs/progressbar.min.js"></script>
 <script type="application/javascript" src="/assets/js/accountApi.js"></script>
 <script type="application/javascript" src="/assets/js/accountConfig.js"></script>
+<script type="application/javascript" src="/assets/js/accountConfigIcon.js"></script>
 {{end}}

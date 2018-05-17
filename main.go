@@ -5,9 +5,12 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
+	"os"
 )
 
 func main() {
+	os.Mkdir("www/assets/accountIcon", 0777)
+
 	connectText := fmt.Sprintf("%s:%s@/%s", MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DB_NAME)
 	db, err := sql.Open("mysql", connectText)
 	if err != nil {

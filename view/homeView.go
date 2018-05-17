@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"../models"
+	"time"
 )
 
 type HomeView struct {
@@ -21,5 +22,6 @@ func (self HomeView) GetSettings(c *gin.Context, userUuid int) {
 	c.HTML(http.StatusOK, "mySettings", gin.H{
 		"Title": "Settings",
 		"AccountUuid": userUuid,
+		"Now": time.Now().Unix(),
 	})
 }
