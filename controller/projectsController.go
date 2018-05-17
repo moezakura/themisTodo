@@ -68,8 +68,15 @@ func (self ProjectsController) GetTaskBoard(c *gin.Context) {
 	projectsModule := module.NewProjectsModule(self.DB)
 
 	loginModule := module.NewLoginModule(self.DB)
-	isError, _ := loginModule.GetUserId(c, self.Session)
+	isError, accountUuid := loginModule.GetUserId(c, self.Session)
 
+	if isError {
+		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	accountModule := module.NewAccountModule(self.DB)
+	isError, account := accountModule.GetAccount(accountUuid)
 	if isError {
 		c.Redirect(http.StatusFound, "/login")
 		return
@@ -98,7 +105,7 @@ func (self ProjectsController) GetTaskBoard(c *gin.Context) {
 		return
 	}
 
-	themisView.ProjectsView{self.BaseView}.GetTaskBoard(c, project, taskList, accounts)
+	themisView.ProjectsView{self.BaseView}.GetTaskBoard(c, project, taskList, accounts, account)
 }
 
 func (self ProjectsController) PostUpdate(c *gin.Context) {

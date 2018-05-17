@@ -23,7 +23,7 @@ func (self ProjectsView) PostAdd(c *gin.Context, json *models.ProjectAddResultJs
 	c.JSON(http.StatusOK, json)
 }
 
-func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, taskList []models.Task, accounts []models.Account) {
+func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, taskList []models.Task, accounts []models.Account, creator *models.Account) {
 	for key, value := range taskList {
 		var e bool
 		e, taskList[key].DeadlineMD = utils.GetDateMD(value.Deadline)
@@ -45,6 +45,7 @@ func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, t
 		"Project":  project,
 		"TaskList": taskList,
 		"AccountJson": accountJson,
+		"Creator": creator,
 	})
 }
 
