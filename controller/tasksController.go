@@ -210,8 +210,9 @@ func (self TasksController) GetView(c *gin.Context) {
 		return
 	}
 
+	taskTemp := utils.TaskConvert(task)
 	getResult.Success = true
-	getResult.Task = utils.TaskConvert(task)
+	getResult.Task = models.NewTaskOfJson(*taskTemp)
 
 	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
 }

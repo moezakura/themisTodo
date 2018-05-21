@@ -23,11 +23,15 @@ func (self ProjectsView) PostAdd(c *gin.Context, json *models.ProjectAddResultJs
 
 func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, taskList []models.Task, accounts []models.Account, creator *models.Account) {
 	taskList = utils.TasksConvert(taskList)
+	jsonTaskList := make([]models.TaskOfJson, 0)
+	for _, value := range taskList  {
+		jsonTaskList = append(jsonTaskList, *models.NewTaskOfJson(value))
+	}
 
 	c.HTML(http.StatusOK, "projectTaskBoard", gin.H{
 		"Title":       project.Name,
 		"Project":     project,
-		"TaskList":    taskList,
+		"TaskList":    jsonTaskList,
 		"AccountJson": accounts,
 		"Creator":     creator,
 	})
