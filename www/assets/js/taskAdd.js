@@ -19,10 +19,10 @@ document.querySelector("body").addEventListener("keydown", function (e) {
 createTaskBoard();
 function createTaskBoard(){
     taskList.forEach(function(task){
-        let taskElem = ProjectUtils.createTaskItem(task.CreateDate, task.Name, task.TaskId, task.CreatorName,
-            task.Creator, task.DeadlineMD, task.LimitDate);
+        let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.creatorName,
+            task.creator, task.deadlineMD, task.limitDate);
 
-        taskBoardLists[task.Status].appendChild(taskElem);
+        taskBoardLists[task.status].appendChild(taskElem);
     });
 }
 
@@ -45,6 +45,15 @@ function postTaskAdd(e) {
             taskAddFormErrorElem.style.display = "none";
             addFormClear();
             TaskApi.GetTaskFromCreateDate(json.createDate).then(function (json) {
+                if(!json.success) {
+                    console.error("API ERROR");
+                    return
+                }
+                let task = json.task;
+                let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.creatorName,
+                    task.creator, task.deadlineMD, task.limitDate);
+
+                taskBoardLists[0].appendChild(taskElem);
             });
         }
     });

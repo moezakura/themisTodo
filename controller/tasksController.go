@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"net/http"
 )
 
 type TasksController struct {
@@ -170,7 +171,47 @@ func (self TasksController) PostTaskCreate(c *gin.Context) {
 
 	newTask = taskModule.Add(newTask)
 
-	addResult.CreateDate = newTask.CreateDate
+	addResult.CreateDate = strconv.FormatInt(newTask.CreateDate, 10)
 	addResult.Success = true
 	themisView.ProjectsView{}.PostTaskBoard(c, addResult)
+}
+
+func (self TasksController) GetView(c *gin.Context) {
+	getResult := &models.TaskGetResultJson{}
+	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
+	if err != nil {
+		getResult.Message = "invalid taskId"
+		c.JSON(http.StatusOK, getResult)
+		return
+	}
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		getResult.Message = "invalid token"
+		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, task := taskModule.Get(createdTime)
+	if isErr {
+		getResult.Message = "unknown taskId"
+		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	projectsModule := module.NewProjectsModule(self.DB)
+	isIn := projectsModule.IsIn(userUuid, task.ProjectId)
+	if !isIn {
+		getResult.Message = "permission denied"
+		themisView.TasksView{}.GetView(c, http.StatusForbidden, getResult)
+		return
+	}
+
+	getResult.Success = true
+	getResult.Task = utils.TaskConvert(task)
+
+	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
 }

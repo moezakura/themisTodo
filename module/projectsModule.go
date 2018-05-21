@@ -141,3 +141,23 @@ func (self *ProjectsModule) Update(project *models.Project) bool {
 
 	return false
 }
+
+func (self *ProjectsModule) IsIn(userUuid, projectId int) (isIn bool) {
+	rows, err := self.db.Query("SELECt count(`user_id`) FROM `users_in_projects` WHERE `user_id` = ? AND `project_id` = ?;",
+		userUuid, projectId)
+
+	if err != nil {
+		return false
+	}
+
+	for rows.Next() {
+		var inCount int
+		if err := rows.Scan(&inCount); err != nil {
+			log.Printf("ProjectsModule.IsIn Error: %+v\n", err)
+			return false
+		}
+		return inCount > 0
+	}
+
+	return false
+}

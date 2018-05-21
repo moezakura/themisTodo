@@ -48,6 +48,7 @@ func Init(db *sql.DB) *gin.Engine {
 	{
 		tasks.POST("/create", themsController.TasksController{baseController}.PostTaskCreate)
 		tasks.POST("/update/:createDate", themsController.TasksController{baseController}.PostUpdate)
+		tasks.GET("/view/:createDate", themsController.TasksController{baseController}.GetView)
 	}
 
 	//アカウント関連

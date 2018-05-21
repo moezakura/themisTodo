@@ -28,5 +28,5 @@ func DiffDay(dateText string) int {
 
 	diff := userTime.Sub(time.Now())
 
-	return int(diff.Hours() / 24)
+	return int(diff.Hours() / 24) + 1
 }
