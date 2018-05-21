@@ -6,7 +6,6 @@ import (
 	"../models"
 	"../utils"
 	"log"
-	"encoding/json"
 )
 
 type ProjectsView struct {
@@ -34,17 +33,11 @@ func (self ProjectsView) GetTaskBoard(c *gin.Context, project *models.Project, t
 		taskList[key].LimitDate = utils.DiffDay(value.Deadline)
 	}
 
-	bytes, err := json.Marshal(accounts)
-	if err != nil {
-		return
-	}
-	accountJson := string(bytes)
-
 	c.HTML(http.StatusOK, "projectTaskBoard", gin.H{
 		"Title":    project.Name,
 		"Project":  project,
 		"TaskList": taskList,
-		"AccountJson": accountJson,
+		"AccountJson": accounts,
 		"Creator": creator,
 	})
 }

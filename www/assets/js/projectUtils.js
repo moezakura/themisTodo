@@ -32,4 +32,61 @@ class ProjectUtils {
 
         return parentLi;
     }
+
+    static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate) {
+        let parentLi = document.createElement("li");
+        parentLi.dataset.id = createTime;
+
+        {
+            let taskTitle = document.createElement("div");
+            taskTitle.innerText = name;
+            taskTitle.classList.add("taskTitle");
+
+            let taskIdDiv = document.createElement("div");
+            taskIdDiv.innerText = "#" + taskId;
+            taskIdDiv.classList.add("taskId");
+
+            let taskAssign = document.createElement("div");
+            taskAssign.classList.add("taskAssign");
+            {
+                let taskAssignIcon = document.createElement("div");
+                taskAssignIcon.style.backgroundImage = "url(\"/assets/accountIcon/" + assignIcon + ".png?t=" + nowTime.getTime() + "\")";
+                taskAssignIcon.classList.add("taskAssignIcon");
+
+                let taskAssignName = document.createElement("div");
+                taskAssignName.innerText = assignName;
+                taskAssignName.classList.add("taskAssignName");
+
+                taskAssign.appendChild(taskAssignIcon);
+                taskAssign.appendChild(taskAssignName);
+            }
+
+            let taskLimit = document.createElement("div");
+            taskLimit.classList.add("taskLimit");
+            {
+                let taskLimitIcon = document.createElement("i");
+                taskLimitIcon.classList.add("fas");
+                taskLimitIcon.classList.add("fa-calendar-alt");
+
+                let taskLimitDead = document.createElement("span");
+                taskLimitDead.classList.add("deadlineDate");
+                taskLimitDead.innerText = deadLine;
+
+                let taskLimitDeadRel = document.createElement("span");
+                taskLimitDeadRel.classList.add("deadlineDate");
+                taskLimitDeadRel.innerText = "あと" + limitDate + "日";
+
+                taskLimit.appendChild(taskLimitIcon);
+                taskLimit.appendChild(taskLimitDead);
+                taskLimit.appendChild(taskLimitDeadRel);
+            }
+
+            parentLi.appendChild(taskTitle);
+            parentLi.appendChild(taskIdDiv);
+            parentLi.appendChild(taskAssign);
+            parentLi.appendChild(taskLimit);
+        }
+
+        return parentLi
+    }
 }

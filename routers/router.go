@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/contrib/renders/multitemplate"
 	themsController "../controller"
 	"database/sql"
+	"html/template"
 )
 
 func Init(db *sql.DB) *gin.Engine {
@@ -13,6 +14,7 @@ func Init(db *sql.DB) *gin.Engine {
 	r.LoadHTMLGlob("www/*.html")
 	r.Static("/fontawesome", "./www/assets/fontawesome/web-fonts-with-css/")
 	r.Static("/assets", "./www/assets")
+	r.SetFuncMap(InitRenderFunc())
 	r.HTMLRender = InitRender()
 
 	baseController := themsController.NewBaseController(db, r)
@@ -67,8 +69,14 @@ func InitRender() multitemplate.Render {
 	r.AddFromFiles("home", "www/base.html", "www/header.html", "www/home.html")
 	r.AddFromFiles("mySettings", "www/base.html", "www/header.html", "www/accountSettings.html")
 	r.AddFromFiles("projectAdd", "www/base.html", "www/header.html", "www/projectAdd.html")
-	r.AddFromFiles("projectTaskBoard", "www/base.html", "www/header.html", "www/taskBoard.html")
+	r.AddFromFiles("projectTaskBoard", "www/base.html", "www/header.html", "www/taskBoard.html").Funcs(InitRenderFunc())
 	r.AddFromFiles("accountAdd", "www/base.html", "www/header.html", "www/accountAdd.html")
 
 	return r
+}
+
+func InitRenderFunc() template.FuncMap {
+	return template.FuncMap{
+		"UnsafeHtml": func(text string) template.HTML { return template.HTML(text) },
+	}
 }

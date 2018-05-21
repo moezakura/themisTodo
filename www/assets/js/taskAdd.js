@@ -16,6 +16,16 @@ document.querySelector("body").addEventListener("keydown", function (e) {
         clickCloseForm();
 }, true);
 
+createTaskBoard();
+function createTaskBoard(){
+    taskList.forEach(function(task){
+        let taskElem = ProjectUtils.createTaskItem(task.CreateDate, task.Name, task.TaskId, task.CreatorName,
+            task.Creator, task.DeadlineMD, task.LimitDate);
+
+        taskBoardLists[task.Status].appendChild(taskElem);
+    });
+}
+
 function postTaskAdd(e) {
     e.preventDefault();
 
@@ -35,7 +45,6 @@ function postTaskAdd(e) {
             taskAddFormErrorElem.style.display = "none";
             addFormClear();
             TaskApi.GetTaskFromCreateDate(json.createDate).then(function (json) {
-
             });
         }
     });
