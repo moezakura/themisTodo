@@ -33,12 +33,16 @@ let userSearchDialogAssign = new UserSearchDialog(assignInput, {
     "singleEnter": true,
     "isIn": true,
     "forceSubmit": function (sendUuid) {
+        if (assignUuid === sendUuid) {
+            postTaskAdd();
+            return;
+        }
         assignUuid = sendUuid;
     }
 });
 
 function postTaskAdd(e) {
-    e.preventDefault();
+    if (e != null && e !== undefined) e.preventDefault();
 
     let formData = new FormData(taskAddForm);
     let projectAddJson = {
@@ -81,6 +85,7 @@ function taskAddShowClick(e) {
 }
 
 function clickCloseForm() {
+    userSearchDialogAssign.hide();
     taskAddForm.classList.remove("shown");
 }
 
@@ -88,6 +93,7 @@ function addFormClear() {
     taskAddForm.reset();
     let nowTime = new Date(Date.now());
     taskAddForm.querySelector("input[name=deadline]").value = dateFormat(nowTime);
+    userSearchDialogAssign.hide();
 }
 
 function dateFormat(date) {

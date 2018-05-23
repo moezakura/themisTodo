@@ -55,7 +55,7 @@ function taskConfigShowClick(e) {
 function backViewLayerElemClick() {
     projectConfigPopup.style.display = "none";
     backViewLayerElem.style.display = "none";
-    userSelectUserList.style.display = "none";
+    userSearchDialog.hide();
 }
 
 function postTaskConfig(e) {

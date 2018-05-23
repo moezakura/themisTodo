@@ -34,7 +34,7 @@ class UserSearchDialog {
     }
 
     hide(){
-        that.userSelectUserList.style.display = "none";
+        this.userSelectUserList.style.display = "none";
     }
 
     userSelectInputKeyUp(e, that) {
