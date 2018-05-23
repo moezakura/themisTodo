@@ -50,46 +50,52 @@ body {
 }
 
 #taskboard {
-    display: flex;
-    justify-content: flex-start;
-    margin: 0 15px;
-    height: calc(100% - 185px);
+    overflow-x: auto;
+    height: calc(100% - 140px);
 
-    section {
-        flex-shrink: 1;
-        flex-grow: 1;
-        width: 100%;
-        margin: 0 8px;
+    #taskBoardMinSized {
+        display: flex;
+        justify-content: flex-start;
+        margin: 0 15px;
+        height: calc(100% - 45px);
+        min-width: 1400px;
 
-        ul {
-            height: 100%;
-            overflow-y: auto;
+        section {
+            flex-shrink: 1;
+            flex-grow: 1;
+            width: 100%;
+            margin: 0 8px;
 
-            li {
-                user-select: none;
-                -moz-user-select: none;
-                -webkit-user-select: none;
-                -ms-user-select: none;
-            }
-        }
-
-        .statusName {
-            height: $buttonHeight;
-            line-height: $buttonHeight;
-            font-size: 18px;
-            padding-left: 15px;
-            background-color: rgba(black, 0.5);
-            letter-spacing: 1.5px;
-
-            &::after {
-                display: block;
-                position: relative;
-                content: " ";
-                width: 5px;
+            ul {
                 height: 100%;
-                top: -100%;
-                left: -15px;
-                background-color: $accentColor;
+                overflow-y: auto;
+
+                li {
+                    user-select: none;
+                    -moz-user-select: none;
+                    -webkit-user-select: none;
+                    -ms-user-select: none;
+                }
+            }
+
+            .statusName {
+                height: $buttonHeight;
+                line-height: $buttonHeight;
+                font-size: 18px;
+                padding-left: 15px;
+                background-color: rgba(black, 0.5);
+                letter-spacing: 1.5px;
+
+                &::after {
+                    display: block;
+                    position: relative;
+                    content: " ";
+                    width: 5px;
+                    height: 100%;
+                    top: -100%;
+                    left: -15px;
+                    background-color: $accentColor;
+                }
             }
         }
     }
