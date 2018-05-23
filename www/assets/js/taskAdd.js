@@ -19,8 +19,8 @@ document.querySelector("body").addEventListener("keydown", function (e) {
 createTaskBoard();
 function createTaskBoard(){
     taskList.forEach(function(task){
-        let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.creatorName,
-            task.creator, task.deadlineMD, task.limitDate);
+        let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
+            task.assign, task.deadlineMD, task.limitDate);
 
         taskBoardLists[task.status].appendChild(taskElem);
     });
@@ -34,6 +34,7 @@ function postTaskAdd(e) {
         "name": formData.get("name"),
         "deadline": formData.get("deadline"),
         "description": formData.get("description"),
+        "assign": Number(formData.get("assign")),
         "projectId": projectId
     };
 
@@ -50,8 +51,8 @@ function postTaskAdd(e) {
                     return
                 }
                 let task = json.task;
-                let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.creatorName,
-                    task.creator, task.deadlineMD, task.limitDate);
+                let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
+                    task.assign, task.deadlineMD, task.limitDate);
 
                 taskBoardLists[0].appendChild(taskElem);
             });

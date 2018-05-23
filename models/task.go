@@ -6,6 +6,8 @@ type Task struct {
 	Name        string     `json:"name"`
 	Creator     int        `json:"creator"`
 	CreatorName string     `json:"creatorName"`
+	Assign      int        `json:"assign"`
+	AssignName  string     `json:"assignName"`
 	Status      TaskStatus `json:"status"`
 	Deadline    string     `json:"deadline"`
 	LimitDate   int        `json:"limitDate"`

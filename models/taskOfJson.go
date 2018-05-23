@@ -8,6 +8,8 @@ type TaskOfJson struct {
 	Name        string     `json:"name"`
 	Creator     int        `json:"creator"`
 	CreatorName string     `json:"creatorName"`
+	Assign      int        `json:"assign"`
+	AssignName  string     `json:"assignName"`
 	Status      TaskStatus `json:"status"`
 	Deadline    string     `json:"deadline"`
 	LimitDate   int        `json:"limitDate"`
@@ -23,6 +25,8 @@ func NewTaskOfJson(task Task) *TaskOfJson {
 		task.Name,
 		task.Creator,
 		task.CreatorName,
+		task.Assign,
+		task.AssignName,
 		task.Status,
 		task.Deadline,
 		task.LimitDate,

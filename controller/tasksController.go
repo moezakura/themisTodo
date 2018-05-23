@@ -136,6 +136,13 @@ func (self TasksController) PostTaskCreate(c *gin.Context) {
 		return
 	}
 
+	projectModule := module.NewProjectsModule(self.DB)
+	if !projectModule.IsIn(addRequest.Assign, addRequest.ProjectId) {
+		addResult.Message = "invalid assign user id"
+		themisView.ProjectsView{}.PostTaskBoard(c, addResult)
+		return
+	}
+
 	timeSplits := strings.Split(addRequest.Deadline, "-")
 	if len(timeSplits) != 3 {
 		addResult.Message = "invalid deadline format(format is yyyy-mm-dd)"
@@ -163,6 +170,7 @@ func (self TasksController) PostTaskCreate(c *gin.Context) {
 		ProjectId:   addRequest.ProjectId,
 		Name:        addRequest.Name,
 		Creator:     userUuid,
+		Assign:      addRequest.Assign,
 		Status:      models.TASK_STATUS_TODO,
 		Deadline:    addRequest.Deadline,
 		Description: addRequest.Description,
