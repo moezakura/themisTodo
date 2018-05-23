@@ -1,14 +1,16 @@
 var taskAddForm = document.querySelector("#taskboardAddForm"),
     taskAddFormErrorElem = taskAddForm.querySelector(".error"),
     taskAddShow = document.querySelector("#taskboardAdd"),
-    closeFormElem = document.querySelector("#taskboardAddClose");
+    closeFormElem = document.querySelector("#taskboardAddClose"),
+    assignInput = document.querySelector("#assign");
 
 taskAddForm.addEventListener("submit", postTaskAdd, true);
 taskAddFormErrorElem.addEventListener("click", clickError, true);
 taskAddShow.addEventListener("click", taskAddShowClick, true);
 closeFormElem.addEventListener("click", clickCloseForm, true);
 
-var nowTime = new Date(Date.now());
+var nowTime = new Date(Date.now()),
+    assignUuid = 0;
 taskAddForm.querySelector("input[name=deadline]").value = dateFormat(nowTime);
 
 document.querySelector("body").addEventListener("keydown", function (e) {
@@ -17,14 +19,23 @@ document.querySelector("body").addEventListener("keydown", function (e) {
 }, true);
 
 createTaskBoard();
-function createTaskBoard(){
-    taskList.forEach(function(task){
+
+function createTaskBoard() {
+    taskList.forEach(function (task) {
         let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
             task.assign, task.deadlineMD, task.limitDate);
 
         taskBoardLists[task.status].appendChild(taskElem);
     });
 }
+
+let userSearchDialogAssign = new UserSearchDialog(assignInput, {
+    "singleEnter": true,
+    "isIn": true,
+    "forceSubmit": function (sendUuid) {
+        assignUuid = sendUuid;
+    }
+});
 
 function postTaskAdd(e) {
     e.preventDefault();
@@ -34,7 +45,7 @@ function postTaskAdd(e) {
         "name": formData.get("name"),
         "deadline": formData.get("deadline"),
         "description": formData.get("description"),
-        "assign": Number(formData.get("assign")),
+        "assign": assignUuid,
         "projectId": projectId
     };
 
@@ -46,7 +57,7 @@ function postTaskAdd(e) {
             taskAddFormErrorElem.style.display = "none";
             addFormClear();
             TaskApi.GetTaskFromCreateDate(json.createDate).then(function (json) {
-                if(!json.success) {
+                if (!json.success) {
                     console.error("API ERROR");
                     return
                 }

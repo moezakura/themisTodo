@@ -34,7 +34,7 @@
     <p class="label">Creator:<span>{{.Creator.DisplayName}}</span></p>
     <p class="label">ID:<span id="createTaskId"></span></p>
     <p>Assign</p>
-    <input type="text" value="" name="assign" id="assign">
+    <input type="text" value="" name="assign" id="assign" autocomplete="off">
     <p>Deadline</p>
     <input type="date" value="" name="deadline">
     <p>Description</p>
@@ -60,7 +60,6 @@
         <ul class="usersList"></ul>
     </form>
 </div>
-<ul id="usersSearchedList" class="usersList"></ul>
 <script type="application/javascript">
     var memberList = {{.AccountJson}}
             taskList = {{.TaskList}};
@@ -68,6 +67,7 @@
 
 <div id="backViewLayer"></div>
 <script type="application/javascript" src="/assets/js/taskApi.js"></script>
+<script type="application/javascript" src="/assets/js/userSearchDialog.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.6.1/Sortable.min.js"></script>
 <script type="application/javascript" src="/assets/js/projectUtils.js"></script>
 <script type="application/javascript" src="/assets/js/taskBoard.js"></script>
