@@ -33,6 +33,10 @@ class UserSearchDialog {
         return getUuid(this);
     }
 
+    hide(){
+        that.userSelectUserList.style.display = "none";
+    }
+
     userSelectInputKeyUp(e, that) {
         let inputText = that.target.value;
         if (inputText.length < 1) {
@@ -54,7 +58,7 @@ class UserSearchDialog {
             "isInProject": that.isIn,
             "max": 20
         };
-        console.log(queryObject);
+
         let queryString = "?";
         for (let key in queryObject)
             queryString += key + "=" + encodeURIComponent(queryObject[key]) + "&";
@@ -115,18 +119,22 @@ class UserSearchDialog {
 
     projectMemberAddSubmit(e, that) {
         e.preventDefault();
-        console.log(this.singleEnter);
         if(!that.selectMode || this.singleEnter){
             let sendUuid = that.getUuid(that);
             that.sendEvent(sendUuid);
             that.userSelectUserList.style.display = "none";
+            that.setName(that);
         }
         else if (that.selectMode) {
-            if (!(that.selectUserIndex < 0 || that.selectUserIndex < 0 || that.selectUserIndex > that.searchResult.length - 1))
-                that.target.value = that.searchResult[that.selectUserIndex].name;
+            that.setName(that);
             that.userSelectUserList.style.display = "none";
             that.selectMode = false;
         }
+    }
+
+    setName(that){
+        if (!(that.selectUserIndex < 0 || that.selectUserIndex < 0 || that.selectUserIndex > that.searchResult.length - 1))
+            that.target.value = that.searchResult[that.selectUserIndex].name;
     }
 
     getUuid(that) {
