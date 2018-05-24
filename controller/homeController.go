@@ -30,8 +30,8 @@ func (self HomeController) GetHome(c *gin.Context) {
 	}
 
 	taskModule := module.NewTaskModule(self.DB)
-	isErrorTodo, todoTaskList := taskModule.GetTasksFromUser(userUuid, 5, models.TASK_STATUS_TODO)
-	isErrorDoing, doingTaskList := taskModule.GetTasksFromUser(userUuid, 5, models.TASK_STATUS_DOING)
+	isErrorTodo, todoTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_TODO)
+	isErrorDoing, doingTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_DOING)
 	if isErrorTodo || isErrorDoing {
 		c.String(http.StatusInternalServerError, "500 server error.")
 		return
