@@ -36,6 +36,7 @@ class ProjectUtils {
     static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate) {
         let parentLi = document.createElement("li");
         parentLi.dataset.id = createTime;
+        let nowTime = new Date();
 
         {
             let taskTitle = document.createElement("div");

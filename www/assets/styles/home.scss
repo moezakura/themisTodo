@@ -6,6 +6,7 @@
     section {
         flex-grow: 1;
         margin: 0 10px;
+        width: 100%;
 
         * {
             justify-content: unset;
@@ -24,7 +25,23 @@
                 line-height: 35px;
             }
         }
-        
+
+        .taskListTitle {
+            height: $buttonHeight;
+            line-height: $buttonHeight;
+            background-color: rgba(black, .3);
+
+            &::before {
+                width: 5px;
+                height: 100%;
+                display: inline-block;
+                vertical-align: top;
+                margin-right: 10px;
+                content: " ";
+                background-color: $accentColor;
+            }
+        }
+
         ul.joinProject {
             display: block;
             list-style: none;

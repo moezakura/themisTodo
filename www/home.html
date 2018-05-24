@@ -9,15 +9,18 @@
         </ul>
     </section>
     <section>
-        <div class="sectionTitle">My Task</div>
-        <ul class="taskList">
-            <li>
-                <div class="taskTitle">Title</div>
-                <div class="taskId">test#1</div>
-                <div class="taskAssign"><i class="fas fa-user"></i>&nbsp;test</div>
-                <div class="taskLimit"><i class="fas fa-calendar-alt"></i>&nbsp;5/2 (あとn日)</div>
-            </li>
-        </ul>
+        <div class="sectionTitle taskListTitle">My Todo Tasks</div>
+        <ul class="taskList" id="todoList"></ul>
+    </section>
+    <section>
+        <div class="sectionTitle taskListTitle">My Doing Tasks</div>
+        <ul class="taskList" id="doingList"></ul>
     </section>
 </div>
+<script>
+    const todoList = {{.Todo}},
+            doingList = {{.Doing}};
+</script>
+<script type="application/javascript" src="assets/js/projectUtils.js"></script>
+<script type="application/javascript" src="assets/js/home.js"></script>
 {{end}}

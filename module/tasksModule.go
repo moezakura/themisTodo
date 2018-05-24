@@ -146,3 +146,44 @@ func (self *TasksModule) Update(createDate int64, task *models.Task) (isErr bool
 
 	return false
 }
+
+func (self *TasksModule) GetTasksFromUser(userUuid, limit int, status models.TaskStatus) (isErr bool, list []models.Task) {
+	list = []models.Task{}
+
+	self.dbLock.Lock()
+	defer self.dbLock.Unlock()
+	rows, err := self.db.Query(`SELECT
+  id,
+  project,
+  todo.name,
+  creator,
+  assign,
+  status,
+  deadline,
+  description,
+  createDate,
+  u1.displayName,
+  u2.displayName
+FROM todo_list todo
+  INNER JOIN users u1 ON u1.uuid = todo.creator
+  INNER JOIN users u2 ON u2.uuid = todo.assign
+WHERE assign = ? AND status = ?
+LIMIT 0, ?;`, userUuid, status, limit)
+
+	if err != nil {
+		return true, nil
+	}
+
+	for rows.Next() {
+		oneTask := models.Task{}
+		if err := rows.Scan(&oneTask.TaskId, &oneTask.ProjectId, &oneTask.Name,
+			&oneTask.Creator, &oneTask.Assign, &oneTask.Status, &oneTask.Deadline,
+			&oneTask.Description, &oneTask.CreateDate, &oneTask.CreatorName, &oneTask.AssignName); err != nil {
+			log.Printf("TasksModule.GetTasksFromUser Error: %+v\n", err)
+			return true, nil
+		}
+		list = append(list, oneTask)
+	}
+
+	return false, list
+}
