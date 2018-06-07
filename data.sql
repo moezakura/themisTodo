@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `name` varchar(256) COLLATE utf8_bin NOT NULL,
   `description` varchar(1024) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`uuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS `todo_list` (
   `id` int(11) NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` varchar(128) COLLATE utf8_bin NOT NULL,
   `password` char(128) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`uuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE IF NOT EXISTS `users_in_projects` (
   `user_id` int(11) NOT NULL,
