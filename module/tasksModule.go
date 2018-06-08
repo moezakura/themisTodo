@@ -76,8 +76,13 @@ func (self *TasksModule) GetList(projectId int) (error bool, list []models.Task)
   INNER JOIN users u2 ON u2.uuid = todo.assign
 WHERE project = ? ORDER BY id ASC;`, projectId)
 
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
+		log.Printf("TasksModule.GetList Error: %+v\n", err)
 		return true, nil
+	}
+
+	if err == sql.ErrNoRows{
+		return false, list
 	}
 
 	for rows.Next() {
