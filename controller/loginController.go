@@ -39,7 +39,7 @@ func (self LoginController) PostLogin(c *gin.Context) {
 		return
 	}
 
-	limitSec := 30 * 24 * 60
+	limitSec := 30 * 24 * 60 * 60
 	authToken := utils.RandomString(64)
 	self.Session.Add(authToken, uuid, limitSec)
 
