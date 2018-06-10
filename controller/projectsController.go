@@ -240,3 +240,42 @@ func (self ProjectsController) PostAddUser(c *gin.Context) {
 	addResult.Success = true
 	themisView.ProjectsView{}.PostAddUser(c, addResult)
 }
+
+func (self ProjectsController) PostDeleteProject(c *gin.Context) {
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	resultJson := models.ProjectDeleteResultJson{}
+	if isError {
+		resultJson.Message = "invalid token"
+		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusBadRequest, &resultJson)
+		return
+	}
+
+	projectIdStr := c.Param("projectId")
+	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
+	projectId := int(projectId64)
+	if err != nil {
+		resultJson.Message = "invalid project id"
+		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusBadRequest, &resultJson)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	isIn := projectModule.IsIn(userUuid, projectId)
+	if !isIn {
+		resultJson.Message = "invalid user"
+		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusBadRequest, &resultJson)
+		return
+	}
+
+	isError = projectModule.Delete(projectId)
+	if isError {
+		resultJson.Message = "failed delete"
+		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusInternalServerError, &resultJson)
+		return
+	}
+
+	resultJson.Message = "ok"
+	resultJson.Success = true
+	themisView.ProjectsView{}.PostDeleteProject(c, http.StatusOK, &resultJson)
+}

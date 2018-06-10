@@ -161,3 +161,28 @@ func (self *ProjectsModule) IsIn(userUuid, projectId int) (isIn bool) {
 
 	return false
 }
+
+func (self *ProjectsModule) Delete(projectId int) (isError bool) {
+	_, err := self.db.Exec("DELETE FROM todo_list WHERE project = ?;", projectId)
+
+	if err != nil {
+		log.Printf("ProjectsModule.Delete Error (todo_list): %+v\n", err)
+		return true
+	}
+
+	_, err = self.db.Exec("DELETE FROM users_in_projects WHERE project_id = ?;", projectId)
+
+	if err != nil {
+		log.Printf("ProjectsModule.Delete Error (users_in_projects): %+v\n", err)
+		return true
+	}
+
+	_, err = self.db.Exec("DELETE FROM projects WHERE uuid = ?;", projectId)
+
+	if err != nil {
+		log.Printf("ProjectsModule.Delete Error (projects): %+v\n", err)
+		return true
+	}
+
+	return false
+}

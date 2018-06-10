@@ -1,8 +1,4 @@
 {{define "content"}}
-<script>
-    const projectId = {{.Project.Uuid}};
-</script>
-
 <h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{.Project.Name}}</span></h2>
 <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
 <a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
@@ -61,9 +57,22 @@
         <p>Member Manage</p>
         <ul class="usersList"></ul>
     </form>
+    <div id="deleteProject" class="deleteButton">DELETE PROJECT</div>
 </div>
+<form id="deleteProjectPopup" class="basicForm">
+    <h2>DELETE PROJECT</h2>
+    <div class="close fas fa-times"></div>
+    <div class="error">xxxxxx</div>
+    <p>This action cannot be undone. This will permanently delete the <strong>{{.Project.Name}}</strong>, project, todo, settings and
+        other all, and remove all project associations.</p>
+    <p>Please type in the name of the project to confirm.</p>
+    <input type="text">
+    <input type="submit" value="DELETE" class="deleteButton" disabled>
+</form>
 <script type="application/javascript">
-    var memberList = {{.AccountJson}}
+    const projectId = {{.Project.Uuid}};
+    const projectName = {{.Project.Name}};
+    var memberList = {{.AccountJson}},
             taskList = {{.TaskList}};
 </script>
 
@@ -74,6 +83,7 @@
 <script type="application/javascript" src="/assets/js/projectUtils.js"></script>
 <script type="application/javascript" src="/assets/js/taskBoard.js"></script>
 <script type="application/javascript" src="/assets/js/taskAdd.js"></script>
+<script type="application/javascript" src="/assets/js/projectDelete.js"></script>
 <script type="application/javascript" src="/assets/js/projectMemberList.js"></script>
 <script type="application/javascript" src="/assets/js/projectConfig.js"></script>
 {{end}}

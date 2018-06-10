@@ -8,3 +8,33 @@
     background-color: rgba(black, .6);
     z-index: 50;
 }
+
+.deleteButton {
+    text-align: center;
+    height: $buttonHeight;
+    line-height: $buttonHeight;
+    border: 1px solid $redColor;
+    background-color: rgba($redColor, .1);
+    letter-spacing: 1.5px;
+    margin: 15px auto 35px auto;
+    width: 90%;
+    cursor: default;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    transition: background-color ease .3s, border-color ease .3s;
+}
+
+.basicForm input.deleteButton {
+    width: 90%;
+    border: 1px solid $redColor;
+    background-color: rgba($redColor, .1);
+    letter-spacing: 1.5px;
+    font-size: 12px;
+}
+
+.deleteButton:hover,
+.basicForm input.deleteButton:hover {
+    border-color: rgba(white, .5);
+    background-color: $redColor;
+}

@@ -12,16 +12,15 @@ $iconSize: 35px;
 $bigIconSize: 150px;
 
 @function accentColor($alpha) {
-    @return rgba(67, 160, 71, $alpha);
+	@return rgba(67, 160, 71, $alpha);
 }
 
+// 共通パーツ
 @import "header.scss";
 @import "welcome.scss";
 @import "login.scss";
-@import "common.scss";
-
-// 共通パーツ
 @import "basicForm.scss";
+@import "common.scss";
 
 // タスク系
 @import "home.scss";

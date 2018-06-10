@@ -36,6 +36,7 @@ func Init(db *sql.DB) *gin.Engine {
 	{
 		projects.GET("/add", themsController.ProjectsController{baseController}.GetAdd)
 		projects.POST("/add", themsController.ProjectsController{baseController}.PostAdd)
+		projects.POST("/delete/:projectId", themsController.ProjectsController{baseController}.PostDeleteProject)
 
 		projects.GET("/view/:projectId", themsController.ProjectsController{baseController}.GetTaskBoard)
 

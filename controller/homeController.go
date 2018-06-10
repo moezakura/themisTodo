@@ -30,12 +30,8 @@ func (self HomeController) GetHome(c *gin.Context) {
 	}
 
 	taskModule := module.NewTaskModule(self.DB)
-	isErrorTodo, todoTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_TODO)
-	isErrorDoing, doingTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_DOING)
-	if isErrorTodo || isErrorDoing {
-		c.String(http.StatusInternalServerError, "500 server error.")
-		return
-	}
+	_, todoTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_TODO)
+	_, doingTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_DOING)
 
 	themisView.HomeView{self.BaseView}.GetHome(c, projects, todoTaskList, doingTaskList)
 }

@@ -300,3 +300,61 @@ body {
     overflow-x: hidden;
     margin: 0;
 }
+
+#deleteProjectPopup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: $modanWidth;
+    background-color: $backgroundColor;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 6px rgba(black, .5), 0 0 6px rgba($redColor, .5);
+    z-index: 100;
+
+    h2 {
+        font-size: 18px;
+        letter-spacing: 2px;
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        font-weight: 900;
+    }
+
+    .close {
+        width: $buttonHeight;
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        text-align: center;
+        font-size: $buttonHeight / 2;
+        margin: -$buttonHeight 0 10px calc(100% - #{$buttonHeight});
+        display: block;
+        transition: color ease .3s;
+    }
+
+    .close:hover {
+        color: rgba(white, .7);
+    }
+
+    p {
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+
+        strong {
+            font-weight: 900;
+        }
+    }
+
+    input {
+        width: 90%;
+    }
+
+    input[disabled] {
+        opacity: 0.3;
+    }
+
+    input:focus {
+        border-color: $redColor;
+    }
+}
