@@ -1,5 +1,5 @@
 var taskConfigShow = document.querySelector("#taskboardConfig"),
-    backViewLayerElem = document.querySelector("#backViewLayer"),
+    taskBackView = new BackView(),
     projectConfigPopup = document.querySelector("#projectConfigPopup"),
     postTaskConfigForm = document.querySelector("#projectConfigForm"),
     taskboardTitleElem = document.querySelector("#taskboardTitle>span"),
@@ -7,13 +7,13 @@ var taskConfigShow = document.querySelector("#taskboardConfig"),
 
 postTaskConfigForm.addEventListener("submit", postTaskConfig, true);
 taskConfigShow.addEventListener("click", taskConfigShowClick, true);
-backViewLayerElem.addEventListener("click", backViewLayerElemClick, true);
 projectConfigPopupErrorElem.addEventListener("click", clickError, true);
+taskBackView.addWithHideElem(projectConfigPopup);
+taskBackView.addHideEvent(function(){
+    userSearchDialog.hide();
+});
 
-
-var userSelectInput = document.querySelector("#userSelect"),
-    userSelectUserList = document.querySelector("#usersSearchedList"),
-    projectMemberAddForm = projectConfigPopup.querySelector("#projectMemberAddForm");
+var userSelectInput = document.querySelector("#userSelect");
 
 var userSearchDialog = new UserSearchDialog(userSelectInput, {
     "forceSubmit": function(sendUuid){
@@ -43,19 +43,13 @@ var userSearchDialog = new UserSearchDialog(userSelectInput, {
 
 document.querySelector("body").addEventListener("keydown", function (e) {
     if (e.keyCode === 27 && projectConfigPopup.style.display === "block")
-        backViewLayerElemClick();
+        taskBackView.hide();
 }, true);
 
 function taskConfigShowClick(e) {
     e.preventDefault();
     projectConfigPopup.style.display = "block";
-    backViewLayerElem.style.display = "block";
-}
-
-function backViewLayerElemClick() {
-    projectConfigPopup.style.display = "none";
-    backViewLayerElem.style.display = "none";
-    userSearchDialog.hide();
+    taskBackView.show();
 }
 
 function postTaskConfig(e) {

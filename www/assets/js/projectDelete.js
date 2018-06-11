@@ -3,7 +3,9 @@ var deleteProject = document.querySelector("#deleteProject"),
     deleteProjectPopupCloseButton = document.querySelector("#deleteProjectPopup .close"),
     deleteProjectNameInput = document.querySelector("#deleteProjectPopup input[type=text]"),
     deleteProjectNameSubmitButton = document.querySelector("#deleteProjectPopup input[type=submit]"),
-    deleteProjectPopupError = deleteProjectPopup.querySelector(".error");
+    deleteProjectPopupError = deleteProjectPopup.querySelector(".error"),
+    projectDeleteBackView = new BackView();
+projectDeleteBackView.addWithHideElem(deleteProjectPopup);
 
 deleteProject.addEventListener("click", deleteProjectPopupShow, true);
 deleteProjectPopupCloseButton.addEventListener("click", deleteProjectPopupClose, true);
@@ -13,10 +15,13 @@ deleteProjectPopupError.addEventListener("click", deleteProjectPopupErrorClick, 
 
 function deleteProjectPopupShow() {
     deleteProjectPopup.style.display = "block";
+    projectDeleteBackView.show();
+    if (taskBackView !== undefined && taskBackView != null)
+        taskBackView.hide();
 }
 
 function deleteProjectPopupClose() {
-    deleteProjectPopup.style.display = "none";
+    projectDeleteBackView.hide();
 }
 
 function deleteProjectPopupErrorClick() {
