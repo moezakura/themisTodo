@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
@@ -16,6 +17,9 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+	db.SetConnMaxLifetime(30 * time.Minute)
+	db.SetMaxOpenConns(15000)
+	db.SetMaxIdleConns(3000)
 	defer db.Close()
 
 	r := routers.Init(db)
