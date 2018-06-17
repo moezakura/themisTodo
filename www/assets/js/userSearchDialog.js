@@ -1,4 +1,6 @@
-class UserSearchDialog {
+import ProjectUtils from "./projectUtils"
+
+export default class UserSearchDialog {
     constructor(target, config) {
         this.selectUserIndex = -1;
         this.selectMode = false;

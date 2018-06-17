@@ -1,4 +1,4 @@
-class AccountApi {
+export default class AccountApi {
     static NewAccountObject(uuid) {
         return {
             "name": "",

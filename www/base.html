@@ -27,11 +27,17 @@
     <link rel="preload" as="style" href="/assets/styles/main.css">
     <link rel="preload" as="style" href="/fontawesome/css/fontawesome-all.min.css">
     <link rel="stylesheet" as="style" href="/assets/styles/cssreset-min.css">
-    <link rel="stylesheet" as="style" href="/assets/styles/main.css">
+{{/*<link rel="stylesheet" as="style" href="/assets/styles/main.css">*/}}
     <link rel="stylesheet" as="style" href="/fontawesome/css/fontawesome-all.min.css">
 </head>
 <body>
 {{template "header"}}
 {{template "content" .}}
+
+{{if isDebug}}
+<script type="application/javascript" src="//localhost:8652/bundle.js"></script>
+{{else}}
+<script type="application/javascript" src="/assets/bundle.js"></script>
+{{end}}
 </body>
 </html>

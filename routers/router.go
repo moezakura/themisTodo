@@ -2,7 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/contrib/renders/multitemplate"
+	"github.com/gin-contrib/multitemplate"
 	themsController "../controller"
 	"database/sql"
 	"html/template"
@@ -11,7 +11,6 @@ import (
 func Init(db *sql.DB) *gin.Engine {
 	r := gin.New()
 
-	r.LoadHTMLGlob("www/*.html")
 	r.Static("/fontawesome", "./www/assets/fontawesome/web-fonts-with-css/")
 	r.Static("/assets", "./www/assets")
 	r.SetFuncMap(InitRenderFunc())
@@ -66,13 +65,15 @@ func Init(db *sql.DB) *gin.Engine {
 
 func InitRender() multitemplate.Render {
 	r := multitemplate.New()
-	r.AddFromFiles("index", "www/base.html", "www/index.html")
-	r.AddFromFiles("login", "www/base.html", "www/login.html")
-	r.AddFromFiles("home", "www/base.html", "www/header.html", "www/home.html")
-	r.AddFromFiles("mySettings", "www/base.html", "www/header.html", "www/accountSettings.html")
-	r.AddFromFiles("projectAdd", "www/base.html", "www/header.html", "www/projectAdd.html")
-	r.AddFromFiles("projectTaskBoard", "www/base.html", "www/header.html", "www/taskBoard.html").Funcs(InitRenderFunc())
-	r.AddFromFiles("accountAdd", "www/base.html", "www/header.html", "www/accountAdd.html")
+	funcMap := InitRenderFunc()
+
+	r.AddFromFilesFuncs("index", funcMap, "www/base.html", "www/index.html").Funcs(funcMap)
+	r.AddFromFilesFuncs("login", funcMap, "www/base.html", "www/login.html").Funcs(funcMap)
+	r.AddFromFilesFuncs("home", funcMap, "www/base.html", "www/header.html", "www/home.html").Funcs(funcMap)
+	r.AddFromFilesFuncs("mySettings", funcMap, "www/base.html", "www/header.html", "www/accountSettings.html").Funcs(funcMap)
+	r.AddFromFilesFuncs("projectAdd", funcMap, "www/base.html", "www/header.html", "www/projectAdd.html").Funcs(funcMap)
+	r.AddFromFilesFuncs("projectTaskBoard", funcMap, "www/base.html", "www/header.html", "www/taskBoard.html").Funcs(funcMap)
+	r.AddFromFilesFuncs("accountAdd", funcMap, "www/base.html", "www/header.html", "www/accountAdd.html").Funcs(funcMap)
 
 	return r
 }
@@ -80,5 +81,6 @@ func InitRender() multitemplate.Render {
 func InitRenderFunc() template.FuncMap {
 	return template.FuncMap{
 		"UnsafeHtml": func(text string) template.HTML { return template.HTML(text) },
+		"isDebug":    func() bool { return gin.Mode() == gin.DebugMode },
 	}
 }

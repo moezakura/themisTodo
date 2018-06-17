@@ -1,112 +1,118 @@
-var taskAddForm = document.querySelector("#taskboardAddForm"),
-    taskAddFormErrorElem = taskAddForm.querySelector(".error"),
-    taskAddShow = document.querySelector("#taskboardAdd"),
-    closeFormElem = document.querySelector("#taskboardAddClose"),
-    assignInput = document.querySelector("#assign");
+import ProjectUtils from "./projectUtils"
+import UserSearchDialog from "./userSearchDialog"
+import TaskApi from "./taskApi"
 
-taskAddForm.addEventListener("submit", postTaskAdd, true);
-taskAddFormErrorElem.addEventListener("click", clickError, true);
-taskAddShow.addEventListener("click", taskAddShowClick, true);
-closeFormElem.addEventListener("click", clickCloseForm, true);
-
-var nowTime = new Date(Date.now()),
-    assignUuid = 0;
-taskAddForm.querySelector("input[name=deadline]").value = dateFormat(nowTime);
-
-document.querySelector("body").addEventListener("keydown", function (e) {
-    if (e.keyCode === 27 && taskAddForm.classList.contains("shown"))
-        clickCloseForm();
-}, true);
-
-createTaskBoard();
-
-function createTaskBoard() {
-    taskList.forEach(function (task) {
-        let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
-            task.assign, task.deadlineMD, task.limitDate);
-
-        taskBoardLists[task.status].appendChild(taskElem);
-    });
-}
-
-let userSearchDialogAssign = new UserSearchDialog(assignInput, {
-    "singleEnter": true,
-    "isIn": true,
-    "forceSubmit": function (sendUuid) {
-        if (assignUuid === sendUuid) {
-            postTaskAdd();
+class TaskAdd {
+    constructor() {
+        this.taskAddForm = document.querySelector("#taskboardAddForm");
+        if (this.taskAddForm === undefined || this.taskAddForm == null)
             return;
-        }
-        assignUuid = sendUuid;
-    }
-});
+        this.taskAddFormErrorElem = this.taskAddForm.querySelector(".error");
+        this.taskAddShow = document.querySelector("#taskboardAdd");
+        this.closeFormElem = document.querySelector("#taskboardAddClose");
+        this.assignInput = document.querySelector("#assign");
 
-function postTaskAdd(e) {
-    if (e != null && e !== undefined) e.preventDefault();
+        let that = this;
 
-    let formData = new FormData(taskAddForm);
-    let projectAddJson = {
-        "name": formData.get("name"),
-        "deadline": formData.get("deadline"),
-        "description": formData.get("description"),
-        "assign": assignUuid,
-        "projectId": projectId
-    };
+        this.taskAddForm.addEventListener("submit", function (e) {
+            that.postTaskAdd(e, that)
+        }, true);
+        this.taskAddFormErrorElem.addEventListener("click", ProjectUtils.clickObjectHide, true);
+        this.taskAddShow.addEventListener("click", function (e) {
+            that.taskAddShowClick(e, that)
+        }, true);
+        this.closeFormElem.addEventListener("click", function () {
+            that.clickCloseForm(that);
+        }, true);
 
-    TaskApi.Create(projectAddJson).then(function (json) {
-        if (!json.success) {
-            taskAddFormErrorElem.style.display = "block";
-            taskAddFormErrorElem.innerText = json.message;
-        } else {
-            taskAddFormErrorElem.style.display = "none";
-            addFormClear();
-            TaskApi.GetTaskFromCreateDate(json.createDate).then(function (json) {
-                if (!json.success) {
-                    console.error("API ERROR");
-                    return
+        let nowTime = new Date(Date.now());
+        this.assignUuid = 0;
+        this.taskAddForm.querySelector("input[name=deadline]").value = ProjectUtils.dateFormat(nowTime);
+
+        document.querySelector("body").addEventListener("keydown", function (e) {
+            if (e.keyCode === 27 && that.taskAddForm.classList.contains("shown"))
+                that.clickCloseForm();
+        }, true);
+
+        this.createTaskBoard();
+
+        this.userSearchDialogAssign = new UserSearchDialog(this.assignInput, {
+            "singleEnter": true,
+            "isIn": true,
+            "forceSubmit": function (sendUuid) {
+                if (that.assignUuid === sendUuid) {
+                    that.postTaskAdd(null, that);
+                    return;
                 }
-                let task = json.task;
-                let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
-                    task.assign, task.deadlineMD, task.limitDate);
+                that.assignUuid = sendUuid;
+            }
+        });
+    }
 
-                taskBoardLists[0].appendChild(taskElem);
-            });
+
+    createTaskBoard() {
+        let that = this;
+        taskList.forEach(function (task) {
+            let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
+                task.assign, task.deadlineMD, task.limitDate);
+
+            document.taskBoard.taskBoardLists[task.status].appendChild(taskElem);
+        });
+    }
+
+    postTaskAdd(e, that) {
+        try {
+            if (e !== undefined && e != null) e.preventDefault();
+        } catch (ex) {
         }
-    });
-}
 
-function clickError(e) {
-    e.target.style.display = "none";
-}
+        let formData = new FormData(that.taskAddForm);
+        let projectAddJson = {
+            "name": formData.get("name"),
+            "deadline": formData.get("deadline"),
+            "description": formData.get("description"),
+            "assign": that.assignUuid,
+            "projectId": projectId
+        };
 
-function taskAddShowClick(e) {
-    e.preventDefault();
-    taskAddForm.classList.add("shown");
-}
+        TaskApi.Create(projectAddJson).then(function (json) {
+            if (!json.success) {
+                that.taskAddFormErrorElem.style.display = "block";
+                that.taskAddFormErrorElem.innerText = json.message;
+            } else {
+                that.taskAddFormErrorElem.style.display = "none";
+                that.addFormClear(that);
+                TaskApi.GetTaskFromCreateDate(json.createDate).then(function (json) {
+                    if (!json.success) {
+                        console.error("API ERROR");
+                        return
+                    }
+                    let task = json.task;
+                    let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
+                        task.assign, task.deadlineMD, task.limitDate);
 
-function clickCloseForm() {
-    userSearchDialogAssign.hide();
-    taskAddForm.classList.remove("shown");
-}
-
-function addFormClear() {
-    taskAddForm.reset();
-    let nowTime = new Date(Date.now());
-    taskAddForm.querySelector("input[name=deadline]").value = dateFormat(nowTime);
-    userSearchDialogAssign.hide();
-}
-
-function dateFormat(date) {
-    let y = date.getFullYear();
-    let m = date.getMonth() + 1;
-    let d = date.getDate();
-
-    if (m < 10) {
-        m = '0' + m;
-    }
-    if (d < 10) {
-        d = '0' + d;
+                    document.taskBoard.taskBoardLists[0].appendChild(taskElem);
+                });
+            }
+        });
     }
 
-    return y + '-' + m + '-' + d;
+    taskAddShowClick(e, that) {
+        e.preventDefault();
+        that.taskAddForm.classList.add("shown");
+    }
+
+    clickCloseForm(that) {
+        that.userSearchDialogAssign.hide();
+        that.taskAddForm.classList.remove("shown");
+    }
+
+    addFormClear(that) {
+        that.taskAddForm.reset();
+        let nowTime = new Date(Date.now());
+        that.taskAddForm.querySelector("input[name=deadline]").value = ProjectUtils.dateFormat(nowTime);
+        that.userSearchDialogAssign.hide();
+    }
 }
+
+new TaskAdd();
