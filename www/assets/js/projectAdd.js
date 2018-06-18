@@ -1,36 +1,48 @@
-var projectAddForm = document.querySelector("#projectAdd"),
-    errorElem = document.querySelector("#error");
+class ProjectAdd {
+    constructor() {
+        this.projectAddForm = document.querySelector("#projectAdd");
+        if (this.projectAddForm === undefined || this.projectAddForm == null)
+            return;
+        this.errorElem = document.querySelector("#error");
 
-projectAddForm.addEventListener("submit", postLogin, true);
-errorElem.addEventListener("click", clickError, true);
+        let that = this;
 
+        this.projectAddForm.addEventListener("submit", function(e){
+            that.postLogin(e, that);
+        }, true);
+        this.errorElem.addEventListener("click", function(e){
+            that.clickError(e, that);
+        });
+    }
 
-function postLogin(e) {
-    e.preventDefault();
+    postLogin(e, that) {
+        e.preventDefault();
 
-    let formData = new FormData(projectAddForm);
-    let projectAddJson = {
-        "name": formData.get("name"),
-        "description": formData.get("description")
-    };
+        let formData = new FormData(that.projectAddForm);
+        let projectAddJson = {
+            "name": formData.get("name"),
+            "description": formData.get("description")
+        };
 
-    fetch("", {
-        method: 'POST',
-        body: JSON.stringify(projectAddJson),
-        credentials: "same-origin"
-    }).then(function (response) {
-        return response.json();
-    }).then(function (json) {
-        if (!json.success) {
-            errorElem.style.display = "block";
-            errorElem.innerText = json.message;
-        } else {
-            errorElem.style.display = "none";
-            location.href = "/project/view/" + json.id;
-        }
-    });
+        fetch("", {
+            method: 'POST',
+            body: JSON.stringify(projectAddJson),
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (!json.success) {
+                that.errorElem.style.display = "block";
+                that.errorElem.innerText = json.message;
+            } else {
+                that.errorElem.style.display = "none";
+                location.href = "/project/view/" + json.id;
+            }
+        });
+    }
+
+    clickError(e, that) {
+        that.errorElem.style.display = "none";
+    }
 }
-
-function clickError() {
-    errorElem.style.display = "none";
-}
+new ProjectAdd();

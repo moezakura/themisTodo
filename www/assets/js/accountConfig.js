@@ -1,120 +1,139 @@
-var idChangeForm = document.querySelector("#idChange"),
-    displayNameChangeForm = document.querySelector("#displayNameChange"),
-    passwordChangeForm = document.querySelector("#passwordChange"),
-    idChangeFormError = idChangeForm.querySelector(".error"),
-    displayNameChangeFormError = displayNameChangeForm.querySelector(".error"),
-    passwordChangeFormError = passwordChangeForm.querySelector(".error"),
-    changeSuccess = document.querySelector(".success"),
-    idChangeSubmitFake = idChangeForm.querySelector(".fas.fa-check"),
-    idChangeSubmitButton = idChangeForm.querySelector("input[type=submit]"),
-    displayNameChangeSubmitFake = displayNameChangeForm.querySelector(".fas.fa-check"),
-    displayNameChangeSubmitButton = displayNameChangeForm.querySelector("input[type=submit]"),
-    currentPasswordDialog = document.querySelector("#currentPasswordDialog"),
-    backViewLayer = document.querySelector("#backViewLayer"),
-    currentPasswordInput = currentPasswordDialog.querySelector("#currentPasswordInput");
+import AccountApi from "./accountApi"
+import BackView from "./backView"
 
-var dialogList = document.querySelectorAll(".error, .success");
-dialogList.forEach(function (value) {
-    value.addEventListener("click", function (e) {
-        this.style.display = "none";
-    }, true);
-});
+class AccountConfig {
+    constructor() {
+        this.idChangeForm = document.querySelector("#idChange");
+        if (this.idChangeForm === undefined || this.idChangeForm == null) return;
 
-idChangeForm.addEventListener("submit", idChangeSubmit, true);
-displayNameChangeForm.addEventListener("submit", displayNameChangeSubmit, true);
-passwordChangeForm.addEventListener("submit", passwordChangeSubmit, true);
-idChangeSubmitFake.addEventListener("click", function () {
-    idChangeSubmitButton.click();
-}, true);
-displayNameChangeSubmitFake.addEventListener("click", function () {
-    displayNameChangeSubmitButton.click();
-}, true);
-backViewLayer.addEventListener("click", backViewLayerClick, true);
-currentPasswordDialog.addEventListener("submit", passwordChangeConfirmSubmit, true);
+        this.displayNameChangeForm = document.querySelector("#displayNameChange");
+        this.passwordChangeForm = document.querySelector("#passwordChange");
+        this.idChangeFormError = this.idChangeForm.querySelector(".error");
+        this.displayNameChangeFormError = this.displayNameChangeForm.querySelector(".error");
+        this.passwordChangeFormError = this.passwordChangeForm.querySelector(".error");
+        this.changeSuccess = document.querySelector(".success");
+        this.idChangeSubmitFake = this.idChangeForm.querySelector(".fas.fa-check");
+        this.idChangeSubmitButton = this.idChangeForm.querySelector("input[type=submit]");
+        this.displayNameChangeSubmitFake = this.displayNameChangeForm.querySelector(".fas.fa-check");
+        this.displayNameChangeSubmitButton = this.displayNameChangeForm.querySelector("input[type=submit]");
+        this.currentPasswordDialog = document.querySelector("#currentPasswordDialog");
+
+        this.backView = new BackView();
+        this.backView.addWithHideElem(this.currentPasswordDialog);
+
+        this.currentPasswordInput = this.currentPasswordDialog.querySelector("#currentPasswordInput");
+
+        let dialogList = document.querySelectorAll(".error, .success");
+        dialogList.forEach(function (value) {
+            value.addEventListener("click", function (e) {
+                this.style.display = "none";
+            }, true);
+        });
+
+        document.AccountConfig = this;
+        let that = this;
+
+        this.idChangeForm.addEventListener("submit", function (e) {
+            that.idChangeSubmit(e, this, that);
+        }, true);
+        this.displayNameChangeForm.addEventListener("submit", function (e) {
+            that.displayNameChangeSubmit(e, this, that);
+        }, true);
+        this.passwordChangeForm.addEventListener("submit", function (e) {
+            that.passwordChangeSubmit(e, this, that);
+        }, true);
+        this.idChangeSubmitFake.addEventListener("click", function () {
+            that.idChangeSubmitButton.click();
+        }, true);
+        this.displayNameChangeSubmitFake.addEventListener("click", function () {
+            that.displayNameChangeSubmitButton.click();
+        }, true);
+        this.currentPasswordDialog.addEventListener("submit", function (e) {
+            that.passwordChangeConfirmSubmit(e, this, that);
+        }, true);
 
 
-var selectPassword = "";
-
-function idChangeSubmit(e) {
-    e.preventDefault();
-    let targetForm = new FormData(this);
-    let changeObj = AccountApi.NewAccountObject(accountUuid);
-    changeObj.name = targetForm.get("accountSettingsId");
-    AccountApi.Change(changeObj).then(function (json) {
-        if (!json.success) {
-            idChangeFormError.style.display = "block";
-            idChangeFormError.innerText = json.message;
-            changeSuccess.style.display = "none";
-        } else {
-            idChangeFormError.style.display = "none";
-            changeSuccess.style.display = "block";
-        }
-    })
-}
-
-function displayNameChangeSubmit(e) {
-    e.preventDefault();
-    let targetForm = new FormData(this);
-    let changeObj = AccountApi.NewAccountObject(accountUuid);
-    changeObj.displayName = targetForm.get("accountSettingsDisplayName");
-    AccountApi.Change(changeObj).then(function (json) {
-        if (!json.success) {
-            displayNameChangeFormError.style.display = "block";
-            displayNameChangeFormError.innerText = json.message;
-            changeSuccess.style.display = "none";
-        } else {
-            displayNameChangeFormError.style.display = "none";
-            changeSuccess.style.display = "block";
-        }
-    })
-}
-
-function backViewLayerClick() {
-    currentPasswordDialog.style.display = "none";
-    backViewLayer.style.display = "none";
-}
-
-function passwordChangeSubmit(e) {
-    e.preventDefault();
-    let targetForm = new FormData(this);
-    let password = targetForm.get("accountSettingsPassword"),
-        passwordRe = targetForm.get("accountSettingsPasswordRe");
-
-    if (password !== passwordRe) {
-        passwordChangeFormError.style.display = "block";
-        passwordChangeFormError.innerText = "password is not match";
-        changeSuccess.style.display = "none";
-        return;
+        var selectPassword = "";
     }
-    selectPassword = password;
-    passwordChangeFormError.style.display = "none";
-    changeSuccess.style.display = "none";
 
-    currentPasswordDialog.style.display = "block";
-    backViewLayer.style.display = "block";
-
-    currentPasswordInput.focus();
-}
-
-function passwordChangeConfirmSubmit(e) {
-    e.preventDefault();
-    if (currentPasswordDialog.style.display == "block") {
+    idChangeSubmit(e, _this, that) {
+        e.preventDefault();
+        let targetForm = new FormData(_this);
         let changeObj = AccountApi.NewAccountObject(accountUuid);
-        changeObj.password = selectPassword;
-        changeObj.currentPassword = currentPasswordInput.value;
-        currentPasswordInput.value = "";
+        changeObj.name = targetForm.get("accountSettingsId");
         AccountApi.Change(changeObj).then(function (json) {
-            selectPassword = "";
             if (!json.success) {
-                passwordChangeFormError.style.display = "block";
-                passwordChangeFormError.innerText = json.message;
-                changeSuccess.style.display = "none";
+                that.idChangeFormError.style.display = "block";
+                that.idChangeFormError.innerText = json.message;
+                that.changeSuccess.style.display = "none";
             } else {
-                passwordChangeFormError.style.display = "none";
-                changeSuccess.style.display = "block";
+                that.idChangeFormError.style.display = "none";
+                that.changeSuccess.style.display = "block";
             }
-
-            backViewLayerClick();
         })
     }
+
+    displayNameChangeSubmit(e, _this, that) {
+        e.preventDefault();
+        let targetForm = new FormData(_this);
+        let changeObj = AccountApi.NewAccountObject(accountUuid);
+        changeObj.displayName = targetForm.get("accountSettingsDisplayName");
+        AccountApi.Change(changeObj).then(function (json) {
+            if (!json.success) {
+                that.displayNameChangeFormError.style.display = "block";
+                that.displayNameChangeFormError.innerText = json.message;
+                that.changeSuccess.style.display = "none";
+            } else {
+                that.displayNameChangeFormError.style.display = "none";
+                that.changeSuccess.style.display = "block";
+            }
+        })
+    }
+
+    passwordChangeSubmit(e, _this, that) {
+        e.preventDefault();
+        let targetForm = new FormData(_this);
+        let password = targetForm.get("accountSettingsPassword"),
+            passwordRe = targetForm.get("accountSettingsPasswordRe");
+
+        if (password !== passwordRe) {
+            that.passwordChangeFormError.style.display = "block";
+            that.passwordChangeFormError.innerText = "password is not match";
+            that.changeSuccess.style.display = "none";
+            return;
+        }
+        that.selectPassword = password;
+        that.passwordChangeFormError.style.display = "none";
+        that.changeSuccess.style.display = "none";
+
+        that.currentPasswordDialog.style.display = "block";
+        that.backView.show();
+
+        that.currentPasswordInput.focus();
+    }
+
+    passwordChangeConfirmSubmit(e, _this, that) {
+        e.preventDefault();
+        if (that.currentPasswordDialog.style.display === "block") {
+            let changeObj = AccountApi.NewAccountObject(accountUuid);
+            changeObj.password = that.selectPassword;
+            changeObj.currentPassword = that.currentPasswordInput.value;
+            that.currentPasswordInput.value = "";
+            AccountApi.Change(changeObj).then(function (json) {
+                that.selectPassword = "";
+                if (!json.success) {
+                    that.passwordChangeFormError.style.display = "block";
+                    that.passwordChangeFormError.innerText = json.message;
+                    that.changeSuccess.style.display = "none";
+                } else {
+                    that.passwordChangeFormError.style.display = "none";
+                    that.changeSuccess.style.display = "block";
+                }
+
+                that.backView.hide();
+            })
+        }
+    }
 }
+
+new AccountConfig();

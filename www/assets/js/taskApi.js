@@ -1,4 +1,4 @@
-class TaskApi {
+export default class TaskApi {
     static NewTaskObject() {
         return {
             "status": -1,

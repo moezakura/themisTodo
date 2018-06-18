@@ -1,4 +1,4 @@
-class ProjectUtils {
+export default class ProjectUtils {
     static createUserListLine(uuid, name, displayName) {
         let parentLi = document.createElement("li");
         parentLi.dataset.uuid = uuid;
@@ -89,5 +89,24 @@ class ProjectUtils {
         }
 
         return parentLi
+    }
+
+    static clickObjectHide(e) {
+        e.target.style.display = "none";
+    }
+
+    static dateFormat(date) {
+        let y = date.getFullYear();
+        let m = date.getMonth() + 1;
+        let d = date.getDate();
+
+        if (m < 10) {
+            m = '0' + m;
+        }
+        if (d < 10) {
+            d = '0' + d;
+        }
+
+        return y + '-' + m + '-' + d;
     }
 }

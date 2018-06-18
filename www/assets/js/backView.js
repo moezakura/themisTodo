@@ -1,4 +1,4 @@
-class BackView {
+export default class BackView {
     constructor() {
         this.view = document.createElement("div");
         this.view.classList.add("backView");

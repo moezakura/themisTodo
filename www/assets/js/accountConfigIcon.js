@@ -1,99 +1,117 @@
-var iconUploadIconFile = document.querySelector('#accountSettingsIcon'),
-    iconUploadForm = document.querySelector('#accountSettingsIconFile'),
-    iconUploadFake = document.querySelector("#accountSettingsIconFake"),
-    iconUploadError = iconUploadIconFile.querySelector(".error"),
-    uploadXhr = null;
+let ProgressBar = require('progressbar.js');
 
-iconUploadFake.addEventListener('click', function (e) {
-    iconUploadForm.click();
-});
+class AccountConfigIcon {
+    constructor() {
+        this.iconUploadIconFile = document.querySelector('#accountSettingsIcon');
+        if (this.iconUploadIconFile === undefined || this.iconUploadIconFile == null)
+            return;
 
-iconUploadFake.addEventListener('dragover', fileDragOver, true);
-iconUploadFake.addEventListener('dragleave', fileDragLeave, true);
-iconUploadFake.addEventListener('drop', fileDrug, true);
-iconUploadForm.addEventListener('change', fileChange, true);
+        this.iconUploadForm = document.querySelector('#accountSettingsIconFile');
+        this.iconUploadFake = document.querySelector("#accountSettingsIconFake");
+        this.iconUploadError = this.iconUploadIconFile.querySelector(".error");
+        this.uploadXhr = null;
 
-let iconUploadFakeProgress = new ProgressBar.Circle(iconUploadFake, {
-    strokeWidth: 2,
-    easing: 'easeInOut',
-    duration: 200,
-    color: 'rgb(67, 160, 71)',
-    trailColor: 'rgb(85, 85, 85)',
-    trailWidth: 2,
-    svgStyle: null
-});
+        let that = this;
 
-function fileDragOver(e) {
-    e.preventDefault();
-    iconUploadFake.classList.add('dragover');
-}
+        this.iconUploadFake.addEventListener('click', function (e) {
+            that.iconUploadForm.click();
+        });
+        this.iconUploadFake.addEventListener('dragover', function (e) {
+            that.fileDragOver(e);
+        }, true);
+        this.iconUploadFake.addEventListener('dragleave', function (e) {
+            that.fileDragLeave(e);
+        }, true);
+        this.iconUploadFake.addEventListener('drop', function (e) {
+            that.fileDrug(e);
+        }, true);
+        this.iconUploadForm.addEventListener('change', function (e) {
+            that.fileChange(e);
+        }, true);
 
-function fileDragLeave(e) {
-    e.preventDefault();
-    iconUploadFake.classList.remove('dragover');
-}
-
-function fileDrug(e) {
-    e.preventDefault();
-    iconUploadFake.classList.remove('dragenter');
-    if (e.dataTransfer.files.length > 1) {
-        console.log("over files");
-        return;
+        this.iconUploadFakeProgress = new ProgressBar.Circle(this.iconUploadFake, {
+            strokeWidth: 2,
+            easing: 'easeInOut',
+            duration: 200,
+            color: 'rgb(67, 160, 71)',
+            trailColor: 'rgb(85, 85, 85)',
+            trailWidth: 2,
+            svgStyle: null
+        });
     }
-    iconUploadFakeProgress.set(0);
-    iconUploadForm.files = e.dataTransfer.files;
-    fileChange();
-}
 
-function fileChange() {
-    let uploadFormData = new FormData(iconUploadIconFile);
-    console.log(uploadFormData.get("icon"));
-    uploadFile(uploadFormData);
-}
+    fileDragOver(e) {
+        e.preventDefault();
+        this.iconUploadFake.classList.add('dragover');
+    }
 
-function uploadFile(formData) {
-    uploadXhr = new XMLHttpRequest();
-    let upload = uploadXhr.upload;
-    if (upload) {
+    fileDragLeave(e) {
+        e.preventDefault();
+        this.iconUploadFake.classList.remove('dragover');
+    }
 
-        uploadXhr.onreadystatechange = function(e) {
-            if (this.readyState == 4) {
-                let json = JSON.parse(this.responseText);
+    fileDrug(e) {
+        e.preventDefault();
+        this.iconUploadFake.classList.remove('dragenter');
+        if (e.dataTransfer.files.length > 1) {
+            console.log("over files");
+            return;
+        }
+        this.iconUploadFakeProgress.set(0);
+        this.iconUploadForm.files = e.dataTransfer.files;
+        this.fileChange();
+    }
 
-                if(json.success){
-                    iconUploadError.style.display = "none";
-                    changeSuccess.style.display = "block";
-                    uploadedIcon();
-                }else{
-                    iconUploadError.style.display = "block";
-                    iconUploadError.innerText = json.message;
-                    changeSuccess.style.display = "none";
+    fileChange() {
+        let uploadFormData = new FormData(this.iconUploadIconFile);
+        this.uploadFile(uploadFormData);
+    }
+
+    uploadFile(formData) {
+        this.uploadXhr = new XMLHttpRequest();
+        let upload = this.uploadXhr.upload;
+        if (upload) {
+            let that = this;
+            this.uploadXhr.onreadystatechange = function (e) {
+                if (this.readyState == 4) {
+                    let json = JSON.parse(this.responseText);
+                    if (json.success) {
+                        that.iconUploadError.style.display = "none";
+                        document.AccountConfig.changeSuccess.style.display = "block";
+                        that.uploadedIcon();
+                    } else {
+                        that.iconUploadError.style.display = "block";
+                        document.AccountConfig.iconUploadError.innerText = json.message;
+                        that.changeSuccess.style.display = "none";
+                    }
                 }
-            }
-        };
-        upload.onerror = function (e) {
-            uploadError(id);
-        };
-        upload.onabort = function (e) {
-            uploadError(id);
-        };
-        upload.ontimeout = function (e) {
-            uploadError(id);
-        };
-        upload.onloadstart = function (e) {
-        };
-        upload.onprogress = function (e) {
-            console.log(e.loaded + " / " + e.total);
-            let progress = e.loaded / e.total;
-            iconUploadFakeProgress.animate(progress);
-        };
+            };
+            upload.onerror = function (e) {
+                that.uploadError(id);
+            };
+            upload.onabort = function (e) {
+                that.uploadError(id);
+            };
+            upload.ontimeout = function (e) {
+                that.uploadError(id);
+            };
+            upload.onloadstart = function (e) {
+            };
+            upload.onprogress = function (e) {
+                console.log(e.loaded + " / " + e.total);
+                let progress = e.loaded / e.total;
+                that.iconUploadFakeProgress.animate(progress);
+            };
+        }
+
+        this.uploadXhr.open("POST", "/account/updateIcon/" + accountUuid);
+        this.uploadXhr.send(formData);
     }
 
-    uploadXhr.open("POST", "/account/updateIcon/" + accountUuid);
-    uploadXhr.send(formData);
+    uploadedIcon() {
+        let now = Math.floor((new Date()).getTime() / 1000);
+        this.iconUploadFake.style.backgroundImage = "url('assets/accountIcon/" + accountUuid + ".png?t=" + now + "')";
+    }
 }
 
-function uploadedIcon() {
-    let now = Math.floor((new Date()).getTime() / 1000);
-    iconUploadFake.style.backgroundImage = "url('assets/accountIcon/" + accountUuid + ".png?t=" + now + "')";
-}
+new AccountConfigIcon();

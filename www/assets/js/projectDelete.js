@@ -1,59 +1,82 @@
-var deleteProject = document.querySelector("#deleteProject"),
-    deleteProjectPopup = document.querySelector("#deleteProjectPopup"),
-    deleteProjectPopupCloseButton = document.querySelector("#deleteProjectPopup .close"),
-    deleteProjectNameInput = document.querySelector("#deleteProjectPopup input[type=text]"),
-    deleteProjectNameSubmitButton = document.querySelector("#deleteProjectPopup input[type=submit]"),
-    deleteProjectPopupError = deleteProjectPopup.querySelector(".error"),
-    projectDeleteBackView = new BackView();
-projectDeleteBackView.addWithHideElem(deleteProjectPopup);
+import BackView from "./backView"
 
-deleteProject.addEventListener("click", deleteProjectPopupShow, true);
-deleteProjectPopupCloseButton.addEventListener("click", deleteProjectPopupClose, true);
-deleteProjectPopup.addEventListener("submit", deleteProjectPopupSend, true);
-deleteProjectNameInput.addEventListener("keyup", deleteProjectNameInputKeyUp, true);
-deleteProjectPopupError.addEventListener("click", deleteProjectPopupErrorClick, true);
+class ProjectDelete {
+    constructor() {
+        this.deleteProject = document.querySelector("#deleteProject");
+        if(this.deleteProject === undefined || this.deleteProject == null)
+            return;
 
-function deleteProjectPopupShow() {
-    deleteProjectPopup.style.display = "block";
-    projectDeleteBackView.show();
-    if (taskBackView !== undefined && taskBackView != null)
-        taskBackView.hide();
-}
+        this.deleteProjectPopup = document.querySelector("#deleteProjectPopup");
+        this.deleteProjectPopupCloseButton = document.querySelector("#deleteProjectPopup .close");
+        this.deleteProjectNameInput = document.querySelector("#deleteProjectPopup input[type=text]");
+        this.deleteProjectNameSubmitButton = document.querySelector("#deleteProjectPopup input[type=submit]");
+        this.deleteProjectPopupError = this.deleteProjectPopup.querySelector(".error");
+        this.projectDeleteBackView = new BackView();
+        this.projectDeleteBackView.addWithHideElem(this.deleteProjectPopup);
 
-function deleteProjectPopupClose() {
-    projectDeleteBackView.hide();
-}
+        let that = this;
 
-function deleteProjectPopupErrorClick() {
-    deleteProjectPopupErrorHide();
-}
+        this.deleteProject.addEventListener("click", function(e){
+            that.deleteProjectPopupShow(e, that);
+        }, true);
+        this.deleteProjectPopupCloseButton.addEventListener("click", function(e){
+            that.deleteProjectPopupClose(e, that);
+        }, true);
+        this.deleteProjectPopup.addEventListener("submit", function(e){
+            that.deleteProjectPopupSend(e, that);
+        }, true);
+        this.deleteProjectNameInput.addEventListener("keyup", function(e){
+            that.deleteProjectNameInputKeyUp(e, that);
+        }, true);
+        this.deleteProjectPopupError.addEventListener("click", function(e){
+            that.deleteProjectPopupErrorClick(e, that);
+        }, true);
+    }
 
-function deleteProjectPopupErrorHide() {
-    deleteProjectPopupError.style.display = "none";
-}
+    deleteProjectPopupShow(e, that) {
+        that.deleteProjectPopup.style.display = "block";
+        that.projectDeleteBackView.show();
+        if (that.taskBackView !== undefined && that.taskBackView != null)
+            that.taskBackView.hide();
+    }
 
-function deleteProjectPopupErrorShow(text) {
-    deleteProjectPopupError.style.display = "block";
-    if (text !== undefined && text != null) {
-        deleteProjectPopupError.innerText = text;
+    deleteProjectPopupClose(e, that) {
+        that.projectDeleteBackView.hide();
+    }
+
+    deleteProjectPopupErrorClick(e, that) {
+        that.deleteProjectPopupErrorHide();
+    }
+
+    deleteProjectPopupErrorHide(e, that) {
+        that.deleteProjectPopupError.style.display = "none";
+    }
+
+    deleteProjectPopupErrorShow(text, that) {
+        that.deleteProjectPopupError.style.display = "block";
+        if (text !== undefined && text != null) {
+            that.deleteProjectPopupError.innerText = text;
+        }
+    }
+
+    deleteProjectNameInputKeyUp(e, that) {
+        let typeText = that.deleteProjectNameInput.value;
+        that.deleteProjectNameSubmitButton.disabled = (typeText !== projectName);
+    }
+
+    deleteProjectPopupSend(e, that) {
+        e.preventDefault();
+        fetch("/project/delete/" + projectId, {
+            method: 'POST',
+            body: "",
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            if (json.success) location.href = "/home";
+            else that.deleteProjectPopupErrorShow(json.message, that);
+        });
     }
 }
 
-function deleteProjectNameInputKeyUp() {
-    let typeText = deleteProjectNameInput.value;
-    deleteProjectNameSubmitButton.disabled = (typeText !== projectName);
-}
-
-function deleteProjectPopupSend(e) {
-    e.preventDefault();
-    fetch("/project/delete/" + projectId, {
-        method: 'POST',
-        body: "",
-        credentials: "same-origin"
-    }).then(function (response) {
-        return response.json();
-    }).then(function (json) {
-        if (json.success) location.href = "/home";
-        else deleteProjectPopupErrorShow(json.message);
-    });
-}
+new ProjectDelete();
