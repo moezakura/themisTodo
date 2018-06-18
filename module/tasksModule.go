@@ -29,6 +29,8 @@ func (self *TasksModule) GetLastId(projectId int) int {
 		return 0
 	}
 
+	defer rows.Close()
+
 	if !rows.Next() {
 		return 0
 	}
@@ -85,6 +87,8 @@ WHERE project = ? ORDER BY id ASC;`, projectId)
 		return false, list
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		listOne := models.Task{}
 		if err := rows.Scan(&listOne.TaskId, &listOne.Name, &listOne.Creator, &listOne.Assign,
@@ -122,6 +126,8 @@ WHERE createDate = ?;`, createDate)
 	if err != nil {
 		return true, nil
 	}
+
+	defer rows.Close()
 
 	if !rows.Next() {
 		return true, nil
@@ -178,6 +184,8 @@ LIMIT 0, ?;`, userUuid, status, limit)
 	if err != nil {
 		return true, nil
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		oneTask := models.Task{}

@@ -15,7 +15,16 @@ func NewLoginModule(db *sql.DB) *LoginModule {
 }
 
 func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
-	if err := self.db.QueryRow("SELECT `uuid` FROM `users` WHERE `name` = ? AND `password` = ?;", name, password).Scan(&uuid); err != nil {
+	rows, err := self.db.Query("SELECT `uuid` FROM `users` WHERE `name` = ? AND `password` = ?;", name, password)
+
+	if err != nil {
+		log.Printf("LoginModule.IsLogin Error: %+v", err)
+		return true, 0
+	}
+
+	defer rows.Close()
+
+	if err := rows.Scan(&uuid); err != nil {
 		log.Printf("LoginModule.IsLogin Error: %+v", err)
 		return true, 0
 	}
@@ -28,10 +37,20 @@ func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
 }
 
 func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool, _uuid int) {
-	if err := self.db.QueryRow("SELECT `uuid` FROM `users` WHERE `uuid` = ? AND `password` = ?;", uuid, password).Scan(&uuid); err != nil {
+	rows, err := self.db.Query("SELECT `uuid` FROM `users` WHERE `uuid` = ? AND `password` = ?;", uuid, password)
+
+	if err != nil {
 		log.Printf("LoginModule.IsLoginFromUuid Error: %+v", err)
 		return true, 0
 	}
+
+	defer rows.Close()
+
+	if err := rows.Scan(&uuid); err != nil {
+		log.Printf("LoginModule.IsLoginFromUuid Error: %+v", err)
+		return true, 0
+	}
+
 
 	if uuid < 1 {
 		return true, 0

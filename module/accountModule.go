@@ -144,6 +144,8 @@ func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isEr
 		return true, nil
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		resultModelOne := models.AccountSearchResultModel{}
 		if err := rows.Scan(&resultModelOne.Uuid, &resultModelOne.Name, &resultModelOne.DisplayName); err != nil {

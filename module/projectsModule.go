@@ -69,6 +69,8 @@ func (self *ProjectsModule) GetProjects(userId int) (error bool, project []model
 		return true, nil
 	}
 
+	defer rows.Close()
+
 	for rows.Next() {
 		projectOne := models.Project{}
 		if err := rows.Scan(&projectOne.Uuid, &projectOne.Name, &projectOne.Description); err != nil {
@@ -89,6 +91,8 @@ func (self *ProjectsModule) GetProject(userId int) (error bool, project *models.
 	if err != nil {
 		return true, nil
 	}
+
+	defer rows.Close()
 
 	if !rows.Next() {
 		return true, nil
@@ -111,6 +115,8 @@ func (self *ProjectsModule) GetUser(projectId int) (error bool, accounts []model
 	if err != nil {
 		return true, nil
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		accountOne := models.Account{}
@@ -149,6 +155,8 @@ func (self *ProjectsModule) IsIn(userUuid, projectId int) (isIn bool) {
 	if err != nil {
 		return false
 	}
+
+	defer rows.Close()
 
 	for rows.Next() {
 		var inCount int
