@@ -51,6 +51,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(black, .6);
+    z-index: 999;
 
     .loadingBody {
         position: fixed;

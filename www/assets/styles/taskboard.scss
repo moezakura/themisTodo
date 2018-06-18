@@ -448,29 +448,50 @@ body {
     }
 
     #taskPopupAssignCreatorLine {
-        height: $iconSize;
-        margin: 8px 0 16px 0;
+        height: $iconSize + 30px;
+        margin-bottom: 16px;
 
-        #taskPopupAssignIcon,
-        #taskPopupCreatorIcon {
-            width: $iconSize;
-            height: $iconSize;
+        .taskPopupAssignCreatorColumn {
+            width:calc(50% - 10px);
             float: left;
-            border-radius: 50%;
-            margin-right: 5px;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-        }
+            height: 100%;
 
-        #taskPopupAssign,
-        #taskPopupCreator {
-            height: $iconSize;
-            line-height: $iconSize;
-            float: left;
-            display: block;
-            width: calc(50% - #{$iconSize} - 5px);
-            font-size: 12px;
+            p{
+                width: 100%;
+                text-align: center;
+                height: 20px;
+                line-height: 20px;
+            }
+
+            #taskPopupAssignIcon,
+            #taskPopupCreatorIcon {
+                width: $iconSize;
+                height: $iconSize;
+                float: left;
+                border-radius: 50%;
+                margin-right: 5px;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center;
+            }
+
+            #taskPopupAssign,
+            #taskPopupCreator {
+                height: $iconSize;
+                line-height: $iconSize;
+                float: left;
+                display: block;
+                width: calc(100% - #{$iconSize} - 5px);
+                font-size: 12px;
+            }
+
+            &:nth-child(1){
+                border-right: 1px solid rgba(white, .5);
+                padding-right: 9px;
+            }
+            &:nth-child(2){
+                padding-left: 10px;
+            }
         }
     }
 
@@ -493,6 +514,10 @@ body {
             background-color: $accentColor;
             margin-top: -$iconSize;
             width: 50%;
+
+            &.over{
+                background-color: $redColor;
+            }
         }
     }
 

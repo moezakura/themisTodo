@@ -8,6 +8,7 @@ export default class LoadingView {
         loadingBody.classList.add("loadingBody");
 
         this.view.appendChild(loadingBody);
+        document.body.appendChild(this.view);
     }
 
     show() {
