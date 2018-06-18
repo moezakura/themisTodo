@@ -2,7 +2,7 @@ const MODE = 'production';
 const enabledSourceMap = (MODE === 'development');
 
 const webpack = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: './js/main.js',
@@ -50,15 +50,6 @@ module.exports = {
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new UglifyJsPlugin({
-            uglifyOptions: {
-                compress: {
-                    top_retain: true,
-                    warnings: false,
-                    drop_console: true,
-                }
-            }
-        }),
     ],
 };
 if (module.hot) {
