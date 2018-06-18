@@ -1,4 +1,4 @@
-class LoadingView {
+export default class LoadingView {
     constructor() {
         this.view = document.createElement("div");
         this.view.classList.add("loading");
