@@ -23,6 +23,7 @@ func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
 	}
 
 	defer rows.Close()
+	rows.Next()
 
 	if err := rows.Scan(&uuid); err != nil {
 		log.Printf("LoginModule.IsLogin Error: %+v", err)
@@ -45,6 +46,7 @@ func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool,
 	}
 
 	defer rows.Close()
+	rows.Next()
 
 	if err := rows.Scan(&uuid); err != nil {
 		log.Printf("LoginModule.IsLoginFromUuid Error: %+v", err)
