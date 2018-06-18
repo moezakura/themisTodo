@@ -22,14 +22,14 @@ module.exports = {
                 test: /\.scss/, // 対象となるファイルの拡張子
                 use: [
                     {
-                        loader: 'style-loader?modules',
+                        loader: 'style-loader',
                         options: {
                             hmr: true,
                             singleton: true,
                         }
                     },
                     {
-                        loader: 'css-loader?modules',
+                        loader: 'css-loader',
                         options: {
                             // オプションでCSS内のurl()メソッドの取り込みを禁止する
                             url: false,
@@ -43,7 +43,7 @@ module.exports = {
                         },
                     },
                     {
-                        loader: 'sass-loader?modules',
+                        loader: 'sass-loader',
                         options: {
                             // ソースマップの利用有無
                             sourceMap: enabledSourceMap,
