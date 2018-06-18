@@ -2,6 +2,7 @@ class LoadingView {
     constructor() {
         this.view = document.createElement("div");
         this.view.classList.add("loading");
+        this.isDisporse = false;
 
         let loadingBody = document.createElement("div");
         loadingBody.classList.add("loadingBody");
@@ -15,5 +16,8 @@ class LoadingView {
 
     hide() {
         this.view.style.display = "none";
+        if(this.isDisporse){
+            this.view.remove();
+        }
     }
 }
