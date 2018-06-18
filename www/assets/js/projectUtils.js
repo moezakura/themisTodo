@@ -1,3 +1,5 @@
+import TaskDetail from "./taskDetail"
+
 export default class ProjectUtils {
     static createUserListLine(uuid, name, displayName) {
         let parentLi = document.createElement("li");
@@ -36,6 +38,10 @@ export default class ProjectUtils {
     static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate) {
         let parentLi = document.createElement("li");
         parentLi.dataset.id = createTime;
+        parentLi.addEventListener("click", function(){
+            TaskDetail.loadAndShow(createTime);
+        });
+
         let nowTime = new Date();
 
         {

@@ -4,6 +4,7 @@ export default class BackView {
         this.view.classList.add("backView");
         this.withHideElem = [];
         this.hideEvents = [];
+        this.isDisporse = false;
 
         let that = this;
         this.view.addEventListener("click", function(){
@@ -21,6 +22,9 @@ export default class BackView {
         this.display("none");
         this.withHideElem.forEach(function(value){ value.style.display = "none"; });
         this.hideEvents.forEach(function(value){ value(); });
+        if(this.isDisporse){
+            this.view.remove();
+        }
     }
 
     addWithHideElem(elem) {
