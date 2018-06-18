@@ -12,6 +12,7 @@
     "scss-loader": "0.0.1",
     "se": "0.0.1",
     "style-loader": "^0.21.0",
+    "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack-hot-middleware": "^2.22.2"
   },
   "devDependencies": {
@@ -20,8 +21,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack-cli",
-    "start": "webpack-dev-server --inline --progress"
+    "build": "webpack-cli --config webpack.config.prd.js",
+    "start": "webpack-dev-server --config webpack.config.dev.js --inline --progress"
   },
   "author": "mox",
   "license": "ISC"
