@@ -13,9 +13,26 @@ export default class TaskDetail {
         backView.show();
 
         backView.addWithHideElem(taskPopup);
+
+        let taskPopupCloseButton = document.querySelector("#taskPopupCloseButton");
+        let closeEventFunc = function () {
+            backView.hide();
+            TaskDetail.setEmpty(true);
+            taskPopupCloseButton.removeEventListener("click", closeEventFunc, true);
+        };
+        backView.addHideEvent(function(){
+            TaskDetail.setEmpty(true);
+            taskPopupCloseButton.removeEventListener("click", closeEventFunc, true);
+        });
+
+        taskPopupCloseButton.addEventListener("click", closeEventFunc, true);
     }
 
     static load(taskId) {
+        TaskDetail.setEmpty(true);
+        let taskPopup = document.querySelector("#taskPopup");
+        taskPopup.dataset.taskId = taskId;
+
         let loadView = new LoadingView();
         loadView.isDisporse = true;
         loadView.show();
@@ -38,6 +55,43 @@ export default class TaskDetail {
         this.load(taskId);
     }
 
+    static setEmpty(readOnly){
+        if(readOnly === undefined || readOnly == null)
+            readOnly = false;
+
+        let taskPopup = document.querySelector("#taskPopup"),
+            taskDetailTitle = taskPopup.querySelector("h2"),
+            taskPopupTaskId = taskPopup.querySelector("#taskPopupTaskId"),
+            taskPopupTitle = taskPopup.querySelector("#taskPopupTitle"),
+            taskPopupProgressText = taskPopup.querySelector("#taskPopupProgressText"),
+            taskPopupDescription = taskPopup.querySelector("#taskPopupDescription"),
+            taskPopupProgressTextSpans = taskPopupProgressText.querySelectorAll("span"),
+            taskPopupAssignIcon = taskPopup.querySelector("#taskPopupAssignIcon"),
+            taskPopupAssign = taskPopup.querySelector("#taskPopupAssign"),
+            taskPopupCreatorIcon = taskPopup.querySelector("#taskPopupCreatorIcon"),
+            taskPopupCreator = taskPopup.querySelector("#taskPopupCreator"),
+            taskPopupInputs = taskPopup.querySelectorAll("input, textarea"),
+        taskPopupProgressCurrent = document.querySelector("#taskPopupProgressCurrent");
+
+        if(readOnly) {
+            taskPopupInputs.forEach(function (value) {
+                value.readOnly = true;
+            });
+        }
+        taskPopup.dataset.taskId = "";
+        taskDetailTitle.innerText = "";
+        taskPopupTaskId.innerText = "#";
+        taskPopupTitle.value = "";
+        taskPopupProgressTextSpans[0].innerText = "";
+        taskPopupProgressTextSpans[1].innerText = "";
+        taskPopupProgressCurrent.style.width = "0%";
+        taskPopupAssignIcon.style.backgroundImage = "";
+        taskPopupAssign.value = "";
+        taskPopupCreatorIcon.style.backgroundImage = "";
+        taskPopupCreator.innerText = "";
+        taskPopupDescription.value = "";
+    }
+
     static set(taskObject) {
         let taskPopup = document.querySelector("#taskPopup"),
             taskDetailTitle = taskPopup.querySelector("h2"),
@@ -54,8 +108,8 @@ export default class TaskDetail {
             nowTime = new Date(),
             statusText = ["Todo", "Doing", "PullRequest", "Done"][taskObject.status];
 
-        taskPopupInputs.forEach(function(value){
-           value.readOnly = true;
+        taskPopupInputs.forEach(function (value) {
+            value.readOnly = true;
         });
 
         taskDetailTitle.innerText = statusText + " Task Detail";

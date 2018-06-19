@@ -198,7 +198,7 @@ body {
         padding-right: $buttonHeight + 10px;
     }
 
-    #userSelect+input {
+    #userSelect + input {
         text-align: center;
         vertical-align: middle;
         height: $lineTextHeight;
@@ -210,8 +210,8 @@ body {
         background-color: transparent;
     }
 
-    #userSelect+input:hover,
-    #userSelect+input:focus {
+    #userSelect + input:hover,
+    #userSelect + input:focus {
         background-color: accentColor(.3);
     }
 
@@ -393,24 +393,29 @@ body {
         }
     }
 
-    #taskPopupEditButton {
-        width: $buttonHeight;
-        height: $buttonHeight;
-        line-height: $buttonHeight;
-        text-align: center;
-        display: block;
-        font-size: 14px;
-        box-sizing: border-box;
-        padding-left: 3px;
-        margin:-$buttonHeight 0 15px calc(#{$modanWidth} - #{$buttonHeight} - 20px);
-        transition: ease .4s background-color;
+    #taskPopupActions {
+        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight * 2} - 20px);
+        width: $buttonHeight * 2;
 
-        &:hover {
-            background-color: accentColor(.15);
-        }
+        i {
+            float: left;
+            width: $buttonHeight;
+            height: $buttonHeight;
+            line-height: $buttonHeight;
+            text-align: center;
+            display: block;
+            font-size: 14px;
+            box-sizing: border-box;
+            padding-left: 3px;
+            transition: ease .4s background-color;
 
-        &::before {
-            font-weight: normal !important;
+            &:hover {
+                background-color: accentColor(.15);
+            }
+
+            &#taskPopupEditButton::before {
+                font-weight: normal !important;
+            }
         }
     }
 
@@ -452,11 +457,11 @@ body {
         margin-bottom: 16px;
 
         .taskPopupAssignCreatorColumn {
-            width:calc(50% - 10px);
+            width: calc(50% - 10px);
             float: left;
             height: 100%;
 
-            p{
+            p {
                 width: 100%;
                 text-align: center;
                 height: 20px;
@@ -485,11 +490,11 @@ body {
                 font-size: 12px;
             }
 
-            &:nth-child(1){
+            &:nth-child(1) {
                 border-right: 1px solid rgba(white, .5);
                 padding-right: 9px;
             }
-            &:nth-child(2){
+            &:nth-child(2) {
                 padding-left: 10px;
             }
         }
@@ -507,7 +512,7 @@ body {
             text-align: center;
             letter-spacing: 2px;
             font-size: 14px;
-            text-shadow:0 0 2px rgba(black, .8);
+            text-shadow: 0 0 2px rgba(black, .8);
         }
 
         #taskPopupProgressCurrent {
@@ -515,7 +520,7 @@ body {
             margin-top: -$iconSize;
             width: 50%;
 
-            &.over{
+            &.over {
                 background-color: $redColor;
             }
         }
