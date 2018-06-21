@@ -25,7 +25,7 @@ export default class TaskApi {
     }
 
     static GetTaskFromCreateDate(createDate) {
-        return fetch("/tasks/view/" + createDate, {
+        return fetch("/tasks/view/createDate/" + createDate, {
             method: 'GET',
             credentials: "same-origin"
         }).then(function (response) {
