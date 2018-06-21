@@ -31,7 +31,7 @@ class TaskBoard {
         }
 
         if (document.location.hash !== "") {
-            TaskDetail.loadAndShowFromTaskId(document.location.hash.replace("#", ""))
+            TaskDetail.loadAndShowFromTaskId(document.location.hash.replace("#", ""));
         }
     }
 }

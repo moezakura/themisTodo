@@ -118,7 +118,7 @@ export default class TaskDetail {
     }
 
     static replaceUrlHash(taskId) {
-        window.location.hash = taskId
+        window.location.hash = taskId;
     }
 
     static refreshUrlHash() {
