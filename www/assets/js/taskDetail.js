@@ -90,5 +90,11 @@ export default class TaskDetail {
         }
 
         taskPopupDescription.value = taskObject.description;
+
+        TaskDetail.replaceUrlHash(taskObject.taskId);
+    }
+
+    static replaceUrlHash(taskId) {
+        window.location.hash = taskId
     }
 }
