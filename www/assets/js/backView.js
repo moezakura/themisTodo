@@ -1,3 +1,5 @@
+import TaskDetail from "./taskDetail";
+
 export default class BackView {
     constructor() {
         this.view = document.createElement("div");
@@ -22,6 +24,7 @@ export default class BackView {
         this.display("none");
         this.withHideElem.forEach(function(value){ value.style.display = "none"; });
         this.hideEvents.forEach(function(value){ value(); });
+        TaskDetail.refreshUrlHash();
         if(this.isDisporse){
             this.view.remove();
         }
