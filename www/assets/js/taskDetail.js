@@ -20,7 +20,7 @@ export default class TaskDetail {
             TaskDetail.setEmpty(true);
             taskPopupCloseButton.removeEventListener("click", closeEventFunc, true);
         };
-        backView.addHideEvent(function(){
+        backView.addHideEvent(function () {
             TaskDetail.setEmpty(true);
             taskPopupCloseButton.removeEventListener("click", closeEventFunc, true);
         });
@@ -55,8 +55,8 @@ export default class TaskDetail {
         this.load(taskId);
     }
 
-    static setEmpty(readOnly){
-        if(readOnly === undefined || readOnly == null)
+    static setEmpty(readOnly) {
+        if (readOnly === undefined || readOnly == null)
             readOnly = false;
 
         let taskPopup = document.querySelector("#taskPopup"),
@@ -70,14 +70,9 @@ export default class TaskDetail {
             taskPopupAssign = taskPopup.querySelector("#taskPopupAssign"),
             taskPopupCreatorIcon = taskPopup.querySelector("#taskPopupCreatorIcon"),
             taskPopupCreator = taskPopup.querySelector("#taskPopupCreator"),
-            taskPopupInputs = taskPopup.querySelectorAll("input, textarea"),
-        taskPopupProgressCurrent = document.querySelector("#taskPopupProgressCurrent");
+            taskPopupProgressCurrent = document.querySelector("#taskPopupProgressCurrent");
 
-        if(readOnly) {
-            taskPopupInputs.forEach(function (value) {
-                value.readOnly = true;
-            });
-        }
+        this.editable(!readOnly);
         taskPopup.dataset.taskId = "";
         taskDetailTitle.innerText = "";
         taskPopupTaskId.innerText = "#";
@@ -104,14 +99,10 @@ export default class TaskDetail {
             taskPopupAssign = taskPopup.querySelector("#taskPopupAssign"),
             taskPopupCreatorIcon = taskPopup.querySelector("#taskPopupCreatorIcon"),
             taskPopupCreator = taskPopup.querySelector("#taskPopupCreator"),
-            taskPopupInputs = taskPopup.querySelectorAll("input, textarea"),
             nowTime = new Date(),
             statusText = ["Todo", "Doing", "PullRequest", "Done"][taskObject.status];
 
-        taskPopupInputs.forEach(function (value) {
-            value.readOnly = true;
-        });
-
+        this.editable(false);
         taskDetailTitle.innerText = statusText + " Task Detail";
 
         taskPopupTaskId.innerText = "#" + taskObject.taskId;
@@ -144,5 +135,12 @@ export default class TaskDetail {
         }
 
         taskPopupDescription.value = taskObject.description;
+    }
+
+    static editable(isEdit) {
+        let taskPopupInputs = taskPopup.querySelectorAll("input, textarea");
+        taskPopupInputs.forEach(function (value) {
+            value.readOnly = !isEdit;
+        });
     }
 }
