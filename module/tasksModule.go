@@ -144,6 +144,47 @@ WHERE createDate = ?;`, createDate)
 	return false, returnTask
 }
 
+func (self *TasksModule) GetFromTaskId(taskId int) (isErr bool, task *models.Task) {
+		self.dbLock.Lock()
+	defer self.dbLock.Unlock()
+	rows, err := self.db.Query(`SELECT
+  id,
+  project,
+  todo.name,
+  creator,
+  assign,
+  status,
+  deadline,
+  description,
+  createDate,
+  u1.displayName,
+  u2.displayName
+FROM todo_list todo
+  INNER JOIN users u1 ON u1.uuid = todo.creator
+  INNER JOIN users u2 ON u2.uuid = todo.assign
+WHERE todo.id = ?;`, taskId)
+
+	if err != nil {
+		return true, nil
+	}
+
+	defer rows.Close()
+
+	if !rows.Next() {
+		return true, nil
+	}
+
+	returnTask := &models.Task{}
+	if err := rows.Scan(&returnTask.TaskId, &returnTask.ProjectId, &returnTask.Name,
+		&returnTask.Creator, &returnTask.Assign, &returnTask.Status, &returnTask.Deadline,
+		&returnTask.Description, &returnTask.CreateDate, &returnTask.CreatorName, &returnTask.AssignName); err != nil {
+		log.Printf("TasksModule.Get Error: %+v\n", err)
+		return true, nil
+	}
+
+	return false, returnTask
+}
+
 func (self *TasksModule) Update(createDate int64, task *models.Task) (isErr bool) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
