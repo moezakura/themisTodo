@@ -15,12 +15,12 @@ export default class TaskDetail {
         backView.addWithHideElem(taskPopup);
     }
 
-    static load(taskId) {
+    static load(createDate) {
         let loadView = new LoadingView();
         loadView.isDisporse = true;
         loadView.show();
 
-        TaskApi.GetTaskFromCreateDate(taskId).then(function (json) {
+        TaskApi.GetTaskFromCreateDate(createDate).then(function (json) {
             if (!json.success) {
                 console.error("API ERROR");
                 loadView.hide();
@@ -33,9 +33,9 @@ export default class TaskDetail {
         });
     }
 
-    static loadAndShow(taskId) {
+    static loadAndShow(createDate) {
         this.show();
-        this.load(taskId);
+        this.load(createDate);
     }
 
     static set(taskObject) {
