@@ -1,4 +1,5 @@
 import TaskApi from "./taskApi"
+import TaskDetail from "./taskDetail";
 
 class TaskBoard {
     constructor() {
@@ -27,6 +28,10 @@ class TaskBoard {
                 },
                 animation: 100
             });
+        }
+
+        if (document.location.hash !== "") {
+            TaskDetail.loadAndShowFromTaskId(document.location.hash.replace("#", ""))
         }
     }
 }

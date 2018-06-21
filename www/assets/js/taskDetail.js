@@ -33,9 +33,32 @@ export default class TaskDetail {
         });
     }
 
+    static loadFromTaskId(taskId) {
+        let loadView = new LoadingView();
+        loadView.isDisporse = true;
+        loadView.show();
+
+        TaskApi.GetTaskFromTaskId(taskId).then(function (json) {
+            if (!json.success) {
+                console.error("API ERROR");
+                loadView.hide();
+                return
+            }
+
+            TaskDetail.set(json.task);
+
+            loadView.hide();
+        });
+    }
+
     static loadAndShow(createDate) {
         this.show();
         this.load(createDate);
+    }
+
+    static loadAndShowFromTaskId(taskId) {
+        TaskDetail.show();
+        TaskDetail.loadFromTaskId(taskId);
     }
 
     static set(taskObject) {
