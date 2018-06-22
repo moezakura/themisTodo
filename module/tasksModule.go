@@ -144,7 +144,7 @@ WHERE createDate = ?;`, createDate)
 	return false, returnTask
 }
 
-func (self *TasksModule) GetFromTaskId(taskId int) (isErr bool, task *models.Task) {
+func (self *TasksModule) GetFromTaskId(taskId int, projectId int) (isErr bool, task *models.Task) {
 		self.dbLock.Lock()
 	defer self.dbLock.Unlock()
 	rows, err := self.db.Query(`SELECT
@@ -162,7 +162,7 @@ func (self *TasksModule) GetFromTaskId(taskId int) (isErr bool, task *models.Tas
 FROM todo_list todo
   INNER JOIN users u1 ON u1.uuid = todo.creator
   INNER JOIN users u2 ON u2.uuid = todo.assign
-WHERE todo.id = ?;`, taskId)
+WHERE todo.id = ? AND todo.project = ?;`, taskId, projectId)
 
 	if err != nil {
 		return true, nil

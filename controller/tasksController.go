@@ -234,6 +234,13 @@ func (self TasksController) GetViewFromTaskId(c *gin.Context) {
 		return
 	}
 	taskId := int(taskIdTmp)
+	projectIdTmp, err := strconv.ParseInt(c.Param("projectId"), 10, 64)
+	if err != nil {
+		getResult.Message = "invalid projectId"
+		c.JSON(http.StatusOK, getResult)
+		return
+	}
+	projectId := int(projectIdTmp)
 
 	loginModule := module.NewLoginModule(self.DB)
 	isError, userUuid := loginModule.GetUserId(c, self.Session)
@@ -245,7 +252,7 @@ func (self TasksController) GetViewFromTaskId(c *gin.Context) {
 	}
 
 	taskModule := module.NewTaskModule(self.DB)
-	isErr, task := taskModule.GetFromTaskId(taskId)
+	isErr, task := taskModule.GetFromTaskId(taskId, projectId)
 	if isErr {
 		getResult.Message = "unknown taskId"
 		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)

@@ -51,7 +51,7 @@ func Init(db *sql.DB) *gin.Engine {
 		views := tasks.Group("/view")
 		{
 			views.GET("/createDate/:createDate", themsController.TasksController{baseController}.GetView)
-			views.GET("/taskId/:taskId", themsController.TasksController{baseController}.GetViewFromTaskId)
+			views.GET("/taskId/:taskId/:projectId", themsController.TasksController{baseController}.GetViewFromTaskId)
 		}
 	}
 
