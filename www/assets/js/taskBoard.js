@@ -36,6 +36,15 @@ class TaskBoard {
                 document.location.pathname.split("/").pop() // get projectId
             );
         }
+
+        window.addEventListener("hashchange", function() {
+            if (document.location.hash !== "") {
+                TaskDetail.loadAndShowFromTaskId(
+                    document.location.hash.replace("#", ""),
+                    document.location.pathname.split("/").pop() // get projectId
+                );
+            }
+        }, false);
     }
 }
 

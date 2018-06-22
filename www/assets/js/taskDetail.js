@@ -13,23 +13,22 @@ export default class TaskDetail {
         backView.show();
 
         backView.addWithHideElem(taskPopup);
+        window.addEventListener("hashchange", function() {
+                if (document.location.hash === "") {
+                    backView.hide();
+                }
+            }, false
+        );
     }
 
     static load(createDate) {
-        let loadView = new LoadingView();
-        loadView.isDisporse = true;
-        loadView.show();
-
         TaskApi.GetTaskFromCreateDate(createDate).then(function (json) {
             if (!json.success) {
                 console.error("API ERROR");
-                loadView.hide();
                 return
             }
 
-            TaskDetail.set(json.task);
-
-            loadView.hide();
+            TaskDetail.replaceUrlHash(json.task.taskId);
         });
     }
 
@@ -52,7 +51,7 @@ export default class TaskDetail {
     }
 
     static loadAndShow(createDate) {
-        this.show();
+        // this.show();
         this.load(createDate);
     }
 
