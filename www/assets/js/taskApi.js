@@ -33,8 +33,8 @@ export default class TaskApi {
         });
     }
 
-    static GetTaskFromTaskId(taskId) {
-        return fetch("/tasks/view/taskId/" + taskId, {
+    static GetTaskFromTaskId(taskId, projectId) {
+        return fetch(`/tasks/view/taskId/${taskId}/${projectId}`, {
             method: 'GET',
             credentials: "same-origin"
         }).then(function (response) {

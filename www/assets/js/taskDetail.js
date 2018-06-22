@@ -33,12 +33,12 @@ export default class TaskDetail {
         });
     }
 
-    static loadFromTaskId(taskId) {
+    static loadFromTaskId(taskId, projectId) {
         let loadView = new LoadingView();
         loadView.isDisporse = true;
         loadView.show();
 
-        TaskApi.GetTaskFromTaskId(taskId).then(function (json) {
+        TaskApi.GetTaskFromTaskId(taskId, projectId).then(function (json) {
             if (!json.success) {
                 console.error("API ERROR");
                 loadView.hide();
@@ -56,9 +56,9 @@ export default class TaskDetail {
         this.load(createDate);
     }
 
-    static loadAndShowFromTaskId(taskId) {
+    static loadAndShowFromTaskId(taskId, projectId) {
         TaskDetail.show();
-        TaskDetail.loadFromTaskId(taskId);
+        TaskDetail.loadFromTaskId(taskId, projectId);
     }
 
     static set(taskObject) {
