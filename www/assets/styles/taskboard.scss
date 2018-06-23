@@ -430,6 +430,7 @@ body {
         border: 0;
         border-bottom: solid 2px $accentColor;
         box-sizing: border-box;
+        padding: 0 12px;
 
         &[type=submit] {
             margin-top: 10px;
@@ -523,7 +524,8 @@ body {
         margin: 10px 0;
         background-color: rgba(black, .5);
 
-        #taskPopupProgressText {
+        #taskPopupProgressText,
+        #taskPopupDeadlineChange{
             width: 100%;
             height: 100%;
             text-align: center;
@@ -531,11 +533,18 @@ body {
             font-size: 14px;
             text-shadow: 0 0 2px rgba(black, .8);
         }
+        
+        #taskPopupDeadlineChange{
+            margin: 0;
+            z-index: 99;
+            text-align: left;
+        }
 
         #taskPopupProgressCurrent {
             background-color: $accentColor;
             margin-top: -$iconSize;
             width: 50%;
+            pointer-events: none;
 
             &.over {
                 background-color: $redColor;
@@ -553,8 +562,10 @@ body {
         &[readonly=""],
         &[readonly] {
             border: 0;
+            padding: 0;
 
-            &[type=submit] {
+            &[type=submit],
+            &[type=date]{
                 display: none;
             }
         }
