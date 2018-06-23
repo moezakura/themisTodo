@@ -1,7 +1,6 @@
 import BackView from "./backView"
 import LoadingView from "./loadingView";
 import TaskApi from "./taskApi";
-import ProjectUtils from "./projectUtils";
 
 export default class TaskDetail {
     static show() {
