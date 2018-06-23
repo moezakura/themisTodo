@@ -147,8 +147,8 @@ WHERE createDate = ?;`, createDate)
 func (self *TasksModule) Update(createDate int64, task *models.Task) (isErr bool) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
-	_, err := self.db.Exec("UPDATE `todo_list` SET `name` = ?, `deadline` = ?, `description` = ?, `status` = ? WHERE `createDate` = ?;",
-		task.Name, task.Deadline, task.Description, int(task.Status), createDate)
+	_, err := self.db.Exec("UPDATE `todo_list` SET `name` = ?, `deadline` = ?, `description` = ?, `status` = ?, `assign` = ? WHERE `createDate` = ?;",
+		task.Name, task.Deadline, task.Description, int(task.Status), task.Assign, createDate)
 
 	if err != nil {
 		log.Printf("TasksModule.Update Error: %+v\n", err)
