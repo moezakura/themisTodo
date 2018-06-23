@@ -31,7 +31,7 @@ class TaskAdd {
 
         document.querySelector("body").addEventListener("keydown", function (e) {
             if (e.keyCode === 27 && that.taskAddForm.classList.contains("shown"))
-                that.clickCloseForm();
+                that.clickCloseForm(that);
         }, true);
 
         this.createTaskBoard();
