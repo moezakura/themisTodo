@@ -138,10 +138,10 @@ export default class TaskDetail {
     static deadLineProgress(createDateNanon, deadLine){
         let createDate = Math.round(createDateNanon / 1000000),
             limitDate = (new Date(deadLine)).getTime(),
-            allDiff = limitDate - createDate,
-            limit = limitDate - (new Date()).getTime();
+            allDiff = Math.abs(limitDate - createDate),
+            limit = Math.abs(limitDate - (new Date()).getTime());
 
-        return Math.abs(limit / allDiff * 100);
+        return limit / allDiff * 100;
     }
 
     static editable(isEdit) {
