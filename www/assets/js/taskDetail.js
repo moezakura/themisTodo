@@ -98,6 +98,7 @@ export default class TaskDetail {
             taskPopupAssign = taskPopup.querySelector("#taskPopupAssign"),
             taskPopupCreatorIcon = taskPopup.querySelector("#taskPopupCreatorIcon"),
             taskPopupCreator = taskPopup.querySelector("#taskPopupCreator"),
+            taskPopupDeadlineChange = document.querySelector("#taskPopupDeadlineChange"),
             nowTime = new Date(),
             statusText = ["Todo", "Doing", "PullRequest", "Done"][taskObject.status];
 
@@ -110,18 +111,16 @@ export default class TaskDetail {
         {
             taskPopupProgressTextSpans[0].innerText = taskObject.deadline;
             taskPopupProgressTextSpans[1].innerText = "(あと" + taskObject.limitDate + "日)";
+            taskPopupDeadlineChange.value = taskObject.deadline;
 
-            let createDate = Math.round(taskObject.createDate / 1000000),
-                limitDate = (new Date(taskObject.deadline)).getTime(),
-                allDiff = limitDate - createDate,
-                limit = limitDate - (new Date()).getTime(),
-                progress = 100 - limit / allDiff * 100;
+            let progress = TaskDetail.deadLineProgress(taskObject.createDate, taskObject.deadline);
 
             let taskPopupProgressCurrent = document.querySelector("#taskPopupProgressCurrent");
             if (progress >= 100) {
                 progress = 100;
                 taskPopupProgressCurrent.classList.add("over");
             } else taskPopupProgressCurrent.classList.remove("over");
+
             taskPopupProgressCurrent.style.width = progress + "%";
         }
 
@@ -136,10 +135,24 @@ export default class TaskDetail {
         taskPopupDescription.value = taskObject.description;
     }
 
+    static deadLineProgress(createDateNanon, deadLine){
+        let createDate = Math.round(createDateNanon / 1000000),
+            limitDate = (new Date(deadLine)).getTime(),
+            allDiff = limitDate - createDate,
+            limit = limitDate - (new Date()).getTime();
+
+        return Math.abs(limit / allDiff * 100);
+    }
+
     static editable(isEdit) {
         let taskPopupInputs = taskPopup.querySelectorAll("input, textarea");
         taskPopupInputs.forEach(function (value) {
             value.readOnly = !isEdit;
         });
+
+        let taskPopupDeadlineChange = document.querySelector("#taskPopupDeadlineChange"),
+            taskPopupProgressText = document.querySelector("#taskPopupProgressText");
+        taskPopupDeadlineChange.style.display = isEdit ? "block" : "none";
+        taskPopupProgressText.style.display = isEdit ? "none" : "block";
     }
 }
