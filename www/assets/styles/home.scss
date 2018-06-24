@@ -6,7 +6,7 @@
     section {
         flex-grow: 1;
         margin: 0 10px;
-        width: 100%;
+        width: 33.3333%;
 
         * {
             justify-content: unset;
@@ -42,17 +42,28 @@
             }
         }
 
-        ul.joinProject {
-            display: block;
-            list-style: none;
-            margin: 0 0 0 15px;
-            padding: 0;
+        ul {
+            &.joinProject {
+                display: block;
+                list-style: none;
+                margin: 0 0 0 15px;
+                padding: 0;
 
-            li {
-                height: $buttonHeight;
-                line-height: $buttonHeight;
-                font-size: 16px;
-                letter-spacing: 1.2px;
+                li {
+                    height: $buttonHeight;
+                    line-height: $buttonHeight;
+                    font-size: 16px;
+                    letter-spacing: 1.2px;
+                }
+            }
+
+            &.taskList {
+                width: 100%;
+                li {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
             }
         }
     }
