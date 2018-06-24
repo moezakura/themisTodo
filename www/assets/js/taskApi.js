@@ -3,7 +3,7 @@ export default class TaskApi {
         return {
             "status": -1,
             "name": "",
-            "creator": -1,
+            "assign": -1,
             "creatorName": "",
             "id": -1,
             "deadline": "",

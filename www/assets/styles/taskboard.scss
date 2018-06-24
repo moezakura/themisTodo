@@ -372,6 +372,10 @@ body {
     box-shadow: 0 0 6px rgba(black, .5);
     z-index: 100;
 
+    .error, .success {
+        margin-top: 8px;
+    }
+
     h2 {
         height: $buttonHeight;
         line-height: $buttonHeight;
@@ -525,7 +529,7 @@ body {
         background-color: rgba(black, .5);
 
         #taskPopupProgressText,
-        #taskPopupDeadlineChange{
+        #taskPopupDeadlineChange {
             width: 100%;
             height: 100%;
             text-align: center;
@@ -533,8 +537,8 @@ body {
             font-size: 14px;
             text-shadow: 0 0 2px rgba(black, .8);
         }
-        
-        #taskPopupDeadlineChange{
+
+        #taskPopupDeadlineChange {
             margin: 0;
             z-index: 99;
             text-align: left;
@@ -565,7 +569,7 @@ body {
             padding: 0;
 
             &[type=submit],
-            &[type=date]{
+            &[type=date] {
                 display: none;
             }
         }

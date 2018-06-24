@@ -25,6 +25,11 @@ export default class TaskDetail {
         });
 
         taskPopupCloseButton.addEventListener("click", closeEventFunc, true);
+
+        let errorMessage = taskPopup.querySelector(".error"),
+            successMessage = taskPopup.querySelector(".success");
+        errorMessage.style.display = "none";
+        successMessage.style.display = "none";
     }
 
     static load(taskId) {
@@ -135,7 +140,7 @@ export default class TaskDetail {
         taskPopupDescription.value = taskObject.description;
     }
 
-    static deadLineProgress(createDateNanon, deadLine){
+    static deadLineProgress(createDateNanon, deadLine) {
         let createDate = Math.round(createDateNanon / 1000000),
             limitDate = (new Date(deadLine)).getTime(),
             allDiff = Math.abs(limitDate - createDate),
