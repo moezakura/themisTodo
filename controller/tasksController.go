@@ -95,7 +95,7 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		task.Deadline = updateRequest.Deadline
 	}
 
-	if updateRequest.Status > 0 && updateRequest.Status < 4 {
+	if updateRequest.Status >= 0 && updateRequest.Status < 4 {
 		task.Status = models.TaskStatus(updateRequest.Status)
 	}
 
