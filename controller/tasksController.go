@@ -225,16 +225,16 @@ func (self TasksController) GetView(c *gin.Context) {
 	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
 }
 
-func (self TasksController) GetViewFromTaskId(c *gin.Context) {
+func (self TasksController) GetSearch(c *gin.Context) {
 	getResult := &models.TaskGetResultJson{}
-	taskIdTmp, err := strconv.ParseInt(c.Param("taskId"), 10, 64)
+	taskIdTmp, err := strconv.ParseInt(c.Query("taskId"), 10, 64)
 	if err != nil {
 		getResult.Message = "invalid taskId"
 		c.JSON(http.StatusOK, getResult)
 		return
 	}
 	taskId := int(taskIdTmp)
-	projectIdTmp, err := strconv.ParseInt(c.Param("projectId"), 10, 64)
+	projectIdTmp, err := strconv.ParseInt(c.Query("projectId"), 10, 64)
 	if err != nil {
 		getResult.Message = "invalid projectId"
 		c.JSON(http.StatusOK, getResult)

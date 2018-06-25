@@ -48,11 +48,8 @@ func Init(db *sql.DB) *gin.Engine {
 	{
 		tasks.POST("/create", themsController.TasksController{baseController}.PostTaskCreate)
 		tasks.POST("/update/:createDate", themsController.TasksController{baseController}.PostUpdate)
-		views := tasks.Group("/view")
-		{
-			views.GET("/createDate/:createDate", themsController.TasksController{baseController}.GetView)
-			views.GET("/taskId/:taskId/:projectId", themsController.TasksController{baseController}.GetViewFromTaskId)
-		}
+		tasks.GET("/view/:createDate", themsController.TasksController{baseController}.GetView)
+		tasks.GET("/search", themsController.TasksController{baseController}.GetSearch)
 	}
 
 	//アカウント関連
