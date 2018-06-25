@@ -123,13 +123,20 @@ export default class TaskDetail {
             let taskPopupProgressCurrent = document.querySelector("#taskPopupProgressCurrent");
 
             taskPopupProgressCurrent.classList.remove("over", "limit1", "limit2", "limit3");
+            taskDetailTitle.classList.remove("over", "limit1", "limit2", "limit3");
+            let addClassName = "";
             if (taskObject.limitDate <= 0){
-                taskPopupProgressCurrent.classList.add("over");
+                addClassName = "over";
                 progress = 100;
             }
-            else if (taskObject.limitDate <= 1) taskPopupProgressCurrent.classList.add("limit1");
-            else if (taskObject.limitDate <= 2) taskPopupProgressCurrent.classList.add("limit2");
-            else if (taskObject.limitDate <= 3) taskPopupProgressCurrent.classList.add("limit3");
+            else if (taskObject.limitDate <= 1) addClassName = "limit1";
+            else if (taskObject.limitDate <= 2) addClassName = "limit2";
+            else if (taskObject.limitDate <= 3) addClassName = "limit3";
+
+            if(addClassName.length > 0){
+                taskPopupProgressCurrent.classList.add(addClassName);
+                taskDetailTitle.classList.add(addClassName);
+            }
 
             taskPopupProgressCurrent.style.width = (progress > 100 ? 100 : progress) + "%";
         }

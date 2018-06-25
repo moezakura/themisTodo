@@ -427,6 +427,22 @@ body {
             left: -15px;
             background-color: $accentColor;
         }
+
+        &.limit3::after {
+            background-color: rgba($orangeColor, .8);
+        }
+
+        &.limit2::after {
+            background-color: rgba($satOrangeColor, .8);
+        }
+
+        &.limit1::after {
+            background-color: $redColor;
+        }
+
+        &.over::after {
+            background-color: $redColor;
+        }
     }
 
     #taskPopupActions {
