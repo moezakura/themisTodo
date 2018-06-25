@@ -38,8 +38,9 @@ export default class ProjectUtils {
     static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate) {
         let parentLi = document.createElement("li");
         parentLi.dataset.id = createTime;
+        parentLi.dataset.taskId = taskId;
         parentLi.addEventListener("click", function(){
-            TaskDetail.loadAndShow(taskId);
+            TaskDetail.replaceUrlHash(taskId);
         });
 
         let nowTime = new Date();
