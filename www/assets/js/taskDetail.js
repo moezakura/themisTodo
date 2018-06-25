@@ -37,7 +37,7 @@ export default class TaskDetail {
         loadView.isDisporse = true;
         loadView.show();
 
-        TaskApi.GetTaskFromTaskId(taskId, projectId).then(function (json) {
+        TaskApi.GetSearch(taskId, projectId).then(function (json) {
             if (!json.success) {
                 console.error("API ERROR");
                 loadView.hide();

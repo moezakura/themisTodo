@@ -25,7 +25,7 @@ export default class TaskApi {
     }
 
     static GetTaskFromCreateDate(createDate) {
-        return fetch("/tasks/view/createDate/" + createDate, {
+        return fetch("/tasks/view/" + createDate, {
             method: 'GET',
             credentials: "same-origin"
         }).then(function (response) {
@@ -33,8 +33,8 @@ export default class TaskApi {
         });
     }
 
-    static GetTaskFromTaskId(taskId, projectId) {
-        return fetch(`/tasks/view/taskId/${taskId}/${projectId}`, {
+    static GetSearch(taskId, projectId) {
+        return fetch(`/tasks/search?taskId=${taskId}&projectId=${projectId}`, {
             method: 'GET',
             credentials: "same-origin"
         }).then(function (response) {
