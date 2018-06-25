@@ -35,13 +35,22 @@ export default class ProjectUtils {
         return parentLi;
     }
 
-    static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate) {
+    static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate, status) {
         let parentLi = document.createElement("li");
+        parentLi.id = "singleTask-" + createTime;
         parentLi.dataset.id = createTime;
         parentLi.dataset.taskId = taskId;
         parentLi.addEventListener("click", function(){
             TaskDetail.replaceUrlHash(taskId);
         });
+
+        if (status === undefined || status == null || status !== 3) {
+            if (limitDate <= 0) parentLi.classList.add("over");
+            else if (limitDate <= 1) parentLi.classList.add("limit1");
+            else if (limitDate <= 2) parentLi.classList.add("limit2");
+            else if (limitDate <= 3) parentLi.classList.add("limit3");
+        }
+
 
         let nowTime = new Date();
 
@@ -82,7 +91,11 @@ export default class ProjectUtils {
 
                 let taskLimitDeadRel = document.createElement("span");
                 taskLimitDeadRel.classList.add("deadlineDate");
-                taskLimitDeadRel.innerText = "あと" + limitDate + "日";
+
+                if (status === undefined || status == null || status !== 3)
+                    taskLimitDeadRel.innerText = "あと" + limitDate + "日";
+                else
+                    taskLimitDeadRel.innerText = "Completed!";
 
                 taskLimit.appendChild(taskLimitIcon);
                 taskLimit.appendChild(taskLimitDead);
@@ -96,6 +109,57 @@ export default class ProjectUtils {
         }
 
         return parentLi
+    }
+
+    /***
+     *
+     * @param createDate {Number}
+     * @param taskObject {Array}
+     */
+    static taskboadOnTaskUpdate(createDate, taskObject) {
+        let taskLi = document.querySelector("#singleTask-" + createDate);
+        if (taskLi === undefined || taskLi == null)
+            return;
+
+        let name = taskLi.querySelector(".taskTitle"),
+            assignName = taskLi.querySelector(".taskAssignName"),
+            assignIcon = taskLi.querySelector(".taskAssignIcon"),
+            deadlines = taskLi.querySelectorAll(".deadlineDate"),
+            deadlineDate = deadlines[0],
+            deadlineLimit = deadlines[1],
+            nowTime = new Date();
+
+        // task
+        {
+            taskLi.classList.remove("over", "limit1", "limit2", "limit3");
+            if (taskObject.status === undefined || taskObject.status == null || taskObject.status !== 3) {
+                if (taskObject.limitDate <= 0) taskLi.classList.add("over");
+                else if (taskObject.limitDate <= 1) taskLi.classList.add("limit1");
+                else if (taskObject.limitDate <= 2) taskLi.classList.add("limit2");
+                else if (taskObject.limitDate <= 3) taskLi.classList.add("limit3");
+            }
+        }
+
+        // name
+        {
+            name.innerText = taskObject.name;
+        }
+
+        // assign
+        {
+            assignName.innerText = taskObject.assignName;
+            assignIcon.style.backgroundImage = "url(\"/assets/accountIcon/" + task.assign + ".png?t=" + nowTime.getTime() + "\")";
+        }
+
+        // deadline
+        {
+            deadlineDate.innerText = taskObject.deadlineMD;
+
+            if (taskObject.status === undefined || taskObject.status == null || taskObject.status !== 3)
+                deadlineLimit.innerText = "あと" + taskObject.limitDate + "日";
+            else
+                deadlineLimit.innerText = "Completed!";
+        }
     }
 
     static clickObjectHide(e) {

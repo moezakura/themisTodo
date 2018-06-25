@@ -141,18 +141,34 @@ export default class TaskDetail {
 
         {
             taskPopupProgressTextSpans[0].innerText = taskObject.deadline;
-            taskPopupProgressTextSpans[1].innerText = "(あと" + taskObject.limitDate + "日)";
+            if (taskObject.status !== 3)
+                taskPopupProgressTextSpans[1].innerText = "(あと" + taskObject.limitDate + "日)";
+            else
+                taskPopupProgressTextSpans[1].innerText = "(Already Completed!)";
+
             taskPopupDeadlineChange.value = taskObject.deadline;
 
             let progress = TaskDetail.deadLineProgress(taskObject.createDate, taskObject.deadline);
 
             let taskPopupProgressCurrent = document.querySelector("#taskPopupProgressCurrent");
-            if (progress >= 100) {
-                progress = 100;
-                taskPopupProgressCurrent.classList.add("over");
-            } else taskPopupProgressCurrent.classList.remove("over");
 
-            taskPopupProgressCurrent.style.width = progress + "%";
+            taskPopupProgressCurrent.classList.remove("over", "limit1", "limit2", "limit3");
+            taskDetailTitle.classList.remove("over", "limit1", "limit2", "limit3");
+            let addClassName = "";
+            if (taskObject.limitDate <= 0) {
+                addClassName = "over";
+                progress = 100;
+            }
+            else if (taskObject.limitDate <= 1) addClassName = "limit1";
+            else if (taskObject.limitDate <= 2) addClassName = "limit2";
+            else if (taskObject.limitDate <= 3) addClassName = "limit3";
+
+            if (addClassName.length > 0 && taskObject.status !== 3) {
+                taskPopupProgressCurrent.classList.add(addClassName);
+                taskDetailTitle.classList.add(addClassName);
+            }
+
+            taskPopupProgressCurrent.style.width = (progress > 100 ? 100 : progress) + "%";
         }
 
         {
