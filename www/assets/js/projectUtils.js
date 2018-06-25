@@ -35,13 +35,15 @@ export default class ProjectUtils {
         return parentLi;
     }
 
-    static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate) {
+    static createTaskItem(createTime, name, taskId, assignName, assignIcon, deadLine, limitDate, status) {
         let parentLi = document.createElement("li");
         parentLi.dataset.id = createTime;
-        if(limitDate <= 0) parentLi.classList.add("over");
-        else if(limitDate <= 1) parentLi.classList.add("limit1");
-        else if(limitDate <= 2) parentLi.classList.add("limit2");
-        else if(limitDate <= 3) parentLi.classList.add("limit3");
+        if(status === undefined || status == null || status !== 3) {
+            if (limitDate <= 0) parentLi.classList.add("over");
+            else if (limitDate <= 1) parentLi.classList.add("limit1");
+            else if (limitDate <= 2) parentLi.classList.add("limit2");
+            else if (limitDate <= 3) parentLi.classList.add("limit3");
+        }
         parentLi.addEventListener("click", function(){
             TaskDetail.loadAndShow(createTime);
         });
