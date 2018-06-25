@@ -13,12 +13,16 @@ export default class TaskDetail {
 
         backView.addWithHideElem(taskPopup);
 
-        window.addEventListener("hashchange", function() {
-                if (document.location.hash === "") {
-                    backView.hide();
-                }
-            }, false
-        );
+        let isHashEmpty = function() {
+            if (document.location.hash === "") {
+                backView.hide();
+            }
+        };
+        backView.addHideEvent(function(){
+            window.removeEventListener("hashchange", isHashEmpty);
+        });
+
+        window.addEventListener("hashchange", isHashEmpty);
     }
 
     static loadFromTaskId(taskId, projectId) {
