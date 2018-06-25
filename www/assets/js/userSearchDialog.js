@@ -90,6 +90,12 @@ export default class UserSearchDialog {
                 elem.addEventListener("click", function (e) {
                     that.userClick(e, this);
                 });
+                elem.addEventListener("mouseenter", function (e) {
+                    that.mouseSelect(e, this, true);
+                });
+                elem.addEventListener("mouseleave", function (e) {
+                    that.mouseSelect(e, this, false);
+                });
                 that.userSelectUserList.appendChild(elem);
             });
         });
@@ -158,9 +164,23 @@ export default class UserSearchDialog {
         this.projectMemberAddSubmit(e, this);
     }
 
-    submit(){
+    submit() {
         let sendUuid = this.getUuid(this);
         this.sendEvent(sendUuid);
+    }
+
+    mouseSelect(e, _this, isOver) {
+        let elementsNodeList = this.userSelectUserList.querySelectorAll("li");
+        elementsNodeList.forEach(function (el) {
+            el.classList.remove("select");
+        });
+
+
+        let elements = [].slice.call(elementsNodeList);
+        this.selectUserIndex = elements.indexOf(_this);
+
+        if (isOver)
+            _this.classList.add("select");
     }
 
     setName(that) {
