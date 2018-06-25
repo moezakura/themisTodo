@@ -582,6 +582,18 @@ body {
             width: 50%;
             pointer-events: none;
 
+            &.limit3 {
+                background-color: rgba($orangeColor, .8);
+            }
+
+            &.limit2 {
+                background-color: rgba($satOrangeColor, .8);
+            }
+
+            &.limit1 {
+                background-color: $redColor;
+            }
+
             &.over {
                 background-color: $redColor;
             }
