@@ -13,6 +13,16 @@ export default class TaskDetail {
 
         backView.addWithHideElem(taskPopup);
 
+        window.addEventListener("hashchange", function() {
+                if (document.location.hash === "") {
+                    backView.hide();
+                }
+            }, false
+        );
+    }
+
+    static loadFromTaskId(taskId, projectId) {
+
         let taskPopupCloseButton = document.querySelector("#taskPopupCloseButton");
         let closeEventFunc = function () {
             backView.hide();
@@ -31,7 +41,7 @@ export default class TaskDetail {
         errorMessage.style.display = "none";
         successMessage.style.display = "none";
     }
-
+    
     static load(taskId) {
         TaskDetail.setEmpty(true);
         let taskPopup = document.querySelector("#taskPopup");
@@ -41,7 +51,7 @@ export default class TaskDetail {
         loadView.isDisporse = true;
         loadView.show();
 
-        TaskApi.GetTaskFromCreateDate(taskId).then(function (json) {
+        TaskApi.GetSearch(taskId, projectId).then(function (json) {
             if (!json.success) {
                 console.error("API ERROR");
                 loadView.hide();
@@ -49,14 +59,20 @@ export default class TaskDetail {
             }
 
             TaskDetail.set(json.task);
+            TaskDetail.replaceUrlHash(json.task.taskId);
 
             loadView.hide();
         });
     }
 
-    static loadAndShow(taskId) {
-        this.show();
-        this.load(taskId);
+    static loadAndShow(createDate) {
+        // this.show();
+        this.load(createDate);
+    }
+
+    static loadAndShowFromTaskId(taskId, projectId) {
+        TaskDetail.show();
+        TaskDetail.loadFromTaskId(taskId, projectId);
     }
 
     static setEmpty(readOnly) {
@@ -138,6 +154,16 @@ export default class TaskDetail {
         }
 
         taskPopupDescription.value = taskObject.description;
+
+        TaskDetail.replaceUrlHash(taskObject.taskId);
+    }
+
+    static replaceUrlHash(taskId) {
+        window.location.hash = taskId;
+    }
+
+    static refreshUrlHash() {
+        window.location.hash = "";
     }
 
     static deadLineProgress(createDateNanon, deadLine) {

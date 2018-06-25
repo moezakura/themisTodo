@@ -234,3 +234,52 @@ func (self TasksController) GetView(c *gin.Context) {
 
 	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
 }
+
+func (self TasksController) GetSearch(c *gin.Context) {
+	getResult := &models.TaskGetResultJson{}
+	taskIdTmp, err := strconv.ParseInt(c.Query("taskId"), 10, 64)
+	if err != nil {
+		getResult.Message = "invalid taskId"
+		c.JSON(http.StatusOK, getResult)
+		return
+	}
+	taskId := int(taskIdTmp)
+	projectIdTmp, err := strconv.ParseInt(c.Query("projectId"), 10, 64)
+	if err != nil {
+		getResult.Message = "invalid projectId"
+		c.JSON(http.StatusOK, getResult)
+		return
+	}
+	projectId := int(projectIdTmp)
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		getResult.Message = "invalid token"
+		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, task := taskModule.GetFromTaskId(taskId, projectId)
+	if isErr {
+		getResult.Message = "unknown taskId"
+		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	projectsModule := module.NewProjectsModule(self.DB)
+	isIn := projectsModule.IsIn(userUuid, task.ProjectId)
+	if !isIn {
+		getResult.Message = "permission denied"
+		themisView.TasksView{}.GetView(c, http.StatusForbidden, getResult)
+		return
+	}
+
+	taskTemp := utils.TaskConvert(task)
+	getResult.Success = true
+	getResult.Task = models.NewTaskOfJson(*taskTemp)
+
+	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
+}

@@ -33,6 +33,15 @@ export default class TaskApi {
         });
     }
 
+    static GetSearch(taskId, projectId) {
+        return fetch(`/tasks/search?taskId=${taskId}&projectId=${projectId}`, {
+            method: 'GET',
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        });
+    }
+
     static Create(taskJson){
         return fetch("/tasks/create", {
             method: 'POST',
