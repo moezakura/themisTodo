@@ -9,6 +9,7 @@ export default class UserSearchDialog {
         this.target = target;
         this.userSelectUserList = UserSearchDialog.createSearchBox();
         this.sendEvent = config.forceSubmit;
+        this.userSelectEvent = config.userSelect;
         this.singleEnter = config.singleEnter === true;
         this.isIn = config.isIn === true;
         let that = this;
@@ -35,7 +36,7 @@ export default class UserSearchDialog {
         return getUuid(this);
     }
 
-    hide(){
+    hide() {
         this.userSelectUserList.style.display = "none";
     }
 
@@ -47,7 +48,9 @@ export default class UserSearchDialog {
             return;
         }
 
-        if (e.keyCode === 38 || e.keyCode === 40 || e.keyCode === 13) return;
+        // up, down, escape, enter key down
+        if (e.keyCode === 38 || e.keyCode === 40 | e.keyCode === 27 || e.keyCode === 13)
+            return;
 
         if (inputText !== that.oldSearchInput) {
             that.selectUserIndex = -1;
@@ -97,7 +100,12 @@ export default class UserSearchDialog {
             //down key
             that.selectUserIndex++;
             if (that.selectUserIndex > that.searchResult.length - 1) that.selectUserIndex = 0;
+        } else if (e.keyCode === 27) {
+            //escape key
+            that.userSelectUserList.style.display = "none";
+            return;
         } else if (e.keyCode === 13) {
+            //enter key
             this.projectMemberAddSubmit(e, that);
             return;
         } else return;
@@ -121,7 +129,10 @@ export default class UserSearchDialog {
 
     projectMemberAddSubmit(e, that) {
         e.preventDefault();
-        if(!that.selectMode || this.singleEnter){
+        if (that.userSelectEvent !== undefined || that.userSelectEvent != null)
+            that.userSelectEvent(that.getUuid(that));
+
+        if (!that.selectMode || this.singleEnter) {
             let sendUuid = that.getUuid(that);
             that.sendEvent(sendUuid);
             that.userSelectUserList.style.display = "none";
@@ -134,7 +145,7 @@ export default class UserSearchDialog {
         }
     }
 
-    setName(that){
+    setName(that) {
         if (!(that.selectUserIndex < 0 || that.selectUserIndex < 0 || that.selectUserIndex > that.searchResult.length - 1))
             that.target.value = that.searchResult[that.selectUserIndex].name;
     }

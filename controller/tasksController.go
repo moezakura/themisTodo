@@ -74,6 +74,7 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 	}
 
 	taskModule := module.NewTaskModule(self.DB)
+	projectModule := module.NewProjectsModule(self.DB)
 	isErr, task := taskModule.Get(createdTime)
 
 	if isErr {
@@ -94,8 +95,17 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		task.Deadline = updateRequest.Deadline
 	}
 
-	if updateRequest.Status > 0 || updateRequest.Status < 4 {
+	if updateRequest.Status > 0 && updateRequest.Status < 4 {
 		task.Status = models.TaskStatus(updateRequest.Status)
+	}
+
+	if updateRequest.Assign > 0 {
+		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId){
+			updateResult.Message = "invalid assign id"
+			themisView.TasksView{}.PostUpdate(c, updateResult)
+			return
+		}
+		task.Assign = updateRequest.Assign
 	}
 
 	taskModule.Update(createdTime, task)

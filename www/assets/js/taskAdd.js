@@ -31,7 +31,7 @@ class TaskAdd {
 
         document.querySelector("body").addEventListener("keydown", function (e) {
             if (e.keyCode === 27 && that.taskAddForm.classList.contains("shown"))
-                that.clickCloseForm();
+                that.clickCloseForm(that);
         }, true);
 
         this.createTaskBoard();
@@ -56,7 +56,8 @@ class TaskAdd {
             let taskElem = ProjectUtils.createTaskItem(task.createDate, task.name, task.taskId, task.assignName,
                 task.assign, task.deadlineMD, task.limitDate);
 
-            document.taskBoard.taskBoardLists[task.status].appendChild(taskElem);
+            if(document.taskBoard.taskBoardLists[task.status] !== undefined && document.taskBoard.taskBoardLists[task.status] != null)
+                document.taskBoard.taskBoardLists[task.status].appendChild(taskElem);
         });
     }
 
