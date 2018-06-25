@@ -148,7 +148,7 @@ export default class ProjectUtils {
         // assign
         {
             assignName.innerText = taskObject.assignName;
-            assignIcon.style.backgroundImage = "url(\"/assets/accountIcon/" + task.assign + ".png?t=" + nowTime.getTime() + "\")";
+            assignIcon.style.backgroundImage = "url(\"/assets/accountIcon/" + taskObject.assign + ".png?t=" + nowTime.getTime() + "\")";
         }
 
         // deadline
