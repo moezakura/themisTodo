@@ -22,6 +22,8 @@ export default class TaskDetail {
     }
 
     static loadFromTaskId(taskId, projectId) {
+        let backView = new BackView();
+        backView.isDisporse = true;
 
         let taskPopupCloseButton = document.querySelector("#taskPopupCloseButton");
         let closeEventFunc = function () {
@@ -40,6 +42,8 @@ export default class TaskDetail {
             successMessage = taskPopup.querySelector(".success");
         errorMessage.style.display = "none";
         successMessage.style.display = "none";
+
+        TaskDetail.load(taskId);
     }
     
     static load(taskId) {

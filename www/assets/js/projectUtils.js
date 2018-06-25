@@ -39,7 +39,7 @@ export default class ProjectUtils {
         let parentLi = document.createElement("li");
         parentLi.dataset.id = createTime;
         parentLi.addEventListener("click", function(){
-            TaskDetail.loadAndShow(createTime);
+            TaskDetail.loadAndShow(taskId);
         });
 
         let nowTime = new Date();
