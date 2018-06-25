@@ -8,6 +8,7 @@ export default class UserSearchDialog {
         this.searchResult = [];
         this.target = target;
         this.userSelectUserList = UserSearchDialog.createSearchBox();
+        this.selectedUserId = -1;
         this.sendEvent = config.forceSubmit;
         this.userSelectEvent = config.userSelect;
         this.singleEnter = config.singleEnter === true;
@@ -86,6 +87,9 @@ export default class UserSearchDialog {
             that.userSelectUserList.innerHTML = "";
             json.forEach(function (value) {
                 let elem = ProjectUtils.createUserListLine(value.uuid, value.name, value.displayName);
+                elem.addEventListener("click", function (e) {
+                    that.userClick(e, this);
+                });
                 that.userSelectUserList.appendChild(elem);
             });
         });
@@ -132,6 +136,8 @@ export default class UserSearchDialog {
         if (that.userSelectEvent !== undefined || that.userSelectEvent != null)
             that.userSelectEvent(that.getUuid(that));
 
+        this.selectedUserId = that.getUuid(that);
+
         if (!that.selectMode || this.singleEnter) {
             let sendUuid = that.getUuid(that);
             that.sendEvent(sendUuid);
@@ -143,6 +149,18 @@ export default class UserSearchDialog {
             that.userSelectUserList.style.display = "none";
             that.selectMode = false;
         }
+    }
+
+    userClick(e, _this) {
+        let elements = [].slice.call(this.userSelectUserList.querySelectorAll("li"));
+        this.selectUserIndex = elements.indexOf(_this);
+        this.selectMode = true;
+        this.projectMemberAddSubmit(e, this);
+    }
+
+    submit(){
+        let sendUuid = this.getUuid(this);
+        this.sendEvent(sendUuid);
     }
 
     setName(that) {
