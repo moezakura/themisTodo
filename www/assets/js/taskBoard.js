@@ -30,6 +30,9 @@ class TaskBoard {
             });
         }
 
+        if(this.taskBoardLists[0] === undefined || this.taskBoardLists[0] == null)
+            return;
+
         if (document.location.hash !== "") {
             TaskDetail.loadAndShowFromTaskId(
                 document.location.hash.replace("#", ""),
