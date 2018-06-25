@@ -119,7 +119,7 @@ export default class TaskDetail {
                 taskPopupProgressTextSpans[1].innerText = "(あと" + taskObject.limitDate + "日)";
             else
                 taskPopupProgressTextSpans[1].innerText = "(Already Completed!)";
-            
+
             taskPopupDeadlineChange.value = taskObject.deadline;
 
             let progress = TaskDetail.deadLineProgress(taskObject.createDate, taskObject.deadline);

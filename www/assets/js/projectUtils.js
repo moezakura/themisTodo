@@ -87,7 +87,11 @@ export default class ProjectUtils {
 
                 let taskLimitDeadRel = document.createElement("span");
                 taskLimitDeadRel.classList.add("deadlineDate");
-                taskLimitDeadRel.innerText = "あと" + limitDate + "日";
+
+                if(status === undefined || status == null || status !== 3)
+                    taskLimitDeadRel.innerText = "あと" + limitDate + "日";
+                else
+                    taskLimitDeadRel.innerText = "Completed!";
 
                 taskLimit.appendChild(taskLimitIcon);
                 taskLimit.appendChild(taskLimitDead);
