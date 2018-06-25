@@ -48,7 +48,7 @@ class TaskEdit {
         }, true);
 
         this.taskForm.deadline.addEventListener("change", function () {
-            TaskEdit.taskDeadlineChange(that.taskPopup.dataset.taskId, this.value);
+            TaskEdit.taskDeadlineChange(that.taskPopup.dataset.taskCreatedDate, this.value);
         });
 
         this.taskPopup.addEventListener("submit", function (e) {
@@ -112,7 +112,8 @@ class TaskEdit {
 
         this.hideError();
         this.hideSuccess();
-        let createDate = this.taskPopup.dataset.taskId;
+        let createDate = this.taskPopup.dataset.taskCreatedDate;
+        let taskId = this.taskPopup.dataset.taskId;
         let updateTask = this.getTaskObjectFromDetailForm();
 
         let that = this;
@@ -123,7 +124,7 @@ class TaskEdit {
                 that.showSuccess();
                 TaskDetail.editable(false);
             }
-            TaskDetail.load(createDate);
+            TaskDetail.load(taskId);
             loadView.hide();
         });
     }

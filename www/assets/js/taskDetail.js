@@ -127,6 +127,8 @@ export default class TaskDetail {
             nowTime = new Date(),
             statusText = ["Todo", "Doing", "PullRequest", "Done"][taskObject.status];
 
+        taskPopup.dataset.taskCreatedDate = taskObject.createDate;
+
         this.editable(false);
         taskDetailTitle.innerText = statusText + " Task Detail";
 
