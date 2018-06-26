@@ -5,12 +5,22 @@ import (
 	"fmt"
 	"os/exec"
 	"os"
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+	"time"
 )
 
 const usage string =
  	"Usage: migration [COMMAND] [OPTION...]\n\n" +
 	"  init [FILE]           initialize database by [FILE]\n" +
 	"  help | -h | --help    display this help and exit"
+
+const migrationTable string =
+	"CREATE TABLE IF NOT EXISTS `_migration` (" +
+	"`app` varchar(16) NOT NULL," +
+	"`name` varchar(16) NOT NULL," +
+	"`modified_at` bigint(20) NOT NULL" +
+	") ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;"
 
 var (
 	mysql_username string
@@ -52,6 +62,25 @@ func initDatabase(baseSql string) error {
 	return nil
 }
 
+func getDbConn() (*sql.DB, error) {
+	connectText := fmt.Sprintf("%s:%s@/%s", mysql_username, mysql_password, mysql_db_name)
+	return sql.Open("mysql", connectText)
+}
+
+// マイグレーションを記録するDBの初期化
+func initMigrationDatabase(db *sql.DB) error {
+	if _, err := db.Exec(migrationTable); err != nil {
+		return err
+	}
+	updatedAt := time.Now().Unix()
+	query := "INSERT INTO `_migration` (`app`, `name`, `modified_at`) VALUES ('themis_todo', 'base', ?);"
+	if _, err := db.Exec(query, updatedAt);
+		err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
 	if err := initEnv(); err != nil {
 		fmt.Println(err.Error())
@@ -71,6 +100,12 @@ func main() {
 			os.Exit(1)
 		}
 		if err := initDatabase(baseSql); err != nil {
+			panic(err)
+		}
+		db, err := getDbConn()
+		if err != nil { panic(err) }
+		defer db.Close()
+		if err := initMigrationDatabase(db); err != nil {
 			panic(err)
 		}
 	case "-h", "--help", "help":
