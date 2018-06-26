@@ -1,10 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os/exec"
 	"os"
-	"github.com/pkg/errors"
 )
 
 const usage string =
@@ -12,19 +12,33 @@ const usage string =
 	"  init [FILE]           initialize database by [FILE]\n" +
 	"  help | -h | --help    display this help and exit"
 
+var (
+	mysql_username string
+	mysql_password string
+	mysql_db_name  string
+)
+
+func initEnv() error {
+	mysql_username = os.Getenv("MYSQL_USERNAME")
+	mysql_password = os.Getenv("MYSQL_PASSWORD")
+	mysql_db_name = os.Getenv("MYSQL_DB_NAME")
+	switch {
+	case mysql_username == "":
+		return errors.New("Environment variable `MYSQL_USERNAME` not found.")
+	case mysql_db_name == "":
+		return errors.New("Environment variable `MYSQL_DB_NAME` not found.")
+	}
+	return nil
+}
+
 // データベース初期化
 // baseSql: 最初のデータベース定義をするフィアル
 func initDatabase(baseSql string) error {
 	var mysqlCommand string
-	mysql_username := os.Getenv("MYSQL_USERNAME")
-	mysql_password := os.Getenv("MYSQL_PASSWORD")
-	switch {
-	case mysql_username == "":
-		return errors.New("Environment variable `MYSQL_USERNAME` not found.")
-	case mysql_password == "":
+	if mysql_password == "" {
 		mysqlCommand = fmt.Sprintf("mysql -u%s < %s",
 			mysql_username, baseSql)
-	default:
+	} else {
 		mysqlCommand = fmt.Sprintf("mysql -u%s -p%s < %s",
 			mysql_username, mysql_password, baseSql)
 
@@ -39,11 +53,15 @@ func initDatabase(baseSql string) error {
 }
 
 func main() {
+	if err := initEnv(); err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
+
 	if len(os.Args) < 2 {
 		fmt.Println(usage)
 		os.Exit(1)
 	}
-
 	switch command := os.Args[1]; command {
 	case "init":
 		if len(os.Args) < 3 { fmt.Println(usage); os.Exit(1) }
