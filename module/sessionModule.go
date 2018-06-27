@@ -2,75 +2,56 @@ package module
 
 import (
 	"time"
-	"sync"
+	jwt "github.com/dgrijalva/jwt-go"
+	"log"
+	"fmt"
 )
 
 type SessionModule struct {
-	Session sync.Map
 }
 
 type Session struct {
-	Uuid     int
-	Limit    int64
-	LifeTime int
+	Uuid int
+	jwt.StandardClaims
 }
 
 func NewSessionModule() *SessionModule {
-	self := &SessionModule{
-		sync.Map{},
-	}
-	go self.background()
+	self := &SessionModule{}
 	return self
 }
 
-func (self *SessionModule) background() {
-	for {
-		sessionTemp := sync.Map{}
-		self.Session.Range(func(key, value interface{}) bool {
-			sessionTemp.Store(key, value)
-			return true
-		})
-		now := time.Now().Unix()
-
-		self.Session.Range(func(key, _value interface{}) bool {
-			value := _value.(*Session)
-			if value.Limit < now {
-				self.Session.Delete(key)
-			}
-			return true
-		})
-
-		time.Sleep(1 * time.Second)
+func (self *SessionModule) GetToken (uuid int) string {
+	userSession := &Session{
+		uuid,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().AddDate(0, 0, 7).Unix(),
+			IssuedAt: time.Now().Unix(),
+		},
 	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, userSession)
+	tokenStr, err := token.SignedString([]byte("foobar"))
+	if err != nil {
+		log.Printf("Error SessionModule.GetToken: %+v", err)
+	}
+	return tokenStr
 }
 
-func (self *SessionModule) Add(key string, uuid, limit int) {
-	now := time.Now().Unix()
-	self.Session.Store(key, &Session{uuid, now + int64(limit), limit})
-}
+func (self *SessionModule) GetUuid(tokenStr string) (isExist bool, uuid int) {
+	userSession := Session{}
+	token, err := jwt.ParseWithClaims(tokenStr, &userSession, func(token *jwt.Token) (interface{}, error) {
+		return []byte("foobar"), nil
+	})
 
-func (self *SessionModule) GetUuid(key string) (isExist bool, uuid int) {
-	now := time.Now().Unix()
-
-	if _value, ok := self.Session.Load(key); ok {
-		value := _value.(*Session)
-		if value.Limit >= now {
-			return true, value.Uuid
-		} else {
-			return false, 0
-		}
+	if err != nil{
+		return false, 0
 	}
+
+	if claims, ok := token.Claims.(*Session); ok && token.Valid {
+		return true ,claims.Uuid
+	} else {
+		fmt.Println(err)
+	}
+
 	return false, 0
-}
-
-func (self *SessionModule) UpdateTime(key string) {
-	now := time.Now().Unix()
-
-	if _value, ok := self.Session.Load(key); ok {
-		value := _value.(*Session)
-		if value.Limit >= now {
-			value.Limit = now + int64(value.LifeTime)
-			self.Session.Store(key, value)
-		}
-	}
 }
