@@ -44,13 +44,33 @@ module.exports = {
                     }
                 ],
             },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            {
+                test: /\.js$/,
+                loader: 'babel-loader?optional[]=runtime',
+                options: {
+                    presets: [
+                        ['env', { 'modules': false }]
+                    ]
+                },
+                exclude: /node_modules/
+            },
         ]
+    },
+    resolve: {
+        extensions: ['*', '.js', '.vue', '.json'],
+        alias: {
+            vue: 'vue/dist/vue.js'
+        }
     },
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-    ],
-};
+    ]
+}
 if (module.hot) {
     module.hot.accept();
 }
