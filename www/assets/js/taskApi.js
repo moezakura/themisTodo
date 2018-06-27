@@ -21,6 +21,8 @@ export default class TaskApi {
                 return 2;
             case "done":
                 return 3;
+            case "hide":
+                return 4;
         }
     }
 

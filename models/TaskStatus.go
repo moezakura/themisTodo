@@ -7,6 +7,7 @@ const (
 	TASK_STATUS_DOING
 	TASK_STATUS_PULL_REQUEST
 	TASK_STATUS_DONE
+	TASK_STATUS_HIDE
 	TASK_STATUS_OTHER
 )
 
@@ -20,6 +21,8 @@ func (rm TaskStatus) String() string {
 		return "PULL_REQUEST"
 	case TASK_STATUS_DONE:
 		return "DONE"
+	case TASK_STATUS_HIDE:
+		return "HIDE"
 	case TASK_STATUS_OTHER:
 		return "OTHER"
 	default:

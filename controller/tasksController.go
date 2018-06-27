@@ -95,12 +95,13 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		task.Deadline = updateRequest.Deadline
 	}
 
-	if updateRequest.Status >= 0 && updateRequest.Status < 4 {
+	taskStatus := models.TaskStatus(updateRequest.Status)
+	if taskStatus.String() != "OTHER" && taskStatus.String() != "Unknown" {
 		task.Status = models.TaskStatus(updateRequest.Status)
 	}
 
 	if updateRequest.Assign > 0 {
-		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId){
+		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId) {
 			updateResult.Message = "invalid assign id"
 			themisView.TasksView{}.PostUpdate(c, updateResult)
 			return
