@@ -17,3 +17,7 @@ func (self TasksView) PostUpdate(c *gin.Context, json *models.TaskUpdateResultJs
 func (self TasksView) GetView(c *gin.Context, statusCode int, json *models.TaskGetResultJson) {
 	c.JSON(statusCode, json)
 }
+
+func (self TasksView) GetMy(c *gin.Context, statusCode int, json *models.TasksGetResultJson) {
+	c.JSON(statusCode, json)
+}
