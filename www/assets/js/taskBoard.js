@@ -1,5 +1,6 @@
 import TaskApi from "./taskApi"
 import TaskDetail from "./taskDetail";
+import ProjectUtils from "./projectUtils";
 
 class TaskBoard {
     constructor() {
@@ -24,7 +25,9 @@ class TaskBoard {
 
                     task.status = TaskApi.stringToIntStatus(statusStr);
 
-                    TaskApi.Update(targetCreateId, task);
+                    TaskApi.Update(targetCreateId, task).then(function(json){
+                        TaskBoard.loadTask(targetCreateId);
+                    });
                 },
                 animation: 100
             });
@@ -48,6 +51,19 @@ class TaskBoard {
                 );
             }
         }, false);
+    }
+
+    /***
+     *
+     * @param createDate {Number}
+     */
+    static loadTask(createDate){
+        TaskApi.GetTaskFromCreateDate(createDate).then(function(json){
+            if(json.success){
+                let task = json.task;
+                ProjectUtils.taskboadOnTaskUpdate(task.createDate, task);
+            }else location.reload();
+        });
     }
 }
 
