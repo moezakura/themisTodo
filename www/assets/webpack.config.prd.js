@@ -57,7 +57,7 @@ module.exports = {
                     ]
                 },
                 exclude: /node_modules/
-            },:
+            },
         ]
     },
     resolve: {
@@ -69,8 +69,8 @@ module.exports = {
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-    ],
-};
+    ]
+}
 if (module.hot) {
     module.hot.accept();
 }
