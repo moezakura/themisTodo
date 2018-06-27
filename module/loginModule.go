@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type LoginModule struct {
@@ -53,7 +54,6 @@ func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool,
 		return true, 0
 	}
 
-
 	if uuid < 1 {
 		return true, 0
 	} else {
@@ -61,7 +61,7 @@ func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool,
 	}
 }
 
-func (self *LoginModule) GetUserId(c *gin.Context, session *SessionModule) (error bool, uuid int){
+func (self *LoginModule) GetUserId(c *gin.Context, session *SessionModule) (error bool, uuid int) {
 	token, err := c.Cookie("token")
 
 	if err != nil {
@@ -71,6 +71,18 @@ func (self *LoginModule) GetUserId(c *gin.Context, session *SessionModule) (erro
 	exist, userUuid := session.GetUuid(token)
 	if !exist {
 		return true, -1
+	}
+
+	tokenUpdateTime := time.Now().AddDate(0, 0, 2)
+	if session.GetExpires(token) < tokenUpdateTime.Unix() {
+		limitSec := 30 * 24 * 60 * 60
+		isErr, authToken := session.UpdateToken(token)
+
+		if isErr {
+			return false, userUuid
+		}
+
+		c.SetCookie("token", authToken, limitSec, "/", "", false, true)
 	}
 
 	return false, userUuid
