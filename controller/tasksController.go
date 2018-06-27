@@ -1,15 +1,16 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	themisView "../view"
-	"../models"
-	"../module"
-	"../utils"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"net/http"
+
+	"../models"
+	"../module"
+	"../utils"
+	themisView "../view"
+	"github.com/gin-gonic/gin"
 )
 
 type TasksController struct {
@@ -100,7 +101,7 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 	}
 
 	if updateRequest.Assign > 0 {
-		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId){
+		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId) {
 			updateResult.Message = "invalid assign id"
 			themisView.TasksView{}.PostUpdate(c, updateResult)
 			return
@@ -282,4 +283,37 @@ func (self TasksController) GetSearch(c *gin.Context) {
 	getResult.Task = models.NewTaskOfJson(*taskTemp)
 
 	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
+}
+
+func (self TasksController) GetMy(c *gin.Context) {
+	getResult := &models.TasksGetResultJson{}
+	taskStatus, err := models.StringToTaskStatus(c.Query("status"))
+	if err != nil {
+		getResult.Message = "Unknown task status"
+		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		getResult.Message = "invalid token"
+		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, tasks := taskModule.GetTasksFromUser(userUuid, 20, taskStatus)
+	if isErr {
+		getResult.Message = "unknown taskId"
+		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	tasksTemp := utils.TasksConvert(tasks)
+	getResult.Success = true
+	getResult.Task = models.NewTasksOfJson(tasksTemp)
+
+	themisView.TasksView{}.GetMy(c, http.StatusOK, getResult)
 }
