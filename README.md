@@ -79,7 +79,7 @@ go get -u github.com/olahol/go-imageupload
 Move config.go.example to config.go and modify your mysql config.  
 ※ config.go will be replaced in the future by environment.  
 
-#### Statup debug server
+#### Build server
 
 ```
 go build
