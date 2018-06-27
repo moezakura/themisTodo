@@ -85,3 +85,12 @@ func (self *SessionModule) GetUuid(tokenStr string) (isExist bool, uuid int) {
 
 	return false, 0
 }
+
+func (self *SessionModule) UpdateToken(tokenStr string) (isError bool, resToken string) {
+	isExist, uuid := self.GetUuid(tokenStr)
+	if !isExist {
+		return true, ""
+	}
+
+	return false, self.GetToken(uuid)
+}
