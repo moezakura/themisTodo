@@ -59,17 +59,18 @@ export default class TaskDetail {
         loadView.isDisporse = true;
         loadView.show();
 
-        TaskApi.GetSearch(taskId, projectId).then(function (json) {
+        return TaskApi.GetSearch(taskId, projectId).then(function (json) {
             if (!json.success) {
                 console.error("API ERROR");
                 loadView.hide();
-                return
+                return null;
             }
 
             TaskDetail.set(json.task);
             TaskDetail.replaceUrlHash(json.task.taskId);
 
             loadView.hide();
+            return json.task;
         });
     }
 
