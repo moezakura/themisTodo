@@ -446,8 +446,8 @@ body {
     }
 
     #taskPopupActions {
-        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight * 2} - 20px);
-        width: $buttonHeight * 2;
+        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight * 3} - 20px);
+        width: $buttonHeight * 3;
 
         i {
             float: left;
