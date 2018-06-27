@@ -86,6 +86,19 @@ func (self *SessionModule) GetUuid(tokenStr string) (isExist bool, uuid int) {
 	return false, 0
 }
 
+func (self *SessionModule) GetExpires(tokenStr string) int64 {
+	userSession := Session{}
+	_, err := jwt.ParseWithClaims(tokenStr, &userSession, func(token *jwt.Token) (interface{}, error) {
+		return self.SecretByte, nil
+	})
+
+	if err != nil {
+		return 0
+	}
+
+	return userSession.ExpiresAt
+}
+
 func (self *SessionModule) UpdateToken(tokenStr string) (isError bool, resToken string) {
 	isExist, uuid := self.GetUuid(tokenStr)
 	if !isExist {
