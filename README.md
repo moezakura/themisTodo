@@ -27,6 +27,12 @@
 	- imageupload
 - Mysql or MariaDB
 
+## Create database
+
+```
+mysql -u root -p < data.sql
+```
+
 ## For Developers
 ### Develop Frontend
 ```
@@ -37,6 +43,7 @@ npm run start
 Start up webpack debug server "localhost:8652".
 
 ### Develop Backend
+
 #### Install library
 
 ```
