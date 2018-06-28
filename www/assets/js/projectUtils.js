@@ -125,6 +125,7 @@ export default class ProjectUtils {
         // status check and hide
         if(taskObject.status === TaskApi.GetTaskStatuses().STATUS_HIDE){
             taskLi.remove();
+            return;
         }
 
         let name = taskLi.querySelector(".taskTitle"),

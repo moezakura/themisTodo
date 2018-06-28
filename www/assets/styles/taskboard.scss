@@ -736,3 +736,69 @@ body {
         }
     }
 }
+#taskDeleteConfirmPopup{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: $minModernWidth;
+    background-color: $backgroundColor;
+    padding: 10px 20px 15px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 6px rgba(black, .5);
+    z-index: 100;
+
+    #taskDeleteConfirmPopupTitle {
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        font-size: 18px;
+        padding-left: 15px;
+        background-color: rgba(black, 0.5);
+        letter-spacing: 1.5px;
+        margin: -10px -20px 0 -20px;
+        -ms-text-align-last: right;
+        text-align: left;
+
+        &::after {
+            display: block;
+            position: relative;
+            content: " ";
+            width: 5px;
+            height: 100%;
+            top: -100%;
+            left: -15px;
+            background-color: $redColor;
+        }
+    }
+
+    .taskDeleteConfirmPopupText {
+        font-size: 14px;
+        letter-spacing: 2px;
+        line-height: 25px;
+        margin: 5px 0;
+    }
+
+    #taskDeleteConfirmPopupSelectButtons {
+        margin-top: 20px;
+
+        #taskDeleteConfirmPopupCancel {
+            background-color: transparent;
+            border-color:white;
+            margin-right: 2%;
+
+            &:hover{
+                background-color: rgba($accentColor, .3);
+            }
+        }
+
+        div {
+            float: left;
+            width: 49%;
+            margin: 0;
+            height: $buttonHeight - 5px;
+            line-height: $buttonHeight - 5px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+    }
+}

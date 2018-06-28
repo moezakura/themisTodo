@@ -74,6 +74,15 @@ export default class TaskApi {
         });
     }
 
+    static Delete(createDate) {
+        return fetch("/tasks/delete/" + createDate, {
+            method: 'POST',
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        });
+    }
+
     static Get(createDate) {
 
     }

@@ -119,9 +119,18 @@
     <p class="taskDeletePopupText"><strong>DELETE</strong>: Delete the task from the task board.<br>This operation can not be undone.</p>
     <div id="taskDeletePopupSelectButtons">
         <div id="taskDeletePopupHide" class="deleteButton" @click="clickHide">HIDE</div>
-        <div id="taskDeletePopupDelete" class="deleteButton">DELETE</div>
+        <div id="taskDeletePopupDelete" class="deleteButton" @click="clickDelete">DELETE</div>
     </div>
     <div class="both"></div>
+</div>
+<div id="taskDeleteConfirmPopup" v-show="taskDeleteConfirmPopupFlag">
+    <div id="taskDeleteConfirmPopupTitle">Delete confirm</div>
+    <p class="taskDeleteConfirmPopupText">Delete the task from the task board.</p>
+    <p class="taskDeleteConfirmPopupText">This operation can not be undone.</p>
+    <div id="taskDeleteConfirmPopupSelectButtons">
+        <div id="taskDeleteConfirmPopupDelete" class="deleteButton" @click="clickDelete">DELETE</div>
+        <div id="taskDeleteConfirmPopupCancel" class="deleteButton" @click="clickCancel">CANCEL</div>
+    </div>
 </div>
 <script type="application/javascript">
     const projectId = {{.Project.Uuid}};

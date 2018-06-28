@@ -6,6 +6,30 @@ import TaskBoard from "./taskBoard"
 if (document.querySelector("#taskPopup")) {
     let backViewLayer = new BackView();
 
+    let taskDeleteConfirmPopup = new Vue({
+        delimiters: ['${', '}'],
+        el: "#taskDeleteConfirmPopup",
+        data: {
+            taskDeleteConfirmPopupFlag: false,
+            taskName: "",
+            createDate: "",
+        },
+        methods: {
+            clickCancel() {
+                this.taskDeleteConfirmPopupFlag = false;
+                backViewLayer.hide();
+            },
+            clickDelete() {
+                let that = this,
+                    createDate = this.createDate;
+                TaskApi.Delete(createDate).then(function () {
+                    that.taskDeleteConfirmPopupFlag = false;
+                    backViewLayer.hide();
+                });
+            }
+        }
+    });
+
     let taskDeletePopup = new Vue({
         delimiters: ['${', '}'],
         el: '#taskDeletePopup',
@@ -15,17 +39,23 @@ if (document.querySelector("#taskPopup")) {
             createDate: "",
         },
         methods: {
-            clickHide(){
+            clickHide() {
                 let task = TaskApi.NewTaskObject();
                 let taskStatuses = TaskApi.GetTaskStatuses();
                 task.status = taskStatuses.STATUS_HIDE;
                 let that = this;
 
-                TaskApi.Update(this.createDate, task).then(function(json){
-                    TaskBoard.loadTask(that.createDate).then(function(){
+                TaskApi.Update(this.createDate, task).then(function (json) {
+                    TaskBoard.loadTask(that.createDate).then(function () {
                         that.clickClose();
                     });
                 });
+            },
+            clickDelete() {
+                this.clickClose();
+                taskDeleteConfirmPopup.taskDeleteConfirmPopupFlag = true;
+                taskDeleteConfirmPopup.createDate = this.createDate;
+                backViewLayer.show();
             },
             clickClose() {
                 this.taskDeletePopupFlag = false;
@@ -49,7 +79,8 @@ if (document.querySelector("#taskPopup")) {
         },
     });
 
-    backViewLayer.addHideEvent(function(){
+    backViewLayer.addHideEvent(function () {
         taskDeletePopup.taskDeletePopupFlag = false;
+        taskDeleteConfirmPopup.taskDeleteConfirmPopupFlag = false;
     });
 }
