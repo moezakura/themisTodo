@@ -722,7 +722,7 @@ body {
         #taskDeletePopupHide {
             background-color: transparent;
 
-            &:hover{
+            &:hover {
                 background-color: rgba($redColor, .3);
             }
         }
@@ -736,7 +736,8 @@ body {
         }
     }
 }
-#taskDeleteConfirmPopup{
+
+#taskDeleteConfirmPopup {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -783,12 +784,15 @@ body {
 
         #taskDeleteConfirmPopupCancel {
             background-color: transparent;
-            border-color:white;
-            margin-right: 2%;
+            border-color: white;
 
-            &:hover{
+            &:hover {
                 background-color: rgba($accentColor, .3);
             }
+        }
+
+        #taskDeleteConfirmPopupDelete {
+            margin-right: 2%;
         }
 
         div {
