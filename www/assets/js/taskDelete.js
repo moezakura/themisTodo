@@ -2,6 +2,7 @@ import Vue from 'vue';
 import BackView from "./backView";
 import TaskApi from "./taskApi";
 import TaskBoard from "./taskBoard"
+import ProjectUtils from "./projectUtils";
 
 if (document.querySelector("#taskPopup")) {
     let backViewLayer = new BackView();
@@ -25,6 +26,9 @@ if (document.querySelector("#taskPopup")) {
                 TaskApi.Delete(createDate).then(function () {
                     that.taskDeleteConfirmPopupFlag = false;
                     backViewLayer.hide();
+                    return createDate;
+                }).then(function(createDate){
+                    ProjectUtils.taskboadOnTaskDelete(createDate);
                 });
             }
         }

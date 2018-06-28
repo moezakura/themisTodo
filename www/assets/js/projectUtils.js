@@ -41,7 +41,7 @@ export default class ProjectUtils {
         parentLi.id = "singleTask-" + createTime;
         parentLi.dataset.id = createTime;
         parentLi.dataset.taskId = taskId;
-        parentLi.addEventListener("click", function(){
+        parentLi.addEventListener("click", function () {
             TaskDetail.replaceUrlHash(taskId);
         });
 
@@ -123,7 +123,7 @@ export default class ProjectUtils {
             return;
 
         // status check and hide
-        if(taskObject.status === TaskApi.GetTaskStatuses().STATUS_HIDE){
+        if (taskObject.status === TaskApi.GetTaskStatuses().STATUS_HIDE) {
             taskLi.remove();
             return;
         }
@@ -167,6 +167,19 @@ export default class ProjectUtils {
             else
                 deadlineLimit.innerText = "Completed!";
         }
+    }
+
+    /***
+     *
+     * @param createDate {Number}
+     */
+    static taskboadOnTaskDelete(createDate) {
+        let taskLi = document.querySelector("#singleTask-" + createDate);
+        if (taskLi === undefined || taskLi == null)
+            return;
+
+        // task item hide
+        taskLi.remove();
     }
 
     static clickObjectHide(e) {
