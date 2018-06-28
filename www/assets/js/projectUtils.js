@@ -121,6 +121,11 @@ export default class ProjectUtils {
         if (taskLi === undefined || taskLi == null)
             return;
 
+        // status check and hide
+        if(taskObject.status){
+            taskLi.remove();
+        }
+
         let name = taskLi.querySelector(".taskTitle"),
             assignName = taskLi.querySelector(".taskAssignName"),
             assignIcon = taskLi.querySelector(".taskAssignIcon"),
