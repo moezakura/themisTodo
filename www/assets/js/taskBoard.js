@@ -25,7 +25,7 @@ class TaskBoard {
 
                     task.status = TaskApi.stringToIntStatus(statusStr);
 
-                    TaskApi.Update(targetCreateId, task).then(function(json){
+                    TaskApi.Update(targetCreateId, task).then(function (json) {
                         TaskBoard.loadTask(targetCreateId);
                     });
                 },
@@ -33,7 +33,7 @@ class TaskBoard {
             });
         }
 
-        if(this.taskBoardLists[0] === undefined || this.taskBoardLists[0] == null)
+        if (this.taskBoardLists[0] === undefined || this.taskBoardLists[0] == null)
             return;
 
         if (document.location.hash !== "") {
@@ -43,7 +43,7 @@ class TaskBoard {
             );
         }
 
-        window.addEventListener("hashchange", function() {
+        window.addEventListener("hashchange", function () {
             if (document.location.hash !== "") {
                 TaskDetail.loadAndShowFromTaskId(
                     document.location.hash.replace("#", ""),
@@ -57,12 +57,12 @@ class TaskBoard {
      *
      * @param createDate {Number}
      */
-    static loadTask(createDate){
-        TaskApi.GetTaskFromCreateDate(createDate).then(function(json){
-            if(json.success){
+    static loadTask(createDate) {
+        return TaskApi.GetTaskFromCreateDate(createDate).then(function (json) {
+            if (json.success) {
                 let task = json.task;
                 ProjectUtils.taskboadOnTaskUpdate(task.createDate, task);
-            }else location.reload();
+            } else location.reload();
         });
     }
 }
