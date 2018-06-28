@@ -1,4 +1,5 @@
 import TaskDetail from "./taskDetail"
+import TaskApi from "./taskApi";
 
 export default class ProjectUtils {
     static createUserListLine(uuid, name, displayName) {
@@ -122,7 +123,7 @@ export default class ProjectUtils {
             return;
 
         // status check and hide
-        if(taskObject.status){
+        if(taskObject.status === TaskApi.GetTaskStatuses().STATUS_HIDE){
             taskLi.remove();
         }
 
