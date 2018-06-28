@@ -11,6 +11,16 @@ export default class TaskApi {
         };
     }
 
+    static GetTaskStatuses() {
+        return {
+            STATUS_TODO: 0,
+            STATUS_DOING: 1,
+            STATUS_PULL_REQUEST: 2,
+            STATUS_DONE: 3,
+            STATUS_HIDE: 4,
+        };
+    }
+
     static stringToIntStatus(str) {
         switch (str) {
             case "todo":
@@ -44,7 +54,7 @@ export default class TaskApi {
         });
     }
 
-    static Create(taskJson){
+    static Create(taskJson) {
         return fetch("/tasks/create", {
             method: 'POST',
             body: JSON.stringify(taskJson),
@@ -64,7 +74,7 @@ export default class TaskApi {
         });
     }
 
-    static Get(createDate){
+    static Get(createDate) {
 
     }
 }

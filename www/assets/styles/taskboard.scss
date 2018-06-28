@@ -635,3 +635,104 @@ body {
         }
     }
 }
+
+#taskDeletePopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: $modanWidth;
+    background-color: $backgroundColor;
+    padding: 10px 20px 15px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 6px rgba(black, .5);
+    z-index: 100;
+
+    #taskDeletePopupTitle {
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        font-size: 18px;
+        padding-left: 15px;
+        background-color: rgba(black, 0.5);
+        letter-spacing: 1.5px;
+        margin: -10px -20px 0 -20px;
+        -ms-text-align-last: right;
+        text-align: left;
+
+        &::after {
+            display: block;
+            position: relative;
+            content: " ";
+            width: 5px;
+            height: 100%;
+            top: -100%;
+            left: -15px;
+            background-color: $redColor;
+        }
+    }
+
+    #taskDeletePopupActions {
+        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight} - 20px);
+        width: $buttonHeight;
+
+        i {
+            float: left;
+            width: $buttonHeight;
+            height: $buttonHeight;
+            line-height: $buttonHeight;
+            text-align: center;
+            display: block;
+            font-size: 14px;
+            box-sizing: border-box;
+            padding-left: 3px;
+            transition: ease .4s background-color;
+
+            &:hover {
+                background-color: accentColor(.15);
+            }
+
+            &#taskPopupEditButton::before {
+                font-weight: normal !important;
+            }
+        }
+    }
+
+    .taskDeletePopupText {
+        font-size: 14px;
+        letter-spacing: 2px;
+        line-height: 25px;
+        margin: 5px 0;
+
+        strong {
+            color: $redColor;
+            font-weight: bolder;
+        }
+
+        &#taskDeletePopupTextCaution {
+            text-align: center;
+            font-weight: bold;
+            line-height: 45px;
+            font-size: 15px;
+        }
+    }
+
+    #taskDeletePopupSelectButtons {
+        margin: 20px 8px;
+
+        #taskDeletePopupHide {
+            background-color: transparent;
+
+            &:hover{
+                background-color: rgba($redColor, .3);
+            }
+        }
+
+        div {
+            float: left;
+            width: 48%;
+            margin: 0 1%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+    }
+}

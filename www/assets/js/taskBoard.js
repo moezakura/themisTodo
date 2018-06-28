@@ -2,7 +2,7 @@ import TaskApi from "./taskApi"
 import TaskDetail from "./taskDetail";
 import ProjectUtils from "./projectUtils";
 
-class TaskBoard {
+export default class TaskBoard {
     constructor() {
         this.taskBoardLists = [
             document.querySelector("#todo>.taskList"),
@@ -62,7 +62,11 @@ class TaskBoard {
             if (json.success) {
                 let task = json.task;
                 ProjectUtils.taskboadOnTaskUpdate(task.createDate, task);
-            } else location.reload();
+                return json;
+            } else {
+                location.reload();
+                return null;
+            }
         });
     }
 }

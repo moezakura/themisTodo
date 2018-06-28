@@ -72,7 +72,7 @@
 <form id="taskPopup">
     <h2>Doing Task</h2>
     <div id="taskPopupActions">
-        <i class="fas fa-trash" id="taskPopupTrashButton"></i>
+        <i class="fas fa-trash" id="taskPopupTrashButton" @click="clickTaskPopupTrashButton"></i>
         <i class="fas fa-edit" id="taskPopupEditButton"></i>
         <i class="fas fa-times" id="taskPopupCloseButton"></i>
     </div>
@@ -109,6 +109,20 @@
     <textarea id="taskPopupDescription">DESCRIPTION</textarea>
     <input type="submit" value="CHANGE">
 </form>
+<div id="taskDeletePopup" v-show="taskDeletePopupFlag">
+    <div id="taskDeletePopupTitle">Delete or Hide confirm</div>
+    <div id="taskDeletePopupActions">
+        <i class="fas fa-times" id="taskDeletePopupClose" @click="clickClose"></i>
+    </div>
+    <p class="taskDeletePopupText" id="taskDeletePopupTextCaution">Would you like to hide or delete ${taskName}?</p>
+    <p class="taskDeletePopupText"><strong>HIDE</strong>: Hide the task from the task board.</p>
+    <p class="taskDeletePopupText"><strong>DELETE</strong>: Delete the task from the task board.<br>This operation can not be undone.</p>
+    <div id="taskDeletePopupSelectButtons">
+        <div id="taskDeletePopupHide" class="deleteButton" @click="clickHide">HIDE</div>
+        <div id="taskDeletePopupDelete" class="deleteButton">DELETE</div>
+    </div>
+    <div class="both"></div>
+</div>
 <script type="application/javascript">
     const projectId = {{.Project.Uuid}};
     const projectName = {{.Project.Name}};
