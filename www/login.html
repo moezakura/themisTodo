@@ -1,10 +1,12 @@
 {{define "header"}}{{end}}
 {{define "content"}}
-<form id="login" method="post" class="basicForm" enctype="application/x-www-form-urlencoded">
-    <h2>LOGIN</h2>
-    <div id="error">&nbsp;</div>
-    <input type="text" name="id" placeholder="id">
-    <input type="password" name="pw" placeholder="password">
-    <input type="submit" value="LOGIN">
-</form>
+<div id="login">
+    <form @submit.prevent="postLogin" class="basicForm">
+        <h2>LOGIN</h2>
+        <p id="error" :style="{display: hideStyle}" @click="clickError">${formError}</p>
+        <input type="text" name="id" v-model="formUsername" placeholder="id">
+        <input type="password" name="pw" v-model="formPassword" placeholder="password">
+        <input type="submit" value="LOGIN">
+    </form>
+</div>
 {{end}}

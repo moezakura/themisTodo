@@ -75,6 +75,38 @@ body {
                     -moz-user-select: none;
                     -webkit-user-select: none;
                     -ms-user-select: none;
+
+                    &::before {
+                        position: relative;
+                        display: block;
+                        width: 5px;
+                        height: 55px;
+                        background-color: accentColor(.5);
+                        left: -15px;
+                        top: 7px;
+                        margin-bottom: -55px;
+                        content: '';
+                    }
+
+                    &.limit3::before {
+                        background-color: rgba($orangeColor, .8);
+                    }
+
+                    &.limit2::before {
+                        background-color: rgba($satOrangeColor, .8);
+                    }
+
+                    &.limit1::before {
+                        background-color: $redColor;
+                    }
+
+                    &.over {
+                        background-color: rgba($redColor, .35);
+                    }
+
+                    &.over::before {
+                        background-color: $redColor;
+                    }
                 }
             }
 
@@ -395,11 +427,27 @@ body {
             left: -15px;
             background-color: $accentColor;
         }
+
+        &.limit3::after {
+            background-color: rgba($orangeColor, .8);
+        }
+
+        &.limit2::after {
+            background-color: rgba($satOrangeColor, .8);
+        }
+
+        &.limit1::after {
+            background-color: $redColor;
+        }
+
+        &.over::after {
+            background-color: $redColor;
+        }
     }
 
     #taskPopupActions {
-        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight * 2} - 20px);
-        width: $buttonHeight * 2;
+        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight * 3} - 20px);
+        width: $buttonHeight * 3;
 
         i {
             float: left;
@@ -550,6 +598,18 @@ body {
             width: 50%;
             pointer-events: none;
 
+            &.limit3 {
+                background-color: rgba($orangeColor, .8);
+            }
+
+            &.limit2 {
+                background-color: rgba($satOrangeColor, .8);
+            }
+
+            &.limit1 {
+                background-color: $redColor;
+            }
+
             &.over {
                 background-color: $redColor;
             }
@@ -572,6 +632,177 @@ body {
             &[type=date] {
                 display: none;
             }
+        }
+    }
+}
+
+#taskDeletePopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: $modanWidth;
+    background-color: $backgroundColor;
+    padding: 10px 20px 15px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 6px rgba(black, .5);
+    z-index: 100;
+
+    #taskDeletePopupTitle {
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        font-size: 18px;
+        padding-left: 15px;
+        background-color: rgba(black, 0.5);
+        letter-spacing: 1.5px;
+        margin: -10px -20px 0 -20px;
+        -ms-text-align-last: right;
+        text-align: left;
+
+        &::after {
+            display: block;
+            position: relative;
+            content: " ";
+            width: 5px;
+            height: 100%;
+            top: -100%;
+            left: -15px;
+            background-color: $redColor;
+        }
+    }
+
+    #taskDeletePopupActions {
+        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight} - 20px);
+        width: $buttonHeight;
+
+        i {
+            float: left;
+            width: $buttonHeight;
+            height: $buttonHeight;
+            line-height: $buttonHeight;
+            text-align: center;
+            display: block;
+            font-size: 14px;
+            box-sizing: border-box;
+            padding-left: 3px;
+            transition: ease .4s background-color;
+
+            &:hover {
+                background-color: accentColor(.15);
+            }
+
+            &#taskPopupEditButton::before {
+                font-weight: normal !important;
+            }
+        }
+    }
+
+    .taskDeletePopupText {
+        font-size: 14px;
+        letter-spacing: 2px;
+        line-height: 25px;
+        margin: 5px 0;
+
+        strong {
+            color: $redColor;
+            font-weight: bolder;
+        }
+
+        &#taskDeletePopupTextCaution {
+            text-align: center;
+            font-weight: bold;
+            line-height: 45px;
+            font-size: 15px;
+        }
+    }
+
+    #taskDeletePopupSelectButtons {
+        margin: 20px 8px;
+
+        #taskDeletePopupHide {
+            background-color: transparent;
+
+            &:hover {
+                background-color: rgba($redColor, .3);
+            }
+        }
+
+        div {
+            float: left;
+            width: 48%;
+            margin: 0 1%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+    }
+}
+
+#taskDeleteConfirmPopup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: $minModernWidth;
+    background-color: $backgroundColor;
+    padding: 10px 20px 15px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 6px rgba(black, .5);
+    z-index: 100;
+
+    #taskDeleteConfirmPopupTitle {
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        font-size: 18px;
+        padding-left: 15px;
+        background-color: rgba(black, 0.5);
+        letter-spacing: 1.5px;
+        margin: -10px -20px 0 -20px;
+        -ms-text-align-last: right;
+        text-align: left;
+
+        &::after {
+            display: block;
+            position: relative;
+            content: " ";
+            width: 5px;
+            height: 100%;
+            top: -100%;
+            left: -15px;
+            background-color: $redColor;
+        }
+    }
+
+    .taskDeleteConfirmPopupText {
+        font-size: 14px;
+        letter-spacing: 2px;
+        line-height: 25px;
+        margin: 5px 0;
+    }
+
+    #taskDeleteConfirmPopupSelectButtons {
+        margin-top: 20px;
+
+        #taskDeleteConfirmPopupCancel {
+            background-color: transparent;
+            border-color: white;
+
+            &:hover {
+                background-color: rgba($accentColor, .3);
+            }
+        }
+
+        #taskDeleteConfirmPopupDelete {
+            margin-right: 2%;
+        }
+
+        div {
+            float: left;
+            width: 49%;
+            margin: 0;
+            height: $buttonHeight - 5px;
+            line-height: $buttonHeight - 5px;
+            text-align: center;
+            box-sizing: border-box;
         }
     }
 }

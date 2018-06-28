@@ -2,6 +2,7 @@ import TaskDetail from "./taskDetail"
 import TaskApi from "./taskApi";
 import UserSearchDialog from "./userSearchDialog";
 import LoadingView from "./loadingView";
+import ProjectUtils from "./projectUtils";
 
 class TaskEdit {
     constructor() {
@@ -124,8 +125,12 @@ class TaskEdit {
                 that.showSuccess();
                 TaskDetail.editable(false);
             }
-            TaskDetail.load(taskId);
-            loadView.hide();
+            TaskDetail.load(taskId).then(function(task){
+                if(task == null) return;
+
+                ProjectUtils.taskboadOnTaskUpdate(task.createDate, task);
+                loadView.hide();
+            });
         });
     }
 }

@@ -1,7 +1,8 @@
 import TaskApi from "./taskApi"
 import TaskDetail from "./taskDetail";
+import ProjectUtils from "./projectUtils";
 
-class TaskBoard {
+export default class TaskBoard {
     constructor() {
         this.taskBoardLists = [
             document.querySelector("#todo>.taskList"),
@@ -24,13 +25,15 @@ class TaskBoard {
 
                     task.status = TaskApi.stringToIntStatus(statusStr);
 
-                    TaskApi.Update(targetCreateId, task);
+                    TaskApi.Update(targetCreateId, task).then(function (json) {
+                        TaskBoard.loadTask(targetCreateId);
+                    });
                 },
                 animation: 100
             });
         }
 
-        if(this.taskBoardLists[0] === undefined || this.taskBoardLists[0] == null)
+        if (this.taskBoardLists[0] === undefined || this.taskBoardLists[0] == null)
             return;
 
         if (document.location.hash !== "") {
@@ -40,7 +43,7 @@ class TaskBoard {
             );
         }
 
-        window.addEventListener("hashchange", function() {
+        window.addEventListener("hashchange", function () {
             if (document.location.hash !== "") {
                 TaskDetail.loadAndShowFromTaskId(
                     document.location.hash.replace("#", ""),
@@ -48,6 +51,23 @@ class TaskBoard {
                 );
             }
         }, false);
+    }
+
+    /***
+     *
+     * @param createDate {Number}
+     */
+    static loadTask(createDate) {
+        return TaskApi.GetTaskFromCreateDate(createDate).then(function (json) {
+            if (json.success) {
+                let task = json.task;
+                ProjectUtils.taskboadOnTaskUpdate(task.createDate, task);
+                return json;
+            } else {
+                location.reload();
+                return null;
+            }
+        });
     }
 }
 

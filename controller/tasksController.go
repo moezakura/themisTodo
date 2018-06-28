@@ -1,15 +1,16 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	themisView "../view"
-	"../models"
-	"../module"
-	"../utils"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"net/http"
+
+	"../models"
+	"../module"
+	"../utils"
+	themisView "../view"
+	"github.com/gin-gonic/gin"
 )
 
 type TasksController struct {
@@ -95,12 +96,13 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		task.Deadline = updateRequest.Deadline
 	}
 
-	if updateRequest.Status > 0 && updateRequest.Status < 4 {
+	taskStatus := models.TaskStatus(updateRequest.Status)
+	if taskStatus.String() != "OTHER" && taskStatus.String() != "Unknown" {
 		task.Status = models.TaskStatus(updateRequest.Status)
 	}
 
 	if updateRequest.Assign > 0 {
-		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId){
+		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId) {
 			updateResult.Message = "invalid assign id"
 			themisView.TasksView{}.PostUpdate(c, updateResult)
 			return
@@ -112,6 +114,53 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 
 	updateResult.Success = true
 	themisView.TasksView{}.PostUpdate(c, updateResult)
+}
+
+func (self TasksController) PostDelete(c *gin.Context) {
+	deleteResult := &models.TaskDeleteResultJson{}
+	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
+
+	if err != nil {
+		deleteResult.Message = "invalid task createdTime"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		deleteResult.Message = "invalid token"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, task := taskModule.Get(createdTime)
+
+	if isErr {
+		deleteResult.Message = "invalid task createdTime"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
+		deleteResult.Message = "invalid task createdTime"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	var statusCode int
+	if isErr := taskModule.Delete(createdTime); isErr{
+		deleteResult.Message = "delete failed"
+		statusCode = http.StatusBadRequest
+	}else{
+		deleteResult.Success = true
+		deleteResult.Message = ""
+		statusCode = http.StatusOK
+	}
+	themisView.TasksView{}.PostDelete(c, statusCode, deleteResult)
 }
 
 func (self TasksController) PostTaskCreate(c *gin.Context) {
@@ -282,4 +331,37 @@ func (self TasksController) GetSearch(c *gin.Context) {
 	getResult.Task = models.NewTaskOfJson(*taskTemp)
 
 	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
+}
+
+func (self TasksController) GetMy(c *gin.Context) {
+	getResult := &models.TasksGetResultJson{}
+	taskStatus, err := models.StringToTaskStatus(c.Query("status"))
+	if err != nil {
+		getResult.Message = "Unknown task status"
+		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		getResult.Message = "invalid token"
+		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, tasks := taskModule.GetTasksFromUser(userUuid, 20, taskStatus)
+	if isErr {
+		getResult.Message = "unknown taskId"
+		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	tasksTemp := utils.TasksConvert(tasks)
+	getResult.Success = true
+	getResult.Task = models.NewTasksOfJson(tasksTemp)
+
+	themisView.TasksView{}.GetMy(c, http.StatusOK, getResult)
 }

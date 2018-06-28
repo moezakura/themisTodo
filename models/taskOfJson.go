@@ -35,3 +35,11 @@ func NewTaskOfJson(task Task) *TaskOfJson {
 		strconv.FormatInt(task.CreateDate, 10),
 	}
 }
+
+func NewTasksOfJson(tasks []Task) []TaskOfJson {
+	tasksOfJson := make([]TaskOfJson, 0)
+	for _, task := range tasks {
+		tasksOfJson = append(tasksOfJson, *NewTaskOfJson(task))
+	}
+	return tasksOfJson
+}

@@ -14,6 +14,7 @@ class ProjectConfig {
         this.postTaskConfigForm = document.querySelector("#projectConfigForm");
         this.taskboardTitleElem = document.querySelector("#taskboardTitle>span");
         this.projectConfigPopupErrorElem = this.projectConfigPopup.querySelector(".error");
+        this.projectMemberAddForm = this.projectConfigPopup.querySelector("#projectMemberAddForm");
 
         ProjectMemberList.update();
         let that = this;
@@ -57,6 +58,9 @@ class ProjectConfig {
                 });
             }
         });
+        this.projectMemberAddForm.addEventListener("submit", function(e){
+            that.projectMemberAddFormSubmit(e);
+        }, true);
 
         document.querySelector("body").addEventListener("keydown", function (e) {
             if (e.keyCode === 27 && that.projectConfigPopup.style.display === "block")
@@ -68,6 +72,11 @@ class ProjectConfig {
         e.preventDefault();
         that.projectConfigPopup.style.display = "block";
         that.taskBackView.show();
+    }
+
+    projectMemberAddFormSubmit(e){
+        e.preventDefault();
+        this.userSearchDialog.submit();
     }
 
     postTaskConfig(e, that) {

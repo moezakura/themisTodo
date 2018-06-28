@@ -1,11 +1,12 @@
 package routers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gin-contrib/multitemplate"
-	themsController "../controller"
 	"database/sql"
 	"html/template"
+
+	themsController "../controller"
+	"github.com/gin-contrib/multitemplate"
+	"github.com/gin-gonic/gin"
 )
 
 func Init(db *sql.DB) *gin.Engine {
@@ -48,8 +49,10 @@ func Init(db *sql.DB) *gin.Engine {
 	{
 		tasks.POST("/create", themsController.TasksController{baseController}.PostTaskCreate)
 		tasks.POST("/update/:createDate", themsController.TasksController{baseController}.PostUpdate)
+		tasks.POST("/delete/:createDate", themsController.TasksController{baseController}.PostDelete)
 		tasks.GET("/view/:createDate", themsController.TasksController{baseController}.GetView)
 		tasks.GET("/search", themsController.TasksController{baseController}.GetSearch)
+		tasks.GET("/my", themsController.TasksController{baseController}.GetMy)
 	}
 
 	//アカウント関連
