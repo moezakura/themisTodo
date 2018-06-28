@@ -202,7 +202,7 @@ func (self *TasksModule) Update(createDate int64, task *models.Task) (isErr bool
 func (self *TasksModule) Delete(createDate int64) (isErr bool) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
-	_, err := self.db.Exec("DELETE `todo_list` WHERE `createDate` = ?;", createDate)
+	_, err := self.db.Exec("DELETE FROM `todo_list` WHERE `createDate` = ?;", createDate)
 
 	if err != nil {
 		log.Printf("TasksModule.Delete Error: %+v\n", err)
