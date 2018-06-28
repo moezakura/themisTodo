@@ -199,6 +199,19 @@ func (self *TasksModule) Update(createDate int64, task *models.Task) (isErr bool
 	return false
 }
 
+func (self *TasksModule) Delete(createDate int64) (isErr bool) {
+	self.dbLock.Lock()
+	defer self.dbLock.Unlock()
+	_, err := self.db.Exec("DELETE `todo_list` WHERE `createDate` = ?;", createDate)
+
+	if err != nil {
+		log.Printf("TasksModule.Delete Error: %+v\n", err)
+		return true
+	}
+
+	return false
+}
+
 func (self *TasksModule) GetTasksFromUser(userUuid, limit int, status models.TaskStatus) (isErr bool, list []models.Task) {
 	list = []models.Task{}
 

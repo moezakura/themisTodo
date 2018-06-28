@@ -14,6 +14,10 @@ func (self TasksView) PostUpdate(c *gin.Context, json *models.TaskUpdateResultJs
 	c.JSON(http.StatusOK, json)
 }
 
+func (self TasksView) PostDelete(c *gin.Context, statusCode int, json *models.TaskDeleteResultJson) {
+	c.JSON(http.StatusOK, json)
+}
+
 func (self TasksView) GetView(c *gin.Context, statusCode int, json *models.TaskGetResultJson) {
 	c.JSON(statusCode, json)
 }

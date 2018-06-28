@@ -115,6 +115,53 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 	themisView.TasksView{}.PostUpdate(c, updateResult)
 }
 
+func (self TasksController) PostDelete(c *gin.Context) {
+	deleteResult := &models.TaskDeleteResultJson{}
+	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
+
+	if err != nil {
+		deleteResult.Message = "invalid task createdTime"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		deleteResult.Message = "invalid token"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, task := taskModule.Get(createdTime)
+
+	if isErr {
+		deleteResult.Message = "invalid task createdTime"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
+		deleteResult.Message = "invalid task createdTime"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	var statusCode int
+	if isErr := taskModule.Delete(createdTime); isErr{
+		deleteResult.Message = "delete failed"
+		statusCode = http.StatusBadRequest
+	}else{
+		deleteResult.Success = true
+		deleteResult.Message = ""
+		statusCode = http.StatusOK
+	}
+	themisView.TasksView{}.PostDelete(c, statusCode, deleteResult)
+}
+
 func (self TasksController) PostTaskCreate(c *gin.Context) {
 	addResult := &models.TaskAddResultJson{}
 	loginModule := module.NewLoginModule(self.DB)
