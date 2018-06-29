@@ -25,3 +25,7 @@ func (self TasksView) GetView(c *gin.Context, statusCode int, json *models.TaskG
 func (self TasksView) GetMy(c *gin.Context, statusCode int, json *models.TasksGetResultJson) {
 	c.JSON(statusCode, json)
 }
+
+func (self TasksView) GetProjects(c *gin.Context, statusCode int, json *models.ProjectGetResultJson) {
+	c.JSON(statusCode, json)
+}
