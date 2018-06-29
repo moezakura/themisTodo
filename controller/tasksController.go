@@ -365,3 +365,30 @@ func (self TasksController) GetMy(c *gin.Context) {
 
 	themisView.TasksView{}.GetMy(c, http.StatusOK, getResult)
 }
+
+func (self TasksController) GetProject(c *gin.Context) {
+	getResult := &models.ProjectGetResultJson{}
+	projectsModule := module.NewProjectsModule(self.DB)
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		getResult.Message = "invalid token"
+		themisView.TasksView{}.GetProjects(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	isError, projects := projectsModule.GetProjects(userUuid)
+	if isError {
+		getResult.Message = "unknown project"
+		themisView.TasksView{}.GetProjects(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	getResult.Project = projects
+	getResult.Success = true
+
+	themisView.TasksView{}.GetProjects(c, http.StatusOK, getResult)
+
+}
