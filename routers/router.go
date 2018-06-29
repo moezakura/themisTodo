@@ -53,6 +53,7 @@ func Init(db *sql.DB) *gin.Engine {
 		tasks.GET("/view/:createDate", themsController.TasksController{baseController}.GetView)
 		tasks.GET("/search", themsController.TasksController{baseController}.GetSearch)
 		tasks.GET("/my", themsController.TasksController{baseController}.GetMy)
+		tasks.GET("/project", themsController.TasksController{baseController}.GetProject)
 	}
 
 	//アカウント関連
