@@ -1,10 +1,10 @@
 import '../styles/main.scss';
 
 // home
-import "./home.js"
+import "./pages/home.js"
 
 // login
-import "./login.js"
+import "./pages/login.js"
 
 // account add
 import "./accountAdd.js"
