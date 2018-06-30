@@ -54,6 +54,7 @@ export default class TaskDetail {
         TaskDetail.setEmpty(true);
         let taskPopup = document.querySelector("#taskPopup");
         taskPopup.dataset.taskId = taskId;
+        taskPopup.dataset.isEditable = "0";
 
         let loadView = new LoadingView();
         loadView.isDisporse = true;
@@ -101,7 +102,7 @@ export default class TaskDetail {
             taskPopupCreator = taskPopup.querySelector("#taskPopupCreator"),
             taskPopupProgressCurrent = document.querySelector("#taskPopupProgressCurrent");
 
-        this.editable(!readOnly);
+        this.setEditable(!readOnly);
         taskPopup.dataset.taskId = "";
         taskDetailTitle.innerText = "";
         taskPopupTaskId.innerText = "#";
@@ -134,7 +135,7 @@ export default class TaskDetail {
 
         taskPopup.dataset.taskCreatedDate = taskObject.createDate;
 
-        this.editable(false);
+        this.setEditable(false);
         taskDetailTitle.innerText = statusText + " Task Detail";
 
         taskPopupTaskId.innerText = "#" + taskObject.taskId;
@@ -202,7 +203,21 @@ export default class TaskDetail {
         return limit / allDiff * 100;
     }
 
-    static editable(isEdit) {
+    static toggleEditable()
+    {
+        this.setEditable(!this.getEditable());
+    }
+
+    static getEditable()
+    {
+        let taskPopup = document.querySelector("#taskPopup");
+        return taskPopup.dataset.isEditable == "1" ? true : false;
+    }
+
+    static setEditable(isEdit) {
+        let taskPopup = document.querySelector("#taskPopup");
+        taskPopup.dataset.isEditable = isEdit ? "1" : "0";
+
         let taskPopupInputs = taskPopup.querySelectorAll("input, textarea");
         taskPopupInputs.forEach(function (value) {
             value.readOnly = !isEdit;
