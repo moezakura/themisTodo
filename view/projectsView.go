@@ -52,3 +52,7 @@ func (self ProjectsView) PostAddUser(c *gin.Context, json *models.ProjectAddResu
 func (self ProjectsView) PostDeleteProject(c *gin.Context, statusCode int, json *models.ProjectDeleteResultJson) {
 	c.JSON(statusCode, json)
 }
+
+func (self ProjectsView) GetMy(c *gin.Context, statusCode int, json *models.ProjectGetResultJson) {
+	c.JSON(statusCode, json)
+}
