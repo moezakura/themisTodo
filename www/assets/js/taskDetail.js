@@ -54,7 +54,7 @@ export default class TaskDetail {
         TaskDetail.setEmpty(true);
         let taskPopup = document.querySelector("#taskPopup");
         taskPopup.dataset.taskId = taskId;
-        taskPopup.dataset.isEditable = "0";
+        taskPopup.dataset.isEditable = "false";
 
         let loadView = new LoadingView();
         loadView.isDisporse = true;
@@ -211,12 +211,12 @@ export default class TaskDetail {
     static getEditable()
     {
         let taskPopup = document.querySelector("#taskPopup");
-        return taskPopup.dataset.isEditable == "1" ? true : false;
+        return taskPopup.dataset.isEditable == "true" ? true : false;
     }
 
     static setEditable(isEdit) {
         let taskPopup = document.querySelector("#taskPopup");
-        taskPopup.dataset.isEditable = isEdit ? "1" : "0";
+        taskPopup.dataset.isEditable = isEdit ? "true" : "false";
 
         let taskPopupInputs = taskPopup.querySelectorAll("input, textarea");
         taskPopupInputs.forEach(function (value) {
