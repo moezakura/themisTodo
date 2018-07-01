@@ -60,6 +60,20 @@
     }
 }
 
+.basicSubmitButton{
+    height: $buttonHeight;
+    line-height: $buttonHeight;
+    letter-spacing: 1.5px;
+    border: 1px solid accentColor(.5);
+    background-color: accentColor(.05);
+    text-align: center;
+    transition: ease background-color .3s;
+
+    &:hover {
+        background-color: accentColor(.2);
+    }
+}
+
 #error,
 .error,
 #success,

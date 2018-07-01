@@ -8,6 +8,7 @@ $satOrangeColor: rgb(255,112,67);
 $floatBoxSize: 480px;
 $modanWidth: 500px;
 $minModernWidth: 350px;
+$bigModernWindow: 900px;
 $buttonHeight: 45px;
 $buttonWidth: 200px;
 $lineTextHeight: 40px;
@@ -16,7 +17,7 @@ $iconSize: 35px;
 $bigIconSize: 150px;
 
 @function accentColor($alpha) {
-    @return rgba(67, 160, 71, $alpha);
+    @return rgba($accentColor, $alpha);
 }
 
 @mixin keyframes($animation-name: animaton) {
@@ -53,6 +54,7 @@ $bigIconSize: 150px;
 // タスク系
 @import "home.scss";
 @import "taskList.scss";
+@import "hideTask";
 
 // Project系
 @import "projectsAdd.scss";

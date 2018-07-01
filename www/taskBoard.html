@@ -1,5 +1,6 @@
 {{define "content"}}
 <h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{.Project.Name}}</span></h2>
+<a id="taskboardHideTaskShown" href="#"><i class="fas fa-adjust"></i></i>HideTask</a>
 <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
 <a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
 <div id="taskboard">
@@ -131,6 +132,20 @@
         <div id="taskDeleteConfirmPopupDelete" class="deleteButton" @click="clickDelete">DELETE</div>
         <div id="taskDeleteConfirmPopupCancel" class="deleteButton" @click="clickCancel">CANCEL</div>
     </div>
+</div>
+<div id="taskHideListPopup" v-show="taskHideListPopupFlag">
+    <h2>Hide Tasks Manage</h2>
+    <ul id="taskHideListPopupTaskList">
+    </ul>
+    <ul id="taskHideListPopupOperations">
+        <li>Bulk Actions</li>
+        <li class="basicSubmitButton">Todo</li>
+        <li class="basicSubmitButton">Doing</li>
+        <li class="basicSubmitButton">PullRequest</li>
+        <li class="basicSubmitButton">Done</li>
+    </ul>
+    <div class="both"></div>
+    <i class="fas fa-angle-double-right" id="taskHideListPopupArrow"></i>
 </div>
 <script type="application/javascript">
     const projectId = {{.Project.Uuid}};

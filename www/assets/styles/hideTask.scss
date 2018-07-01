@@ -1,0 +1,56 @@
+#taskHideListPopup {
+    position: fixed;
+    top: 5%;
+    left: 50%;
+    width: $bigModernWindow;
+    height: 90%;
+    transform:translateX(#{-$bigModernWindow / 2});
+    background-color: $backgroundColor;
+    box-shadow: 0 0 6px rgba(black, .5);
+    padding: 10px 15px;
+
+    h2 {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+    }
+
+    #taskHideListPopupTaskList,
+    #taskHideListPopupOperations{
+        float: left;
+        height: calc(100% - #{$buttonHeight});
+
+    }
+
+    #taskHideListPopupTaskList {
+        width: calc(70% - 35px);
+        margin: 0 35px 0 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    #taskHideListPopupOperations {
+        width: 30%;
+
+        li:first-child {
+            text-align: center;
+            font-size: 16px;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+    }
+
+    #taskHideListPopupArrow{
+        position: relative;
+        top: calc(-100% + #{$buttonHeight + 140px});
+        left: calc(70% - #{$buttonHeight - 15px});
+        font-size: 20px;
+    }
+}

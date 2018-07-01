@@ -21,6 +21,7 @@ import "./taskBoard.js"
 import "./taskAdd.js"
 import "./taskEdit.js"
 import "./taskDelete.js"
+import "./taskhideList.js"
 
 // projects
 import "./projectDelete.js"
