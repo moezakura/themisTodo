@@ -73,7 +73,7 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		}
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 	projectModule := module.NewProjectsModule(self.DB)
 	isErr, task := taskModule.Get(createdTime)
 
@@ -134,7 +134,7 @@ func (self TasksController) PostDelete(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 	isErr, task := taskModule.Get(createdTime)
 
 	if isErr {
@@ -151,10 +151,10 @@ func (self TasksController) PostDelete(c *gin.Context) {
 	}
 
 	var statusCode int
-	if isErr := taskModule.Delete(createdTime); isErr{
+	if isErr := taskModule.Delete(createdTime); isErr {
 		deleteResult.Message = "delete failed"
 		statusCode = http.StatusBadRequest
-	}else{
+	} else {
 		deleteResult.Success = true
 		deleteResult.Message = ""
 		statusCode = http.StatusOK
@@ -222,7 +222,7 @@ func (self TasksController) PostTaskCreate(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 	newTask := &models.Task{
 		TaskId:      taskModule.GetLastId(addRequest.ProjectId) + 1,
 		ProjectId:   addRequest.ProjectId,
@@ -260,7 +260,7 @@ func (self TasksController) GetView(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 	isErr, task := taskModule.Get(createdTime)
 	if isErr {
 		getResult.Message = "unknown taskId"
@@ -309,7 +309,7 @@ func (self TasksController) GetSearch(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 	isErr, task := taskModule.GetFromTaskId(taskId, projectId)
 	if isErr {
 		getResult.Message = "unknown taskId"
@@ -330,4 +330,12 @@ func (self TasksController) GetSearch(c *gin.Context) {
 	getResult.Task = models.NewTaskOfJson(*taskTemp)
 
 	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
+}
+
+func (self TasksController) GetSearches(c *gin.Context) {
+	searchesResult := &models.TaskSearchesResultJson{}
+
+
+
+	themisView.TasksView{}.GetSearches(c, http.StatusOK, searchesResult)
 }

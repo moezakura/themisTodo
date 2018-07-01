@@ -29,7 +29,7 @@ func (self HomeController) GetHome(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 	_, todoTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_TODO)
 	_, doingTaskList := taskModule.GetTasksFromUser(userUuid, 20, models.TASK_STATUS_DOING)
 

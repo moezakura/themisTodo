@@ -6,16 +6,19 @@ import (
 	"../models"
 	"time"
 	"sync"
+	"github.com/jinzhu/gorm"
 )
 
 type TasksModule struct {
 	db     *sql.DB
+	gormDB *gorm.DB
 	dbLock sync.Mutex
 }
 
-func NewTaskModule(db *sql.DB) *TasksModule {
+func NewTaskModule(db *sql.DB, gormDB *gorm.DB) *TasksModule {
 	return &TasksModule{
 		db,
+		gormDB,
 		sync.Mutex{},
 	}
 }
@@ -83,7 +86,7 @@ WHERE project = ? ORDER BY id ASC;`, projectId)
 		return true, nil
 	}
 
-	if err == sql.ErrNoRows{
+	if err == sql.ErrNoRows {
 		return false, list
 	}
 
@@ -145,7 +148,7 @@ WHERE createDate = ?;`, createDate)
 }
 
 func (self *TasksModule) GetFromTaskId(taskId int, projectId int) (isErr bool, task *models.Task) {
-		self.dbLock.Lock()
+	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
 	rows, err := self.db.Query(`SELECT
   id,

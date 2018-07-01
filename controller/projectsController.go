@@ -91,7 +91,7 @@ func (self ProjectsController) GetTaskBoard(c *gin.Context) {
 	}
 
 	isError, project := projectsModule.GetProject(projectId)
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 
 	isErr, taskList := taskModule.GetList(projectId)
 	if isErr {
