@@ -6,9 +6,10 @@ import (
 	themsController "../controller"
 	"database/sql"
 	"html/template"
+	"github.com/jinzhu/gorm"
 )
 
-func Init(db *sql.DB) *gin.Engine {
+func Init(db *sql.DB, formDB *gorm.DB) *gin.Engine {
 	r := gin.New()
 
 	r.Static("/fontawesome", "./www/assets/fontawesome/web-fonts-with-css/")
@@ -51,6 +52,7 @@ func Init(db *sql.DB) *gin.Engine {
 		tasks.POST("/delete/:createDate", themsController.TasksController{baseController}.PostDelete)
 		tasks.GET("/view/:createDate", themsController.TasksController{baseController}.GetView)
 		tasks.GET("/search", themsController.TasksController{baseController}.GetSearch)
+		tasks.GET("/searches", themsController.TasksController{baseController}.GetSearches)
 	}
 
 	//アカウント関連

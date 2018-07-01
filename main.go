@@ -4,6 +4,8 @@ import (
 	"./routers"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"fmt"
 	"os"
 	"time"
@@ -23,6 +25,10 @@ func main() {
 	db.SetMaxIdleConns(3000)
 	defer db.Close()
 
-	r := routers.Init(db)
+	// gorm sql
+	gormDb, err := gorm.Open("mysql", "user:password@/dbname?charset=utf8&parseTime=True&loc=Local")
+	defer db.Close()
+
+	r := routers.Init(db, gormDb)
 	r.Run(":31204")
 }
