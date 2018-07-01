@@ -1,8 +1,11 @@
 import Vue from "vue";
+import BackView from "./backView";
 
 
 if(document.querySelector("#taskHideListPopup")) {
-    new Vue({
+    let backView = new BackView();
+
+    let taskHideListPopup = new Vue({
         delimiters: ['${', '}'],
         el: '#taskHideListPopup',
         data: {
@@ -10,4 +13,17 @@ if(document.querySelector("#taskHideListPopup")) {
         },
         methods: {}
     });
+    backView.addHideEvent(function(){
+        taskHideListPopup.taskHideListPopupFlag = false;
+    });
+
+    new Vue({
+        el: "#taskboardHideTaskShown",
+        methods:{
+            click(){
+                taskHideListPopup.taskHideListPopupFlag = true;
+                backView.show();
+            }
+        }
+    })
 }

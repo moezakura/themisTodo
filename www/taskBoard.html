@@ -1,6 +1,6 @@
 {{define "content"}}
 <h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{.Project.Name}}</span></h2>
-<a id="taskboardHideTaskShown" href="#"><i class="fas fa-adjust"></i></i>HideTask</a>
+<a id="taskboardHideTaskShown" @click="click"><i class="fas fa-adjust"></i></i>HideTask</a>
 <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
 <a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
 <div id="taskboard">
