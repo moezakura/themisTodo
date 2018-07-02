@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import MyTaskList from '../components/ListComponent.vue';
-import * as api from '../utils/api'
+import HomeApi from '../utils/homeApi'
 
 if(document.querySelector("#home")) {
     new Vue({
@@ -15,9 +15,28 @@ if(document.querySelector("#home")) {
             "parent": MyTaskList
         },
         created () {
-            api.getList('TODO').then(data => this.todoList = data)
-            api.getList('DOING').then(data => this.doingList = data)
-            api.getProject().then(data => this.projects = data)
+            HomeApi.getList('TODO').then(json => {
+                if(!json.success) {
+                    console.error("API ERROR")
+                    return
+                }
+                this.todoList = json.task
+            })
+            HomeApi.getList('DOING').then(json => {
+                if(!json.success) {
+                    console.error("API ERROR")
+                    return
+                }
+                this.doingList = json.task
+            })
+            HomeApi.getProject().then(json => {
+                console.log(json)
+                if(!json.success) {
+                    console.error("API ERROR")
+                    return
+                }
+                this.projects = json.project
+            })
         },
         methods : { },
     })
