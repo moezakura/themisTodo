@@ -206,7 +206,7 @@ func (app *AppDB) nextGen() Generation {
 
 func (app *AppDB) Up() error {
 	if !app.isUpgradable() {
-		return errors.New("Aleady up to date.")
+		return errors.New("Already up to date.")
 	}
 	next := app.nextGen()
 	if err := app.execSql(next.UpFile); err != nil {
