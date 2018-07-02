@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS `themis_todo` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
-USE `themis_todo`;
-
 CREATE TABLE IF NOT EXISTS `authority_role` (
   `user_id` int(11) NOT NULL,
   `type` int(11) NOT NULL,
