@@ -225,7 +225,16 @@ func (app *AppDB) prevGen() Generation {
 }
 
 func (app *AppDB) Down() error {
-	return errors.New("Not implementation error") // TODO
+	if !app.isDowngradable() {
+		return errors.New("Already downgraded. nothing to do.")
+	}
+	if err := app.execSql(app.Current.DownFile); err != nil {
+		return err
+	}
+	prev := app.prevGen()
+	app.db.Exec("UPDATE _migration SET grade=?, name=?, modified_at=?",
+		prev.Grade, prev.Name, time.Now().Unix())
+	return nil
 }
 
 func (app *AppDB) Status() {
