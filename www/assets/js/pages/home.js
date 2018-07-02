@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import MyTaskList from '../components/ListComponent.vue';
+import MyTaskList from '../components/TaskListComponent.vue';
 import HomeApi from '../utils/homeApi'
 
 if(document.querySelector("#home")) {
@@ -30,7 +30,6 @@ if(document.querySelector("#home")) {
                 this.doingList = json.task
             })
             HomeApi.getProject().then(json => {
-                console.log(json)
                 if(!json.success) {
                     console.error("API ERROR")
                     return
