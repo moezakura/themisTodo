@@ -306,6 +306,11 @@ func main() {
 	}
 	defer db.Close()
 
+	if _, err := db.Exec("SHOW TABLES;"); err != nil {
+		fmt.Println("Can not connect to the database.")
+		os.Exit(1)
+	}
+
 	app, err := NewAppDB("./", db)
 	if err != nil {
 		fmt.Println("Database is not initialzed. Please execute `migration init` on your shell.")
