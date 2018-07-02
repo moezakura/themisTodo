@@ -3,22 +3,22 @@
     <section>
         <div class="sectionTitle">Join Project<a href="/project/add"><i class="fas fa-plus-circle"></i></a></div>
         <ul class="joinProject">
-        {{range .Projects}}
-            <li><a href="/project/view/{{.Uuid}}">{{.Name}}</a></li>
-        {{end}}
+            <li v-for="project in projects">
+                <a :href="'/project/view/'+project.uuid">${project.name}</a>
+            </li>
         </ul>
     </section>
     <section>
         <div class="sectionTitle taskListTitle">My Todo Tasks</div>
-        <ul class="taskList" id="todoList"></ul>
+        <ul class="taskList" id="todoList">
+            <parent :todo="todo" v-for="todo in todoList"/>
+        </ul>
     </section>
     <section>
         <div class="sectionTitle taskListTitle">My Doing Tasks</div>
-        <ul class="taskList" id="doingList"></ul>
+        <ul class="taskList" id="doingList">
+            <parent :todo="todo" v-for="todo in doingList"/>
+        </ul>
     </section>
 </div>
-<script>
-    const todoList = {{.Todo}},
-            doingList = {{.Doing}};
-</script>
 {{end}}
