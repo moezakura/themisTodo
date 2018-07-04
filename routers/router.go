@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func Init(db *sql.DB, formDB *gorm.DB) *gin.Engine {
+func Init(db *sql.DB, gormDB *gorm.DB) *gin.Engine {
 	r := gin.New()
 
 	r.Static("/fontawesome", "./www/assets/fontawesome/web-fonts-with-css/")
@@ -17,7 +17,8 @@ func Init(db *sql.DB, formDB *gorm.DB) *gin.Engine {
 	r.SetFuncMap(InitRenderFunc())
 	r.HTMLRender = InitRender()
 
-	baseController := themsController.NewBaseController(db, r)
+	gormDB.LogMode(true)
+	baseController := themsController.NewBaseController(db, gormDB, r)
 
 	r.GET("/", themsController.IndexController{baseController}.GetIndex)
 

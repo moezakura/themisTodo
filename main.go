@@ -26,7 +26,7 @@ func main() {
 	defer db.Close()
 
 	// gorm sql
-	gormDb, err := gorm.Open("mysql", "user:password@/dbname?charset=utf8&parseTime=True&loc=Local")
+	gormDb, err := gorm.Open("mysql", connectText)
 	gormDb.DB().SetConnMaxLifetime(30 * time.Minute)
 	gormDb.DB().SetMaxOpenConns(15000)
 	gormDb.DB().SetMaxIdleConns(3000)

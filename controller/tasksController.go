@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 	"net/http"
+	"fmt"
 )
 
 type TasksController struct {
@@ -335,7 +336,25 @@ func (self TasksController) GetSearch(c *gin.Context) {
 func (self TasksController) GetSearches(c *gin.Context) {
 	searchesResult := &models.TaskSearchesResultJson{}
 
+	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 
+	queryName := c.Query("name")
+	queryDescription := c.Query("description")
+	queryStatus, _ := strconv.ParseInt(c.Query("status"), 10, 64)
+	queryProjectId, _ := strconv.ParseInt(c.Query("projectId"), 10, 64)
+
+	tasks, err := taskModule.SearchTasks(queryName, queryDescription, int(queryStatus), int(queryProjectId))
+
+	fmt.Println(err)
+
+	searchesResult.Success = true
+	searchesResult.Message = ""
+
+	jsonTaskList := make([]models.TaskOfJson, 0)
+	for _, value := range tasks  {
+		jsonTaskList = append(jsonTaskList, *models.NewTaskOfJson(value))
+	}
+	searchesResult.Task = jsonTaskList
 
 	themisView.TasksView{}.GetSearches(c, http.StatusOK, searchesResult)
 }

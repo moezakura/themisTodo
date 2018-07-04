@@ -21,3 +21,7 @@ func (self TasksView) PostDelete(c *gin.Context, statusCode int, json *models.Ta
 func (self TasksView) GetView(c *gin.Context, statusCode int, json *models.TaskGetResultJson) {
 	c.JSON(statusCode, json)
 }
+
+func (self TasksView) GetSearches(c *gin.Context, statusCode int, json *models.TaskSearchesResultJson) {
+	c.JSON(statusCode, json)
+}

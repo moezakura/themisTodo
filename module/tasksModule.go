@@ -7,6 +7,7 @@ import (
 	"time"
 	"sync"
 	"github.com/jinzhu/gorm"
+	"fmt"
 )
 
 type TasksModule struct {
@@ -256,4 +257,66 @@ LIMIT 0, ?;`, userUuid, status, limit)
 	}
 
 	return false, list
+}
+
+func (self *TasksModule) SearchTasks(name, description string, status int, project int) (result []models.Task, err error) {
+	sr := []models.Task{}
+	db := self.gormDB.Table("todo_list")
+	db = db.Select("id, project, todo_list.name,creator, assign, status, deadline," +
+		"description, createDate,u1.displayName creatorName, u2.displayName assignName")
+
+	searchORs := make([]string, 0)
+	searchORsValue := make([]interface{}, 0)
+
+	if len(name) > 0 {
+		searchORs = append(searchORs, "todo_list.name LIKE ?")
+		searchORsValue = append(searchORsValue, fmt.Sprintf("%%%s%%", name))
+	}
+
+	if len(description) > 0 {
+		searchORs = append(searchORs, "description LIKE ?")
+		searchORsValue = append(searchORsValue, fmt.Sprintf("%%%s%%", name))
+	}
+
+	orText := ""
+	for k, v := range searchORs {
+		t := v
+		if k > 0 {
+			t = " OR " + t
+		}
+		orText += t
+	}
+	db = db.Where(orText, searchORsValue...)
+
+	statusAndProject := make([]string, 0)
+	statusAndProjectValue := make([]interface{}, 0)
+	if status > -1 {
+		statusAndProject = append(statusAndProject, "status = ?")
+		statusAndProjectValue = append(statusAndProjectValue, status)
+	}
+
+	if project > -1 {
+		statusAndProject = append(statusAndProject, "project = ?")
+		statusAndProjectValue = append(statusAndProjectValue, project)
+	}
+
+	for k, v := range statusAndProject {
+		db = db.Where(v, statusAndProjectValue[k])
+	}
+
+	db = db.Joins("INNER JOIN users u1 ON u1.uuid = todo_list.creator")
+	db = db.Joins("INNER JOIN users u2 ON u2.uuid = todo_list.assign")
+	rows, err := db.Rows()
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		tsr := models.Task{}
+		db.ScanRows(rows, &tsr)
+		sr = append(sr, tsr)
+	}
+
+	return sr, nil
 }
