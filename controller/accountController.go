@@ -171,8 +171,7 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 			return
 		}
 
-		passwordHash := utils.SHA512(updateRequest.CurrentPassword)
-		isErr, _ := loginModule.IsLoginFromUuid(accountUuid, passwordHash)
+		isErr, _ := loginModule.IsLoginFromUuid(accountUuid, updateRequest.CurrentPassword)
 		if !isErr {
 			accountChangeRequest.Password = updateRequest.Password
 			isChange = true

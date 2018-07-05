@@ -16,7 +16,7 @@ func NewAccountModule(db *sql.DB) *AccountModule {
 }
 
 func (self *AccountModule) Add(name, password string) bool {
-	stmt, err := self.db.Prepare("INSERT INTO `users` (`displayName`, `name`, `password`) VALUES(?, ?, ?);")
+	stmt, err := self.db.Prepare("INSERT INTO `users` (`displayName`, `name`, `password`, `password_version`) VALUES(?, ?, ?, ?);")
 
 	if err != nil {
 		log.Printf("AccountModule.Add Error: %+v", err)
@@ -25,7 +25,8 @@ func (self *AccountModule) Add(name, password string) bool {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(name, name, utils.SHA512(password))
+	passworder, _ := utils.NewPassworder(utils.VersionHmacSha512)
+	_, err = stmt.Exec(name, name, passworder.Hash(password), utils.VersionHmacSha512)
 	if err != nil {
 		log.Printf("AccountModule.Add Error: %+v", err)
 		return true
@@ -162,8 +163,9 @@ func (self *AccountModule) Update(account *models.AccountChangeRequestJson) bool
 	var result sql.Result
 	var err error
 	if len(account.Password) > 0 {
-		result, err = self.db.Exec("UPDATE `users` SET `displayName` = ?, `name` = ?, `password` = ? WHERE `uuid` = ?;",
-			account.DisplayName, account.Name, utils.SHA512(account.Password), account.Uuid)
+		passworder, _ := utils.NewPassworder(utils.VersionHmacSha512)
+		result, err = self.db.Exec("UPDATE `users` SET `displayName` = ?, `name` = ?, `password` = ?, `password_version` = ? WHERE `uuid` = ?;",
+			account.DisplayName, account.Name, passworder.Hash(account.Password), utils.VersionHmacSha512, account.Uuid)
 	} else {
 		result, err = self.db.Exec("UPDATE `users` SET `displayName` = ?, `name` = ? WHERE `uuid` = ?;",
 			account.DisplayName, account.Name, account.Uuid)

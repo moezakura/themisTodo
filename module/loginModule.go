@@ -5,6 +5,7 @@ import (
 	"log"
 	"github.com/gin-gonic/gin"
 	"time"
+	"../utils"
 )
 
 type LoginModule struct {
@@ -16,7 +17,7 @@ func NewLoginModule(db *sql.DB) *LoginModule {
 }
 
 func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
-	rows, err := self.db.Query("SELECT `uuid` FROM `users` WHERE `name` = ? AND `password` = ?;", name, password)
+	rows, err := self.db.Query("SELECT `uuid`, `password`, `password_version` FROM `users` WHERE `name` = ?;", name)
 
 	if err != nil {
 		log.Printf("LoginModule.IsLogin Error: %+v", err)
@@ -26,20 +27,31 @@ func (self *LoginModule) IsLogin(name, password string) (error bool, uuid int) {
 	defer rows.Close()
 	rows.Next()
 
-	if err := rows.Scan(&uuid); err != nil {
+	var expectedPassword string
+	var passwordVersion utils.PasswordVersion
+	if err := rows.Scan(&uuid, &expectedPassword, &passwordVersion); err != nil {
 		log.Printf("LoginModule.IsLogin Error: %+v", err)
 		return true, 0
 	}
 
 	if uuid < 1 {
 		return true, 0
-	} else {
+	}
+
+	passworder, err := utils.NewPassworder(passwordVersion)
+	if err != nil {
+		log.Fatal("LoginModule.IsLogin Error: %+v", err)
+	}
+	requestedPassword := passworder.Hash(password)
+	if passworder.Equal(expectedPassword, requestedPassword) {
 		return false, uuid
+	} else {
+		return true, 0
 	}
 }
 
 func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool, _uuid int) {
-	rows, err := self.db.Query("SELECT `uuid` FROM `users` WHERE `uuid` = ? AND `password` = ?;", uuid, password)
+	rows, err := self.db.Query("SELECT `uuid`, `password`, `password_version` FROM `users` WHERE `uuid` = ?;", uuid)
 
 	if err != nil {
 		log.Printf("LoginModule.IsLoginFromUuid Error: %+v", err)
@@ -49,15 +61,26 @@ func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool,
 	defer rows.Close()
 	rows.Next()
 
-	if err := rows.Scan(&uuid); err != nil {
+	var expectedPassword string
+	var passwordVersion utils.PasswordVersion
+	if err := rows.Scan(&uuid, &expectedPassword, &passwordVersion); err != nil {
 		log.Printf("LoginModule.IsLoginFromUuid Error: %+v", err)
 		return true, 0
 	}
 
 	if uuid < 1 {
 		return true, 0
-	} else {
+	}
+
+	passworder, err := utils.NewPassworder(passwordVersion)
+	if err != nil {
+		log.Fatal("LoginModule.IsLogin Error: %+v", err)
+	}
+	requestedPassword := passworder.Hash(password)
+	if passworder.Equal(expectedPassword, requestedPassword) {
 		return false, uuid
+	} else {
+		return true, 0
 	}
 }
 

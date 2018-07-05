@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	themisView "../view"
 	"../models"
-	"../utils"
 	"../module"
 	"net/http"
 )
@@ -28,7 +27,6 @@ func (self LoginController) PostLogin(c *gin.Context) {
 		return
 	}
 
-	loginRequest.Password = utils.SHA512(loginRequest.Password)
 	loginModule := module.NewLoginModule(self.DB)
 
 	err, uuid := loginModule.IsLogin(loginRequest.Id, loginRequest.Password)
