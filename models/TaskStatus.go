@@ -1,9 +1,14 @@
 package models
 
+import (
+	"strings"
+	"errors"
+)
+
 type TaskStatus int
 
 const (
-	TASK_STATUS_TODO TaskStatus = iota
+	TASK_STATUS_TODO         TaskStatus = iota
 	TASK_STATUS_DOING
 	TASK_STATUS_PULL_REQUEST
 	TASK_STATUS_DONE
@@ -28,4 +33,24 @@ func (rm TaskStatus) String() string {
 	default:
 		return "Unknown"
 	}
+}
+
+func TaskStatusFromString(statusText string) (status TaskStatus, err error) {
+	statusText = strings.ToUpper(statusText)
+
+	switch statusText {
+	case "TODO":
+		return TASK_STATUS_TODO, nil
+	case "DOING":
+		return TASK_STATUS_DOING, nil
+	case "PULL_REQUEST":
+	case "PULLREQUEST":
+		return TASK_STATUS_PULL_REQUEST, nil
+	case "DONE":
+		return TASK_STATUS_DONE, nil
+	case "HIDE":
+		return TASK_STATUS_HIDE, nil
+	}
+
+	return TASK_STATUS_OTHER, errors.New("invalid status.")
 }

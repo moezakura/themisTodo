@@ -336,22 +336,56 @@ func (self TasksController) GetSearch(c *gin.Context) {
 func (self TasksController) GetSearches(c *gin.Context) {
 	searchesResult := &models.TaskSearchesResultJson{}
 
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		searchesResult.Message = "invalid token"
+		themisView.TasksView{}.GetSearches(c, http.StatusBadRequest, searchesResult)
+		return
+	}
+
 	taskModule := module.NewTaskModule(self.DB, self.GormDB)
 
 	queryName := c.Query("name")
 	queryDescription := c.Query("description")
-	queryStatus, _ := strconv.ParseInt(c.Query("status"), 10, 64)
-	queryProjectId, _ := strconv.ParseInt(c.Query("projectId"), 10, 64)
 
-	tasks, err := taskModule.SearchTasks(queryName, queryDescription, int(queryStatus), int(queryProjectId))
+	statusText := c.Query("status")
+	queryStatus, err := strconv.ParseInt(statusText, 10, 64)
+	if err != nil {
+		queryStatusTmp, parseErr := models.TaskStatusFromString(statusText)
 
-	fmt.Println(err)
+		if parseErr != nil {
+			searchesResult.Message = fmt.Sprintf("%s", parseErr)
+			themisView.TasksView{}.GetSearches(c, http.StatusBadRequest, searchesResult)
+			return
+		}
+
+		queryStatus = int64(queryStatusTmp)
+	}
+
+	queryProjectId, err := strconv.ParseInt(c.Query("projectId"), 10, 64)
+	if err != nil {
+		searchesResult.Message = "invalid project id"
+		themisView.TasksView{}.GetSearches(c, http.StatusBadRequest, searchesResult)
+		return
+	}
+	projectId := int(queryProjectId)
+
+	projectModule := module.NewProjectsModule(self.DB)
+	if !projectModule.IsIn(userUuid, projectId) {
+		searchesResult.Message = "forbidden"
+		themisView.TasksView{}.GetSearches(c, http.StatusBadRequest, searchesResult)
+		return
+	}
+
+	tasks, err := taskModule.SearchTasks(queryName, queryDescription, int(queryStatus), projectId)
 
 	searchesResult.Success = true
 	searchesResult.Message = ""
 
 	jsonTaskList := make([]models.TaskOfJson, 0)
-	for _, value := range tasks  {
+	for _, value := range tasks {
 		jsonTaskList = append(jsonTaskList, *models.NewTaskOfJson(value))
 	}
 	searchesResult.Task = jsonTaskList
