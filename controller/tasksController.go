@@ -384,10 +384,12 @@ func (self TasksController) GetSearches(c *gin.Context) {
 	searchesResult.Success = true
 	searchesResult.Message = ""
 
+	taskList := utils.TasksConvert(tasks)
 	jsonTaskList := make([]models.TaskOfJson, 0)
-	for _, value := range tasks {
+	for _, value := range taskList  {
 		jsonTaskList = append(jsonTaskList, *models.NewTaskOfJson(value))
 	}
+
 	searchesResult.Task = jsonTaskList
 
 	themisView.TasksView{}.GetSearches(c, http.StatusOK, searchesResult)
