@@ -18,7 +18,7 @@ type Task struct {
 	LimitDate   int        `json:"limitDate"`
 	DeadlineMD  string     `json:"deadlineMD"`
 	Description string     `json:"description"`
-	CreateDate  int64      `json:"createDate" gorm:"primary_key" gorm:"column:createDate"`
+	CreateDate  int64      `json:"createDate" gorm:"column:createDate;primary_key"`
 }
 
 func (Task) TableName() string {
