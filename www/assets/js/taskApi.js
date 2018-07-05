@@ -86,4 +86,25 @@ export default class TaskApi {
     static Get(createDate) {
 
     }
+
+    static Search(projectId, status, name, description) {
+        let query = {
+            projectId: projectId,
+            status: status,
+            name: name === undefined ? "" : name,
+            description: description === undefined ? "" : description
+        };
+        let queryString = "";
+        Object.keys(query).forEach(key => {
+            let value = query[key];
+            queryString += (queryString === "" ? "" : "&") + key + "=" + encodeURIComponent(value);
+        });
+
+        return fetch("/tasks/searches?" + queryString, {
+            method: 'GET',
+            credentials: "same-origin"
+        }).then(function (response) {
+            return response.json();
+        });
+    }
 }
