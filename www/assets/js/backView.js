@@ -16,6 +16,15 @@ export default class BackView {
         document.body.appendChild(this.view);
     }
 
+    /**
+     * backViewにZIndexを指定します。
+     *
+     * @param zIndex {number}
+     */
+    setZIndex(zIndex){
+        this.view.style.zIndex = zIndex;
+    }
+
     show() {
         this.display("block");
     }
