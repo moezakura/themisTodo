@@ -2,6 +2,7 @@ const MODE = 'production';
 const enabledSourceMap = (MODE === 'development');
 
 const webpack = require('webpack');
+const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
     entry: './js/main.js',
@@ -69,8 +70,9 @@ module.exports = {
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
+        new VueLoaderPlugin(),
     ]
-}
+};
 if (module.hot) {
     module.hot.accept();
 }

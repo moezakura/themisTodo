@@ -279,3 +279,30 @@ func (self ProjectsController) PostDeleteProject(c *gin.Context) {
 	resultJson.Success = true
 	themisView.ProjectsView{}.PostDeleteProject(c, http.StatusOK, &resultJson)
 }
+
+func (self ProjectsController) GetMy(c *gin.Context) {
+	getResult := &models.ProjectGetResultJson{}
+	projectsModule := module.NewProjectsModule(self.DB)
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		getResult.Message = "invalid token"
+		themisView.ProjectsView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	isError, projects := projectsModule.GetProjects(userUuid)
+	if isError {
+		getResult.Message = "unknown project"
+		themisView.ProjectsView{}.GetMy(c, http.StatusBadRequest, getResult)
+		return
+	}
+
+	getResult.Project = projects
+	getResult.Success = true
+
+	themisView.ProjectsView{}.GetMy(c, http.StatusOK, getResult)
+
+}

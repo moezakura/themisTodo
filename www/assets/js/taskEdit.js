@@ -62,7 +62,7 @@ class TaskEdit {
     }
 
     static editClick() {
-        TaskDetail.editable(true);
+        TaskDetail.toggleEditable();
     }
 
     static taskDeadlineChange(createDate, deadline) {
@@ -123,7 +123,7 @@ class TaskEdit {
                 that.showError(json.message);
             }else{
                 that.showSuccess();
-                TaskDetail.editable(false);
+                TaskDetail.setEditable(false);
             }
             TaskDetail.load(taskId).then(function(task){
                 if(task == null) return;

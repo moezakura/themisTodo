@@ -96,7 +96,8 @@ go build
 ## Author
 Mox [Twitter](http://twitter.com/__MOX__) / [Github](https://github.com/moezakura)  
 uryoya [Github](https://github.com/uryoya)  
-nishi3 [Github](https://github.com/nishi3)  
+nishi3 [Github](https://github.com/nishi3)
+nitoling [Github](https://github.com/nitoling)
 
 ## Version
 - 0.1 (Alpha)
