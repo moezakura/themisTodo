@@ -13,7 +13,7 @@ func main() {
 	os.Mkdir("www/assets/accountIcon", 0777)
 	os.Mkdir("data", 0777)
 
-	connectText := fmt.Sprintf("%s:%s@/%s", MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DB_NAME)
+	connectText := fmt.Sprintf("%s:%s@tcp(%s)/%s", MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DB_NAME)
 	db, err := sql.Open("mysql", connectText)
 	if err != nil {
 		panic(err.Error())
