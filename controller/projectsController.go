@@ -105,6 +105,19 @@ func (self ProjectsController) GetTaskBoard(c *gin.Context) {
 		return
 	}
 
+	isIn := false
+	for _, inUser := range accounts{
+		if inUser.Uuid == accountUuid{
+			isIn = true
+			break
+		}
+	}
+
+	if project == nil || !isIn {
+		c.String(http.StatusNotFound, "400 Not Found")
+		return
+	}
+
 	themisView.ProjectsView{self.BaseView}.GetTaskBoard(c, project, taskList, accounts, account)
 }
 
