@@ -107,7 +107,10 @@
         <div id="taskPopupProgressCurrent">&nbsp;</div>
     </div>
     <textarea id="taskPopupDescription">DESCRIPTION</textarea>
-    <input type="submit" value="CHANGE">
+    <div class="input-box">
+        <input type="button" value="CANCEL" id="taskPopupEditCancelButton">
+        <input type="submit" value="CHANGE">
+    </div>
 </form>
 <div id="taskDeletePopup" v-show="taskDeletePopupFlag">
     <div id="taskDeletePopupTitle">Delete or Hide confirm</div>

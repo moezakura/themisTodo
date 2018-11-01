@@ -12,6 +12,7 @@ class TaskEdit {
         this.taskPopupEditButton = this.taskPopup.querySelector("#taskPopupEditButton");
         this.taskAssgin = this.taskPopup.querySelector("#taskPopupAssign");
         this.taskPopupAssignIcon = this.taskPopup.querySelector("#taskPopupAssignIcon");
+        this.taskPopupEditCancelButton = this.taskPopup.querySelector("#taskPopupEditCancelButton");
         this.error = this.taskPopup.querySelector(".error");
         this.success = this.taskPopup.querySelector(".success");
         this.taskForm = {
@@ -57,6 +58,10 @@ class TaskEdit {
         }, true);
 
         this.taskPopupEditButton.addEventListener("click", function (e) {
+            TaskEdit.editClick(e);
+        }, true);
+
+        this.taskPopupEditCancelButton.addEventListener("click", function (e){
             TaskEdit.editClick(e);
         }, true);
     }

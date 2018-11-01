@@ -397,7 +397,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: $modanWidth;
+    width: $taskPopupWidth;
     background-color: $backgroundColor;
     padding: 10px 20px;
     box-sizing: border-box;
@@ -446,7 +446,7 @@ body {
     }
 
     #taskPopupActions {
-        margin: -$buttonHeight 0 15px calc(#{$modanWidth - $buttonHeight * 3} - 20px);
+        margin: -$buttonHeight 0 15px calc(100% - #{$buttonHeight * 3} + 20px);
         width: $buttonHeight * 3;
 
         i {
@@ -471,6 +471,15 @@ body {
         }
     }
 
+    .input-box {
+        display: flex;
+        justify-content: space-between;
+
+        * {
+            width: 49%;
+        }
+    }
+
     input, textarea {
         display: block;
         width: 100%;
@@ -484,7 +493,7 @@ body {
         box-sizing: border-box;
         padding: 0 12px;
 
-        &[type=submit] {
+        &[type=submit], &[type=button] {
             margin-top: 10px;
             height: $buttonHeight;
             line-height: $buttonHeight;
@@ -629,7 +638,8 @@ body {
             padding: 0;
 
             &[type=submit],
-            &[type=date] {
+            &[type=date],
+            &[type=button] {
                 display: none;
             }
         }
