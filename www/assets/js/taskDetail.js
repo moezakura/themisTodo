@@ -13,12 +13,12 @@ export default class TaskDetail {
 
         backView.addWithHideElem(taskPopup);
 
-        let isHashEmpty = function() {
+        let isHashEmpty = function () {
             if (document.location.hash === "") {
                 backView.hide();
             }
         };
-        backView.addHideEvent(function(){
+        backView.addHideEvent(function () {
             window.removeEventListener("hashchange", isHashEmpty);
         });
 
@@ -49,7 +49,7 @@ export default class TaskDetail {
 
         TaskDetail.load(taskId);
     }
-    
+
     static load(taskId) {
         TaskDetail.setEmpty(true);
         let taskPopup = document.querySelector("#taskPopup");
@@ -203,13 +203,18 @@ export default class TaskDetail {
         return limit / allDiff * 100;
     }
 
-    static toggleEditable()
-    {
-        this.setEditable(!this.getEditable());
+    static toggleEditable(rollback, forceRollback) {
+        const isEditable = this.getEditable();
+        this.setEditable(!isEditable);
+
+        if (forceRollback || (rollback && isEditable)) {
+            const taskPopup = document.querySelector("#taskPopup");
+            const taskId = taskPopup.dataset.taskId;
+            this.loadFromTaskId(taskId, projectId);
+        }
     }
 
-    static getEditable()
-    {
+    static getEditable() {
         let taskPopup = document.querySelector("#taskPopup");
         return taskPopup.dataset.isEditable == "true" ? true : false;
     }

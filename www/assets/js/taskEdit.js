@@ -62,12 +62,16 @@ class TaskEdit {
         }, true);
 
         this.taskPopupEditCancelButton.addEventListener("click", function (e){
-            TaskEdit.editClick(e);
+            TaskEdit.editCancelClick(e);
         }, true);
     }
 
     static editClick() {
-        TaskDetail.toggleEditable();
+        TaskDetail.toggleEditable(true, false);
+    }
+
+    static editCancelClick() {
+        TaskDetail.toggleEditable(true, true);
     }
 
     static taskDeadlineChange(createDate, deadline) {
