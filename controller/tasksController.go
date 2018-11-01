@@ -51,6 +51,10 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		return
 	}
 
+	taskModule := module.NewTaskModule(self.DB)
+	projectModule := module.NewProjectsModule(self.DB)
+	isErr, task := taskModule.Get(createdTime)
+
 	if len(updateRequest.Deadline) > 0 {
 		timeSplits := strings.Split(updateRequest.Deadline, "-")
 		if len(timeSplits) != 3 {
@@ -67,16 +71,12 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		}
 
 		now := time.Now()
-		if userTime.Unix() < now.Unix() {
+		if userTime.Unix() < now.Unix() && updateRequest.Deadline != task.Deadline {
 			updateResult.Message = "deadline is not allowed past"
 			themisView.TasksView{}.PostUpdate(c, updateResult)
 			return
 		}
 	}
-
-	taskModule := module.NewTaskModule(self.DB)
-	projectModule := module.NewProjectsModule(self.DB)
-	isErr, task := taskModule.Get(createdTime)
 
 	if isErr {
 		updateResult.Message = "invalid task id"
