@@ -5,6 +5,7 @@ class AccountConfig {
     constructor() {
         this.idChangeForm = document.querySelector("#idChange");
         if (this.idChangeForm === undefined || this.idChangeForm == null) return;
+        return;
 
         this.displayNameChangeForm = document.querySelector("#displayNameChange");
         this.passwordChangeForm = document.querySelector("#passwordChange");
@@ -135,5 +136,25 @@ class AccountConfig {
         }
     }
 }
+
+import Vue from 'vue';
+import IdSetting from "./components/AccountSettings/IdSetting.vue"
+
+if(document.querySelector("#accountSettings")) {
+    new Vue({
+        delimiters: ['${', '}'],
+        el: '#accountSettings',
+        data: {
+        },
+        components: {
+            IdSetting
+        },
+        created () {
+
+        },
+        methods : { },
+    })
+}
+
 
 new AccountConfig();

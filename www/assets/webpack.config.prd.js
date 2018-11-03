@@ -2,7 +2,7 @@ const MODE = 'production';
 const enabledSourceMap = (MODE === 'development');
 
 const webpack = require('webpack');
-const { VueLoaderPlugin } = require('vue-loader');
+const {VueLoaderPlugin} = require('vue-loader');
 
 module.exports = {
     entry: './js/main.js',
@@ -17,6 +17,17 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.ts$/,
+                use: [
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            appendTsSuffixTo: [/\.vue$/]
+                        }
+                    }
+                ]
+            },
             {
                 test: /\.scss/, // 対象となるファイルの拡張子
                 use: [
@@ -54,7 +65,7 @@ module.exports = {
                 loader: 'babel-loader?optional[]=runtime',
                 options: {
                     presets: [
-                        ['env', { 'modules': false }]
+                        ['env', {'modules': false}]
                     ]
                 },
                 exclude: /node_modules/
@@ -62,7 +73,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['*', '.js', '.vue', '.json'],
+        extensions: ['*', '.js', '.vue', '.json', '.ts'],
         alias: {
             vue: 'vue/dist/vue.js'
         }
