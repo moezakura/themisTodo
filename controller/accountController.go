@@ -109,20 +109,10 @@ func (self AccountController) GetSearch(c *gin.Context) {
 func (self AccountController) PostUpdate(c *gin.Context) {
 	result := models.AccountChangeResultJson{}
 
-	accountUuidStr := c.Param("accountUuid")
-	accountUuidI64, err := strconv.ParseInt(accountUuidStr, 10, 32)
-	accountUuid := int(accountUuidI64)
-
-	if err != nil {
-		result.Message = "invalid account id"
-		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
-		return
-	}
-
 	loginModule := module.NewLoginModule(self.DB)
 
-	isErr, sessionUuid := loginModule.GetUserId(c, self.Session)
-	if sessionUuid != accountUuid || isErr {
+	isErr, accountUuid := loginModule.GetUserId(c, self.Session)
+	if isErr {
 		result.Message = "invalid account id"
 		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
 		return
