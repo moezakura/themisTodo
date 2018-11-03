@@ -1,20 +1,10 @@
 {{define "content"}}
 <div id="accountSettings" class="basicForm">
-    <div class="success">Success changed</div>
-
     <form id="accountSettingsIcon" autocomplete="off">
         <div class="error"></div>
         <div id="accountSettingsIconFake" style="background-image: url('/assets/accountIcon/{{.AccountUuid}}.png?t={{.Now}}')"></div>
         <input type="file" id="accountSettingsIconFile" name="icon">
     </form>
-
-    <!--<form id="idChange">-->
-        <!--<div class="error"></div>-->
-        <!--<label for="accountSettingsId">ID</label>-->
-        <!--<input type="text" id="accountSettingsId" name="accountSettingsId">-->
-        <!--<i class="fas fa-check"></i>-->
-        <!--<input type="submit">-->
-    <!--</form>-->
     <id-setting></id-setting>
     <form id="displayNameChange">
         <div class="error"></div>

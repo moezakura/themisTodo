@@ -89,6 +89,10 @@
     }
 }
 
+.v-shown {
+    display: block;
+}
+
 #success,
 .success {
     background-color: $accentColor;

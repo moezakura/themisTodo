@@ -1,16 +1,15 @@
 export default class AccountApi {
-    static NewAccountObject(uuid) {
+    static NewAccountObject() {
         return {
             "name": "",
             "displayName": "",
-            "uuid": uuid,
             "password": "",
             "currentPassword": "",
         };
     }
 
     static Change(accountObject) {
-        return fetch("/account/update/" + accountObject.uuid, {
+        return fetch("/account/update", {
             method: 'POST',
             body: JSON.stringify(accountObject),
             credentials: "same-origin"
