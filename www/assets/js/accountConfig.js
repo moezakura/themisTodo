@@ -1,4 +1,4 @@
-import AccountApi from "./accountApi"
+import AccountApi from "./api/AccountApi"
 import BackView from "./backView"
 
 class AccountConfig {

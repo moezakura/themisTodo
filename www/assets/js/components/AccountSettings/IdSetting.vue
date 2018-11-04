@@ -10,7 +10,8 @@
 </template>
 
 <script lang="ts">
-    import AccountApi from "../../accountApi"
+    import AccountApi from "../../api/AccountApi"
+    import Account from "../../model/Account";
 
     export default {
         name: "NameSetting",
@@ -23,7 +24,7 @@
         },
         methods: {
             changeId() {
-                let changeObj = AccountApi.NewAccountObject()
+                let changeObj = new Account();
                 changeObj.name = this.userId
                 AccountApi.Change(changeObj).then(json => {
                     if (!json.success) {
