@@ -139,6 +139,7 @@ class AccountConfig {
 
 import Vue from 'vue';
 import IdSetting from "./components/AccountSettings/IdSetting.vue"
+import DisplayNameSetting from "./components/AccountSettings/DisplayNameSetting";
 
 if(document.querySelector("#accountSettings")) {
     new Vue({
@@ -147,7 +148,8 @@ if(document.querySelector("#accountSettings")) {
         data: {
         },
         components: {
-            IdSetting
+            IdSetting,
+            DisplayNameSetting
         },
         created () {
 

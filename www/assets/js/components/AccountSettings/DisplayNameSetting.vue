@@ -1,10 +1,10 @@
 <template>
-    <form id="idChange" @submit.prevent="changeId">
+    <form id="displayNameChange" @submit.prevent="changeDisplayName">
         <div class="success v-shown" v-show="changeSuccess" @click="clearMessages">Success changed</div>
         <div class="error v-shown" v-show="errorMessage.length > 0" @click="clearMessages">{{ errorMessage }}</div>
-        <label for="accountSettingsId">ID</label>
-        <input type="text" id="accountSettingsId" name="accountSettingsId" v-model="userId">
-        <i class="fas fa-check" @click="changeId"></i>
+        <label for="accountSettingsDisplayName">Display name</label>
+        <input type="text" id="accountSettingsDisplayName" name="accountSettingsDisplayName" v-model="userName">
+        <i class="fas fa-check" @click="changeDisplayName"></i>
         <input type="submit">
     </form>
 </template>
@@ -14,18 +14,18 @@
     import Account from "../../model/Account"
 
     export default {
-        name: "NameSetting",
+        name: "DisplayNameSetting",
         data: () => {
             return {
-                userId: "",
+                userName: "",
                 changeSuccess: false,
                 errorMessage: "",
             }
         },
         methods: {
-            changeId() {
+            changeDisplayName() {
                 let changeObj = new Account()
-                changeObj.name = this.userId
+                changeObj.displayName = this.userName
                 AccountApi.Change(changeObj).then(json => {
                     if (!json.success) {
                         this.errorMessage = json.message
