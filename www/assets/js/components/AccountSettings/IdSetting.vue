@@ -4,8 +4,7 @@
         <div class="error v-shown" v-show="errorMessage.length > 0" @click="clearMessages">{{ errorMessage }}</div>
         <label for="accountSettingsId">ID</label>
         <input type="text" id="accountSettingsId" name="accountSettingsId" v-model="userId">
-        <i class="fas fa-check" @click="changeId"></i>
-        <input type="submit">
+        <input type="submit" value="CHANGE">
     </form>
 </template>
 
