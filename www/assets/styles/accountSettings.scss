@@ -39,11 +39,11 @@
             padding-right: calc(#{$lineTextHeight} + 5px);
         }
 
-        input[type=submit]:not([value=CHANGE]) {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
+        //input[type=submit]:not([value=CHANGE]) {
+        //    opacity: 0;
+        //    width: 0;
+        //    height: 0;
+        //}
 
         input[type=submit] {
             padding: 0 10px;
@@ -78,13 +78,12 @@
 }
 
 #currentPasswordDialog {
-    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     width: 450px;
     height: 180px;
-    padding: 10px 0;
+    padding: 10px 15px 0 15px;
     transform: translate(-50%, -50%);
     background-color: $backgroundColor;
     z-index: 99;

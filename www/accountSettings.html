@@ -7,23 +7,6 @@
     </form>
     <id-setting></id-setting>
     <display-name-setting></display-name-setting>
-    <form id="passwordChange">
-        <div class="error"></div>
-        <label for="accountSettingsPassword">New Password</label>
-        <input type="password" id="accountSettingsPassword" name="accountSettingsPassword">
-        <label for="accountSettingsPasswordRe">New Password</label>
-        <input type="password" id="accountSettingsPasswordRe" name="accountSettingsPasswordRe">
-        <input type="submit" value="CHANGE">
-    </form>
+    <password-change></password-change>
 </div>
-
-<form id="currentPasswordDialog" class="basicForm">
-    <p>Current password</p>
-    <input type="password" id="currentPasswordInput">
-    <input type="submit" value="CONFIRM">
-</form>
-<div id="backViewLayer"></div>
-<script type="application/javascript">
-    const accountUuid = {{.AccountUuid}};
-</script>
 {{end}}
