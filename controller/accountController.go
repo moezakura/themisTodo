@@ -17,10 +17,6 @@ type AccountController struct {
 	*BaseController
 }
 
-func (self AccountController) GetAdd(c *gin.Context) {
-	themisView.AccountView{self.BaseView}.GetAdd(c)
-}
-
 func (self AccountController) PostAdd(c *gin.Context) {
 	var addRequest models.AccountAddRequestJson
 	c.ShouldBindJSON(&addRequest)

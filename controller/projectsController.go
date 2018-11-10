@@ -13,10 +13,6 @@ type ProjectsController struct {
 	*BaseController
 }
 
-func (self ProjectsController) GetAdd(c *gin.Context) {
-	themisView.ProjectsView{self.BaseView}.GetAdd(c)
-}
-
 func (self ProjectsController) PostAdd(c *gin.Context) {
 	addResult := &models.ProjectAddResultJson{}
 	loginModule := module.NewLoginModule(self.DB)
@@ -62,63 +58,6 @@ func (self ProjectsController) PostAdd(c *gin.Context) {
 	addResult.Success = true
 	addResult.Id = id
 	themisView.ProjectsView{}.PostAdd(c, addResult)
-}
-
-func (self ProjectsController) GetTaskBoard(c *gin.Context) {
-	projectsModule := module.NewProjectsModule(self.DB)
-
-	loginModule := module.NewLoginModule(self.DB)
-	isError, accountUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
-
-	accountModule := module.NewAccountModule(self.DB)
-	isError, account := accountModule.GetAccount(accountUuid)
-	if isError {
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
-
-	projectIdStr := c.Param("projectId")
-	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
-	projectId := int(projectId64)
-	if err != nil {
-		c.String(http.StatusBadRequest, "400 Bad Request")
-		return
-	}
-
-	isError, project := projectsModule.GetProject(projectId)
-	taskModule := module.NewTaskModule(self.DB)
-
-	isErr, taskList := taskModule.GetList(projectId)
-	if isErr {
-		c.String(http.StatusBadRequest, "400 Bad Request")
-		return
-	}
-
-	isErr, accounts := projectsModule.GetUser(projectId)
-	if isErr {
-		c.String(http.StatusBadRequest, "400 Bad Request")
-		return
-	}
-
-	isIn := false
-	for _, inUser := range accounts{
-		if inUser.Uuid == accountUuid{
-			isIn = true
-			break
-		}
-	}
-
-	if project == nil || !isIn {
-		c.String(http.StatusNotFound, "400 Not Found")
-		return
-	}
-
-	themisView.ProjectsView{self.BaseView}.GetTaskBoard(c, project, taskList, accounts, account)
 }
 
 func (self ProjectsController) PostUpdate(c *gin.Context) {

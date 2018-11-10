@@ -13,10 +13,6 @@ type LoginController struct {
 	*BaseController
 }
 
-func (self LoginController) GetLogin(c *gin.Context) {
-	themisView.LoginView{self.BaseView}.GetLogin(c)
-}
-
 func (self LoginController) PostLogin(c *gin.Context) {
 	var loginRequest models.LoginRequestJson
 	c.ShouldBindJSON(&loginRequest)
