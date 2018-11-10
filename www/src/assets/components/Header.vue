@@ -1,0 +1,24 @@
+<template>
+    <header>
+        <a href="/"><img src="/assets/images/logo.png"></a>
+        <a href="/home">
+            <div>Home</div>
+        </a>
+        <a href="/settings">
+            <div>My Setting</div>
+        </a>
+        <a href="/account/add">
+            <div>New Account</div>
+        </a>
+    </header>
+</template>
+
+<script lang="ts">
+    export default {
+        name: "Header"
+    }
+</script>
+
+<style scoped>
+
+</style>

@@ -28,8 +28,8 @@
 </template>
 
 <script lang="ts">
-    import AccountApi from "../../api/AccountApi"
-    import Account from "../../model/Account"
+    import AccountApi from "../../scripts/api/AccountApi"
+    import Account from "../../scripts/model/Account"
 
     export default {
         name: "PasswordChange",

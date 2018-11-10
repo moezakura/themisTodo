@@ -3,13 +3,14 @@ const enabledSourceMap = (MODE === 'development');
 
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const {VueLoaderPlugin} = require('vue-loader');
 
 const path = require('path')
 const dist = path.resolve(__dirname, 'dist')
 
 module.exports = {
-    entry: './src/assets/scripts/main.js',
+    entry: './src/main.ts',
     mode: "development",
     output: {
         filename: '[name].js',
@@ -31,6 +32,13 @@ module.exports = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.css/,
+                use: [
+                    'style-loader',
+                    {loader: 'css-loader', options: {url: false}},
+                ],
             },
             {
                 test: /\.scss/, // 対象となるファイルの拡張子
@@ -99,6 +107,16 @@ module.exports = {
             template: './src/index.html',
             inject: 'body'
         }),
+        new CopyWebpackPlugin([
+            {
+                from: path.resolve(__dirname, 'src/assets/fontawesome/web-fonts-with-css/webfonts/'),
+                to: path.resolve(dist, './webfonts/'),
+            },
+            {
+                from: path.resolve(__dirname, 'src/assets/images/'),
+                to: path.resolve(dist, './assets/images/'),
+            }
+        ]),
     ],
 };
 if (module.hot) {

@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {{if .Title}}
+    <title>{{.Title}} -Themis Todo</title>
+    {{else}}
     <title>Themis Todo</title>
+    {{end}}
     <style>
         html,
         body {
@@ -21,14 +25,13 @@
     </style>
 </head>
 <body>
-<div id="main">
-
-
-    <div id="welcome">
-        <h2>Themis&nbsp;Todo</h2>
-        <h3>Themis&nbsp;Todoは簡単なTODO管理アプリケーションです</h3>
-        <a href="/login">ログイン</a>
-    </div>
+{{template "header"}}
+<i class="fab fa-500px"></i>
+<div id="welcome">
+    <h2>Themis&nbsp;Todo</h2>
+    <h3>Themis&nbsp;Todoは簡単なTODO管理アプリケーションです</h3>
+    <a href="/login">ログイン</a>
 </div>
-</body>
+
+<script type="text/javascript" src="main.js"></script></body>
 </html>
