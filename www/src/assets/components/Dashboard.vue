@@ -11,14 +11,14 @@
                 <div class="sectionTitle taskListTitle">My Todo Tasks</div>
                 <ul class="taskList" id="todoList">
                     <task-line v-for="task in todoList" :key="task.createDate" :task="task"
-                               :hideAssign="true"></task-line>
+                               :hideAssign="true" :full-deadline="true"></task-line>
                 </ul>
             </section>
             <section>
                 <div class="sectionTitle taskListTitle">My Doing Tasks</div>
                 <ul class="taskList" id="doingList">
                     <task-line v-for="task in doingList" :key="task.createDate" :task="task"
-                               :hideAssign="true"></task-line>
+                               :hideAssign="true" :full-deadline="true"></task-line>
                 </ul>
             </section>
         </div>

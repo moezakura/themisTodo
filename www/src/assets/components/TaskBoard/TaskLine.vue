@@ -9,7 +9,7 @@
         </div>
         <div class="taskLimit">
             <i class="fas fa-calendar-alt"></i>
-            <span class="deadlineDate">{{ task.deadline }}</span>
+            <span class="deadlineDate">{{ isFullDeadline ? task.deadline : task.deadlineMD }}</span>
             <span class="deadlineDate" v-if="!isCompleted">あと{{ task.limitDate }}日</span>
             <span class="deadlineDate" v-if="isCompleted">Completed!</span>
         </div>
@@ -19,7 +19,7 @@
 <script lang="ts">
     export default {
         name: "TaskLine",
-        props: ["task", "hideAssign"],
+        props: ["task", "hideAssign", "fullDeadline"],
         data() {
             return {
                 backgroundImage: `/assets/accountIcon/${this.task.assign}.png?t=${new Date().getTime()}`
@@ -31,6 +31,12 @@
                     return false
                 }
                 return this.task.status === 3
+            },
+            isFullDeadline(): boolean {
+                if (this.fullDeadline === undefined || this.fullDeadline == null) {
+                    return false
+                }
+                return this.fullDeadline
             },
             isShowAssign(): boolean {
                 if (this.hideAssign === undefined || this.hideAssign == null) {
