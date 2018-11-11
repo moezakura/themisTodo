@@ -4,7 +4,7 @@
             <i class="fas fa-th-list"></i>
             <span>{{ name }}</span>
         </div>
-        <p class="description">{{ description }}</p>
+        <pre class="description">{{ description }}</pre>
     </li>
 </template>
 
@@ -57,6 +57,8 @@
         .description {
             font-size: 14px;
             color: rgb(150, 150, 150);
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
     }
 </style>
