@@ -3,6 +3,7 @@ import ProjectListResult from "@scripts/model/api/ProjectListResult"
 import Project from "@scripts/model/api/project/Project"
 import TaskListResult from "@scripts/model/api/TaskListResult"
 import Task from "@scripts/model/api/task/Task"
+import ProjectResult from "@scripts/model/api/ProjectResult"
 
 export default class ProjectApi {
     static getList(taskStatus: TaskStatus): Promise<TaskListResult> {
@@ -42,7 +43,7 @@ export default class ProjectApi {
         })
     }
 
-    static getProject(): Promise<ProjectListResult> {
+    static getProjects(): Promise<ProjectListResult> {
         return fetch("/api/project/my", {
             method: 'GET',
             credentials: 'same-origin'
@@ -65,6 +66,27 @@ export default class ProjectApi {
             }
 
             return projectList
+        })
+    }
+
+    static getProject(projectId: number): Promise<ProjectResult> {
+        return fetch(`/api/project/info/${projectId}`, {
+            method: 'GET',
+            credentials: 'same-origin'
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let project = new ProjectResult()
+
+            project.message = json["message"]
+            project.success = json["success"]
+
+            project.project = new Project()
+            project.project.uuid = json["uuid"]
+            project.project.name = json["name"]
+            project.project.description = json["description"]
+
+            return project
         })
     }
 }

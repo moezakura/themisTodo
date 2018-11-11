@@ -80,7 +80,7 @@
             loadingJoinedProject() {
                 this.$store.commit("incrementLoadingCount")
 
-                ProjectApi.getProject().then(res => {
+                ProjectApi.getProjects().then(res => {
                     if (!res.success) {
                         return
                     }

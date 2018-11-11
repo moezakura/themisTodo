@@ -1,27 +1,5 @@
 {{define "content"}}
-<h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{.Project.Name}}</span></h2>
-<a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
-<a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
-<div id="taskboard">
-    <div id="taskBoardMinSized">
-        <section id="todo">
-            <div class="statusName">Todo</div>
-            <ul class="taskList" data-status="todo"></ul>
-        </section>
-        <section id="doing">
-            <div class="statusName">Doing</div>
-            <ul class="taskList" data-status="doing"></ul>
-        </section>
-        <section id="pr">
-            <div class="statusName">PullRequest</div>
-            <ul class="taskList" data-status="pr"></ul>
-        </section>
-        <section id="done">
-            <div class="statusName">Done</div>
-            <ul class="taskList" data-status="done"></ul>
-        </section>
-    </div>
-</div>
+
 
 <form id="taskboardAddForm" class="basicForm">
     <h3>New Task</h3>
