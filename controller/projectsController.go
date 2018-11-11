@@ -248,22 +248,22 @@ func (self ProjectsController) GetInfo(c *gin.Context) {
 	projectId := int(projectId64)
 	if err != nil {
 		resultJson.Message = "invalid project id"
-		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, &esultJson)
+		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, resultJson)
 		return
 	}
 
 	projectModule := module.NewProjectsModule(self.DB)
 	isIn := projectModule.IsIn(userUuid, projectId)
 	if !isIn {
-		resultJson.Message = "unknown project"
-		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, resultJson)
+		resultJson.Message = "not found project"
+		themisView.ProjectsView{}.GetInfo(c, http.StatusNotFound, resultJson)
 		return
 	}
 
-	isError, project := projectModule.GetProject(userUuid)
+	isError, project := projectModule.GetProject(projectId)
 	if isError {
-		resultJson.Message = "unknown project"
-		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, resultJson)
+		resultJson.Message = "not found project"
+		themisView.ProjectsView{}.GetInfo(c, http.StatusNotFound, resultJson)
 		return
 	}
 	resultJson.Project = *project
