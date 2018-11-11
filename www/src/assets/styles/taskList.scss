@@ -20,6 +20,8 @@ ul.taskList {
             background-color: rgba(black, .5);
         }
 
+        @import "task_color";
+
         &::after {
             display: block;
             position: relative;

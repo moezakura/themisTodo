@@ -1,0 +1,31 @@
+&::before {
+    position: relative;
+    display: block;
+    width: 5px;
+    height: 55px;
+    background-color: accentColor(.5);
+    left: -15px;
+    top: 7px;
+    margin-bottom: -55px;
+    content: '';
+}
+
+&.limit3::before {
+    background-color: rgba($orangeColor, .8);
+}
+
+&.limit2::before {
+    background-color: rgba($satOrangeColor, .8);
+}
+
+&.limit1::before {
+    background-color: $redColor;
+}
+
+&.over {
+    background-color: rgba($redColor, .35);
+}
+
+&.over::before {
+    background-color: $redColor;
+}
