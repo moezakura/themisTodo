@@ -15,6 +15,7 @@ module.exports = {
     output: {
         filename: '[name].js',
         path: dist,
+        publicPath: '/'
     },
 
     devServer: {

@@ -39,7 +39,7 @@
                     if (!res.success) {
                         this.errorMessage = res.message
                     } else {
-                        location.href = 'home'
+                        this.$router.push({name: 'dashboard'})
                     }
                 }).finally(() => {
                     this.$store.commit('decrementLoadingCount')

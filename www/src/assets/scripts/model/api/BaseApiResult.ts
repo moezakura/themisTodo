@@ -1,4 +1,4 @@
 export default class BaseApiResult {
-    success: boolean
-    message: string
+    public success: boolean
+    public message: string
 }

@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import MyTaskList from '../../components/TaskListComponent.vue';
-import HomeApi from '../utils/homeApi'
 
 if(document.querySelector("#home")) {
     new Vue({
