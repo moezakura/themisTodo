@@ -23,6 +23,7 @@
     "progressbar.js": "^1.0.1",
     "sass-loader": "^7.0.3",
     "save": "^2.3.2",
+    "sortablejs": "^1.7.0",
     "style-loader": "^0.21.0",
     "vue": "^2.5.16",
     "vue-class-component": "^6.3.2",

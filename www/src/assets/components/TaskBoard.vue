@@ -7,26 +7,30 @@
             <div id="taskBoardMinSized">
                 <section id="todo">
                     <div class="statusName">Todo</div>
-                    <ul class="taskList" data-status="todo">
-                        <task-line v-for="task in tasks.todo" :key="task.createDate" :task="task"></task-line>
+                    <ul class="taskList" data-status="TODO" ref="task-line-todo">
+                        <task-line v-for="task in tasks.todo" :key="task.createDate" :task="task"
+                                   :data-task-id="task.createDate"></task-line>
                     </ul>
                 </section>
                 <section id="doing">
                     <div class="statusName">Doing</div>
-                    <ul class="taskList" data-status="doing">
-                        <task-line v-for="task in tasks.doing" :key="task.createDate" :task="task"></task-line>
+                    <ul class="taskList" data-status="DOING" ref="task-line-doing">
+                        <task-line v-for="task in tasks.doing" :key="task.createDate" :task="task"
+                                   :data-task-id="task.createDate"></task-line>
                     </ul>
                 </section>
                 <section id="pr">
                     <div class="statusName">PullRequest</div>
-                    <ul class="taskList" data-status="pr">
-                        <task-line v-for="task in tasks.pullRequest" :key="task.createDate" :task="task"></task-line>
+                    <ul class="taskList" data-status="PULL_REQUEST" ref="task-line-pr">
+                        <task-line v-for="task in tasks.pullRequest" :key="task.createDate" :task="task"
+                                   :data-task-id="task.createDate"></task-line>
                     </ul>
                 </section>
                 <section id="done">
                     <div class="statusName">Done</div>
-                    <ul class="taskList" data-status="done">
-                        <task-line v-for="task in tasks.done" :key="task.createDate" :task="task"></task-line>
+                    <ul class="taskList" data-status="DONE" ref="task-line-done">
+                        <task-line v-for="task in tasks.done" :key="task.createDate" :task="task"
+                                   :data-task-id="task.createDate"></task-line>
                     </ul>
                 </section>
             </div>
@@ -39,7 +43,9 @@
     import ProjectApi from "../scripts/api/ProjectApi"
     import Task from "../scripts/model/api/task/Task"
     import TaskStatusConvert, {TaskStatus} from "../scripts/enums/TaskStatus"
-    import TaskLine from "./TaskBoard/TaskLine";
+    import TaskLine from "./TaskBoard/TaskLine"
+    import Sortable from "sortablejs/Sortable"
+    import TaskApi from "../scripts/api/TaskApi"
 
     export default {
         name: "TaskBoard",
@@ -81,10 +87,10 @@
             loadTasks() {
                 this.$store.commit("incrementLoadingCount")
 
-                this.tasks.todo.splice(0, this.tasks.todo.length);
-                this.tasks.doing.splice(0, this.tasks.doing.length);
-                this.tasks.pullRequest.splice(0, this.tasks.pullRequest.length);
-                this.tasks.done.splice(0, this.tasks.done.length);
+                this.tasks.todo.splice(0, this.tasks.todo.length)
+                this.tasks.doing.splice(0, this.tasks.doing.length)
+                this.tasks.pullRequest.splice(0, this.tasks.pullRequest.length)
+                this.tasks.done.splice(0, this.tasks.done.length)
 
                 ProjectApi.getTasks(this.projectId).then(res => {
                     if (res.success) {
@@ -108,11 +114,45 @@
                 }).finally(() => {
                     this.$store.commit("decrementLoadingCount")
                 })
+            },
+            changedStatus(changeStatus: number, createDate) {
+                let task = new Task()
+                task.status = changeStatus
+                this.$store.commit("incrementLoadingCount")
+
+                TaskApi.Update(createDate, task).then(res => {
+                    if (res.success) {
+                        this.loadTasks()
+                    }
+                    //TaskBoard.loadTask(targetCreateId)
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
             }
         },
         created() {
             this.loadProjectInfo()
             this.loadTasks()
+        },
+        mounted() {
+            const taskLists = [
+                this.$refs["task-line-todo"],
+                this.$refs["task-line-doing"],
+                this.$refs["task-line-pr"],
+                this.$refs["task-line-done"],
+            ]
+
+            for (let taskLine of taskLists) {
+                Sortable.create(taskLine, {
+                    group: "shares",
+                    onEnd: evt => {
+                        const status = TaskStatusConvert.toNumber(evt.item.parentNode.dataset.status)
+                        const targetCreateId = evt.item.dataset.taskId
+                        this.changedStatus(status, targetCreateId)
+                    },
+                    animation: 100
+                })
+            }
         }
     }
 </script>

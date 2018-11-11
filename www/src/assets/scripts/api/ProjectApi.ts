@@ -22,19 +22,7 @@ export default class ProjectApi {
             taskList.task = []
             for (let i of <Array<any>>json["task"]) {
                 let task = new Task()
-                task.taskId = i["taskId"]
-                task.projectId = i["projectId"]
-                task.name = i["name"]
-                task.creator = i["creator"]
-                task.creatorName = i["creatorName"]
-                task.assign = i["assign"]
-                task.assignName = i["assignName"]
-                task.status = i["status"]
-                task.deadline = i["deadline"]
-                task.limitDate = i["limitDate"]
-                task.deadlineMD = i["deadlineMD"]
-                task.description = i["description"]
-                task.createDate = i["createDate"]
+                task.fromAny(i)
 
                 taskList.task.push(task)
             }
@@ -105,19 +93,7 @@ export default class ProjectApi {
             taskList.task = []
             for (let i of <Array<any>>json["task"]) {
                 let task = new Task()
-                task.taskId = i["taskId"]
-                task.projectId = i["projectId"]
-                task.name = i["name"]
-                task.creator = i["creator"]
-                task.creatorName = i["creatorName"]
-                task.assign = i["assign"]
-                task.assignName = i["assignName"]
-                task.status = i["status"]
-                task.deadline = i["deadline"]
-                task.limitDate = i["limitDate"]
-                task.deadlineMD = i["deadlineMD"]
-                task.description = i["description"]
-                task.createDate = i["createDate"]
+                task.fromAny(i)
 
                 taskList.task.push(task)
             }
