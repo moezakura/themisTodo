@@ -22,13 +22,8 @@
 </head>
 <body>
 <div id="main">
-
-
-    <div id="welcome">
-        <h2>Themis&nbsp;Todo</h2>
-        <h3>Themis&nbsp;Todoは簡単なTODO管理アプリケーションです</h3>
-        <a href="/login">ログイン</a>
-    </div>
+    <common-header v-show="isHeaderEnable"></common-header>
+    <router-view></router-view>
 </div>
 </body>
 </html>

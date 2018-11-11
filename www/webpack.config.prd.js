@@ -1,13 +1,13 @@
-const MODE = 'production'
-const enabledSourceMap = (MODE === 'development')
+const MODE = 'production';
+const enabledSourceMap = (MODE === 'development');
 
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const {VueLoaderPlugin} = require('vue-loader')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const {VueLoaderPlugin} = require('vue-loader');
 
-const path = require('path')
-const dist = path.resolve(__dirname, 'dist')
+const path = require('path');
+const dist = path.resolve(__dirname, 'dist');
 
 module.exports = {
     entry: './src/main.ts',
@@ -89,9 +89,11 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['*', '.js', '.vue', '.json', '.ts'],
+        extensions: ['*', '.js', '.vue', '.json', '.tsx', '.ts'],
         alias: {
-            vue: 'vue/dist/vue.js'
+            vue: 'vue/dist/vue.js',
+            '@components': path.resolve(__dirname, './src/assets/components'),
+            '@scripts': path.resolve(__dirname, './src/assets/scripts'),
         }
     },
     plugins: [
