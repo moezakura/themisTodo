@@ -78,7 +78,6 @@
                 this.$store.commit("incrementLoadingCount")
 
                 ProjectApi.getProject().then(res => {
-                    console.log(res)
                     if (!res.success) {
                         return
                     }
