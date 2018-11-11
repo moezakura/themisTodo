@@ -31,7 +31,16 @@ new Vue({
     },
     watch: {
         '$route'(to, from) {
-            this.$store.commit("setHeaderEnable", to.path !== "/")
+            this.headerController()
         }
+    },
+    methods: {
+        headerController() {
+            const pageName = this.$route.name
+            this.$store.commit("setHeaderEnable", pageName !== "welcome")
+        }
+    },
+    created() {
+        this.headerController()
     }
 })

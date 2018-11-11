@@ -16,9 +16,9 @@ module.exports = {
         filename: '[name].js',
         path: dist,
     },
-
     devServer: {
         port: 8652,
+        historyApiFallback: true
     },
     module: {
         rules: [
