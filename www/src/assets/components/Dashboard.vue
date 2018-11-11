@@ -1,24 +1,26 @@
 <template>
     <div id="home">
-        <section>
-            <div class="sectionTitle">Your Projects</div>
-            <ul class="joinProject">
-                <project-line v-for="project in projects" :project="project"
-                              @click="moveProject(project.uuid)"></project-line>
-            </ul>
-        </section>
-        <section>
-            <div class="sectionTitle taskListTitle">My Todo Tasks</div>
-            <ul class="taskList" id="todoList">
-                <task-line v-for="task in todoList" :task="task"></task-line>
-            </ul>
-        </section>
-        <section>
-            <div class="sectionTitle taskListTitle">My Doing Tasks</div>
-            <ul class="taskList" id="doingList">
-                <task-line v-for="task in doingList" :task="task"></task-line>
-            </ul>
-        </section>
+        <div id="home-container">
+            <section>
+                <div class="sectionTitle">Your Projects</div>
+                <ul class="joinProject">
+                    <project-line v-for="project in projects" :project="project"
+                                  @click="moveProject(project.uuid)"></project-line>
+                </ul>
+            </section>
+            <section>
+                <div class="sectionTitle taskListTitle">My Todo Tasks</div>
+                <ul class="taskList" id="todoList">
+                    <task-line v-for="task in todoList" :task="task" :hideAssign="true"></task-line>
+                </ul>
+            </section>
+            <section>
+                <div class="sectionTitle taskListTitle">My Doing Tasks</div>
+                <ul class="taskList" id="doingList">
+                    <task-line v-for="task in doingList" :task="task" :hideAssign="true"></task-line>
+                </ul>
+            </section>
+        </div>
     </div>
 </template>
 

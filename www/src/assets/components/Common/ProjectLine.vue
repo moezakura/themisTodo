@@ -55,8 +55,8 @@
         }
 
         .description {
-            font-size: 16px;
-            color: rgb(200, 200, 200);
+            font-size: 14px;
+            color: rgb(150, 150, 150);
         }
     }
 </style>

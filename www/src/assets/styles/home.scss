@@ -1,61 +1,69 @@
 #home {
-    display: flex;
-    justify-content: flex-start;
-    margin: 0 15px;
+    overflow-x: auto;
 
-    section {
-        flex-grow: 1;
-        margin: 0 10px;
-        width: 33.3333%;
+    #home-container {
+        display: flex;
+        justify-content: flex-start;
+        margin: 0 15px;
+        min-width: 1100px;
 
-        * {
-            justify-content: unset;
-            flex-grow: 0;
-        }
+        section {
+            flex-grow: 1;
+            margin: 0 10px;
+            width: (100% - 45%) / 2;
+            &:first-child {
+                width: 45%;
+            }
 
-        .sectionTitle {
-            font-size: 16px;
-            letter-spacing: 1.3px;
-            height: 35px;
-            line-height: 35px;
+            * {
+                justify-content: unset;
+                flex-grow: 0;
+            }
 
-            i {
-                color: white;
-                margin-left: 10px;
+            .sectionTitle {
+                font-size: 16px;
+                letter-spacing: 1.3px;
+                height: 35px;
                 line-height: 35px;
-            }
-        }
 
-        .taskListTitle {
-            height: $buttonHeight;
-            line-height: $buttonHeight;
-            background-color: rgba(black, .3);
-
-            &::before {
-                width: 5px;
-                height: 100%;
-                display: inline-block;
-                vertical-align: top;
-                margin-right: 10px;
-                content: " ";
-                background-color: $accentColor;
-            }
-        }
-
-        ul {
-            &.joinProject {
-                display: block;
-                list-style: none;
-                margin: 0 0 0 15px;
-                padding: 0;
+                i {
+                    color: white;
+                    margin-left: 10px;
+                    line-height: 35px;
+                }
             }
 
-            &.taskList {
-                width: 100%;
-                li {
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
+            .taskListTitle {
+                height: $buttonHeight;
+                line-height: $buttonHeight;
+                background-color: rgba(black, .3);
+
+                &::before {
+                    width: 5px;
+                    height: 100%;
+                    display: inline-block;
+                    vertical-align: top;
+                    margin-right: 10px;
+                    content: " ";
+                    background-color: $accentColor;
+                }
+            }
+
+            ul {
+                &.joinProject {
+                    display: block;
+                    list-style: none;
+                    margin: 0 0 0 15px;
+                    padding: 0;
+                }
+
+                &.taskList {
+                    width: 100%;
+                    li {
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
                 }
             }
         }
