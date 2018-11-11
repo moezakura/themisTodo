@@ -232,6 +232,46 @@ func (self ProjectsController) PostDeleteProject(c *gin.Context) {
 	themisView.ProjectsView{}.PostDeleteProject(c, http.StatusOK, &resultJson)
 }
 
+func (self ProjectsController) GetInfo(c *gin.Context) {
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	resultJson := &models.ProjectInfoResultJson{}
+
+	if isError {
+		resultJson.Message = "invalid token"
+		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	projectIdStr := c.Param("projectId")
+	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
+	projectId := int(projectId64)
+	if err != nil {
+		resultJson.Message = "invalid project id"
+		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, &esultJson)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	isIn := projectModule.IsIn(userUuid, projectId)
+	if !isIn {
+		resultJson.Message = "unknown project"
+		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	isError, project := projectModule.GetProject(userUuid)
+	if isError {
+		resultJson.Message = "unknown project"
+		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, resultJson)
+		return
+	}
+	resultJson.Project = *project
+	resultJson.Success = true
+
+	themisView.ProjectsView{}.GetInfo(c, http.StatusOK, resultJson)
+}
+
 func (self ProjectsController) GetMy(c *gin.Context) {
 	getResult := &models.ProjectGetResultJson{}
 	projectsModule := module.NewProjectsModule(self.DB)
