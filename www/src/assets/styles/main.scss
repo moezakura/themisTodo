@@ -1,3 +1,9 @@
+$fa-font-path: "/webfonts/";
+@import '../fontawesome/web-fonts-with-css/scss/fontawesome.scss';
+@import '../fontawesome/web-fonts-with-css/scss/fa-brands.scss';
+@import '../fontawesome/web-fonts-with-css/scss/fa-regular.scss';
+@import '../fontawesome/web-fonts-with-css/scss/fa-solid.scss';
+
 $backgroundColor: rgb(30, 30, 30);
 $accentColor: rgb(67, 160, 71);
 $linkColor: rgb(187, 222, 251);

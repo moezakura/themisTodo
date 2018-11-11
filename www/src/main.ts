@@ -8,10 +8,6 @@ import CommonHeader from '@components/CommonHeader.vue'
 import LoadingOverlay from '@components/Overlay/LoadingOverlay.vue'
 
 import './assets/styles/cssreset-min.css'
-import './assets/fontawesome/web-fonts-with-css/scss/fontawesome.scss'
-import './assets/fontawesome/web-fonts-with-css/scss/fa-brands.scss'
-import './assets/fontawesome/web-fonts-with-css/scss/fa-regular.scss'
-import './assets/fontawesome/web-fonts-with-css/scss/fa-solid.scss'
 import './assets/styles/main.scss'
 
 Vue.use(Vuex)
