@@ -42,7 +42,8 @@
     clear: both;
 }
 
-.loading {
+.loading,
+#loading-overlay {
     display: none;
     position: fixed;
     top: 0;
@@ -65,6 +66,10 @@
         border-bottom-color: transparent;
         @include animation(rotateAnimate .5s infinite, linear);
     }
+}
+
+#loading-overlay {
+    display: block;
 }
 
 .loading-circle {

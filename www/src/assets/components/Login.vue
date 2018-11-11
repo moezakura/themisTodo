@@ -10,7 +10,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
     export default {
         name: "Login",
         data: () => {
@@ -27,7 +27,29 @@
                 this.errorMessage = ""
             },
             postLogin() {
+                this.$store.commit('incrementLoadingCount')
+                let loginJson = {
+                    "id": this.formUsername,
+                    "password": this.formPassword
+                }
 
+                fetch("/api/login", {
+                    method: 'POST',
+                    body: JSON.stringify(loginJson),
+                    credentials: "same-origin"
+                }).then((response) => {
+                    return response.json()
+                }).then((json) => {
+                    if (!json.success) {
+                        this.formError = json.message
+                        this.hideStyle = 'block'
+                    } else {
+                        this.hideStyle = 'none'
+                        location.href = 'home'
+                    }
+                }).finally(() => {
+                    this.$store.commit('decrementLoadingCount')
+                })
             }
         }
     }

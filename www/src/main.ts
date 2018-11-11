@@ -3,7 +3,9 @@ import Router from './assets/routers/index'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
+
 import CommonHeader from '@components/CommonHeader.vue'
+import LoadingOverlay from '@components/Overlay/LoadingOverlay.vue'
 
 import './assets/styles/cssreset-min.css'
 import './assets/fontawesome/web-fonts-with-css/css/fontawesome-all.css'
@@ -22,7 +24,8 @@ new Vue({
     store,
     router,
     components: {
-        CommonHeader
+        CommonHeader,
+        LoadingOverlay
     },
     computed: {
         isHeaderEnable(): boolean {
