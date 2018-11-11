@@ -36,8 +36,11 @@ new Vue({
     },
     methods: {
         headerController() {
-            const pageName = this.$route.name
-            this.$store.commit("setHeaderEnable", pageName !== "welcome")
+            let showHeader = true
+            if (this.$route.meta !== undefined && this.$route.meta.hideHeader !== undefined) {
+                showHeader = !this.$route.meta.hideHeader
+            }
+            this.$store.commit("setHeaderEnable", showHeader)
         }
     },
     created() {
