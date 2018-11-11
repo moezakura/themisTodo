@@ -1,17 +1,8 @@
-export default class Account {
+import BaseJsonStruct from "./BaseJsonStruct"
+
+export default class Account extends BaseJsonStruct {
     public name: string | null = null
     public displayName: string | null = null
     public password: string | null = null
     public currentPassword: string | null = null
-
-    public toJson(): string {
-        const obj = {
-            name: this.name,
-            displayName: this.displayName,
-            password: this.password,
-            currentPassword: this.currentPassword,
-        }
-
-        return JSON.stringify(obj)
-    }
 }

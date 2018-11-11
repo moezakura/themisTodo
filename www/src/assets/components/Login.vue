@@ -2,7 +2,7 @@
     <div id="login">
         <form @submit.prevent="postLogin" class="basicForm">
             <h2>LOGIN</h2>
-            <p id="error" @click="clearMessage">{{ errorMessage }}</p>
+            <p id="error" v-show="errorMessage && errorMessage.length > 0" @click="clearMessage">{{ errorMessage }}</p>
             <input type="text" name="id" v-model="form.userName" placeholder="id">
             <input type="password" name="pw" v-model="form.userPassword" placeholder="password">
             <input type="submit" value="LOGIN">
@@ -11,6 +11,9 @@
 </template>
 
 <script lang="ts">
+    import LoginRequest from "@scripts/model/api/LoginRequest"
+    import AuthApi from "../scripts/api/AuthApi"
+
     export default {
         name: "Login",
         data: () => {
@@ -28,23 +31,14 @@
             },
             postLogin() {
                 this.$store.commit('incrementLoadingCount')
-                let loginJson = {
-                    "id": this.formUsername,
-                    "password": this.formPassword
-                }
+                const loginRequest = new LoginRequest()
+                loginRequest.id = this.form.userName
+                loginRequest.password = this.form.userPassword
 
-                fetch("/api/login", {
-                    method: 'POST',
-                    body: JSON.stringify(loginJson),
-                    credentials: "same-origin"
-                }).then((response) => {
-                    return response.json()
-                }).then((json) => {
-                    if (!json.success) {
-                        this.formError = json.message
-                        this.hideStyle = 'block'
+                AuthApi.Login(loginRequest).then(res => {
+                    if (!res.success) {
+                        this.errorMessage = res.message
                     } else {
-                        this.hideStyle = 'none'
                         location.href = 'home'
                     }
                 }).finally(() => {
