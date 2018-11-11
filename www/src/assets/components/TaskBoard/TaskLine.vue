@@ -1,5 +1,5 @@
 <template>
-    <li>
+    <li :class="[limitAddClass]">
         <div class="taskTitle">{{ task.name }}</div>
         <div class="taskId">#{{ task.taskId }}</div>
         <div class="taskAssign">
@@ -43,6 +43,22 @@
                     return true
                 }
                 return !this.hideAssign
+            },
+            limitAddClass(): string {
+                if (this.task.limitDate <= 0) {
+                    return "over"
+                }
+                else if (this.task.limitDate <= 1) {
+                    return "limit1"
+                }
+                else if (this.task.limitDate <= 2) {
+                    return "limit2"
+                }
+                else if (this.task.limitDate <= 3) {
+                    return "limit3"
+                }
+
+                return "normal"
             }
         }
     }
