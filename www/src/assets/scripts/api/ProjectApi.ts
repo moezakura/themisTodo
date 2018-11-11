@@ -89,4 +89,40 @@ export default class ProjectApi {
             return project
         })
     }
+
+    static getTasks(projectId: number): Promise<TaskListResult> {
+        return fetch(`/api/project/tasks/${projectId}`, {
+            method: 'GET',
+            credentials: 'same-origin'
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let taskList = new TaskListResult()
+
+            taskList.message = json["message"]
+            taskList.success = json["success"]
+
+            taskList.task = []
+            for (let i of <Array<any>>json["task"]) {
+                let task = new Task()
+                task.taskId = i["taskId"]
+                task.projectId = i["projectId"]
+                task.name = i["name"]
+                task.creator = i["creator"]
+                task.creatorName = i["creatorName"]
+                task.assign = i["assign"]
+                task.assignName = i["assignName"]
+                task.status = i["status"]
+                task.deadline = i["deadline"]
+                task.limitDate = i["limitDate"]
+                task.deadlineMD = i["deadlineMD"]
+                task.description = i["description"]
+                task.createDate = i["createDate"]
+
+                taskList.task.push(task)
+            }
+
+            return taskList
+        })
+    }
 }
