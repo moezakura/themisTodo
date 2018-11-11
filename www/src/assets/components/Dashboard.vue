@@ -4,20 +4,21 @@
             <section>
                 <div class="sectionTitle">Your Projects</div>
                 <ul class="joinProject">
-                    <project-line v-for="project in projects" :project="project"
-                                  @click="moveProject(project.uuid)"></project-line>
+                    <project-line v-for="project in projects" :key="project.uuid" :project="project"></project-line>
                 </ul>
             </section>
             <section>
                 <div class="sectionTitle taskListTitle">My Todo Tasks</div>
                 <ul class="taskList" id="todoList">
-                    <task-line v-for="task in todoList" :task="task" :hideAssign="true"></task-line>
+                    <task-line v-for="task in todoList" :key="task.createDate" :task="task"
+                               :hideAssign="true"></task-line>
                 </ul>
             </section>
             <section>
                 <div class="sectionTitle taskListTitle">My Doing Tasks</div>
                 <ul class="taskList" id="doingList">
-                    <task-line v-for="task in doingList" :task="task" :hideAssign="true"></task-line>
+                    <task-line v-for="task in doingList" :key="task.createDate" :task="task"
+                               :hideAssign="true"></task-line>
                 </ul>
             </section>
         </div>
@@ -88,9 +89,6 @@
                     this.$store.commit("decrementLoadingCount")
                 })
             },
-            moveProject(uuid: number) {
-                this.$router.push({name: ""})
-            }
         },
         created() {
             this.loadTodoTask()

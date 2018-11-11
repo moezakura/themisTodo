@@ -1,5 +1,5 @@
 <template>
-    <li class="project-line">
+    <li class="project-line" @click="moveProject">
         <div class="name">
             <i class="fas fa-th-list"></i>
             <span>{{ name }}</span>
@@ -21,6 +21,11 @@
             },
             description(): string {
                 return this.project.description
+            }
+        },
+        methods:{
+            moveProject() {
+                this.$router.push({name: "taskBoard", params: {'projectId': this.uuid}})
             }
         }
     }
