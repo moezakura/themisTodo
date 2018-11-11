@@ -1,10 +1,11 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	themisView "../view"
 	"../models"
 	"../module"
+	"../utils"
+	themisView "../view"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
@@ -270,6 +271,51 @@ func (self ProjectsController) GetInfo(c *gin.Context) {
 	resultJson.Success = true
 
 	themisView.ProjectsView{}.GetInfo(c, http.StatusOK, resultJson)
+}
+
+func (self ProjectsController) GetTasks(c *gin.Context) {
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	resultJson := &models.TasksGetResultJson{}
+
+	if isError {
+		resultJson.Message = "invalid token"
+		themisView.ProjectsView{}.GetTasks(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	projectIdStr := c.Param("projectId")
+	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
+	projectId := int(projectId64)
+	if err != nil {
+		resultJson.Message = "invalid project id"
+		themisView.ProjectsView{}.GetTasks(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	isIn := projectModule.IsIn(userUuid, projectId)
+	if !isIn {
+		resultJson.Message = "not found project"
+		themisView.ProjectsView{}.GetTasks(c, http.StatusNotFound, resultJson)
+		return
+	}
+
+	isError, _ = projectModule.GetProject(projectId)
+	if isError {
+		resultJson.Message = "not found project"
+		themisView.ProjectsView{}.GetTasks(c, http.StatusNotFound, resultJson)
+		return
+	}
+
+	tasksModule := module.NewTaskModule(self.DB)
+	isError, tasks := tasksModule.GetList(projectId)
+	tasks = utils.TasksConvert(tasks)
+
+	resultJson.Success = true
+	resultJson.Task = models.NewTasksOfJson(tasks)
+
+	themisView.ProjectsView{}.GetTasks(c, http.StatusOK, resultJson)
 }
 
 func (self ProjectsController) GetMy(c *gin.Context) {
