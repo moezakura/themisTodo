@@ -26,5 +26,9 @@ export default [
         path: '/project/view/:projectId/task/:taskId',
         component: TaskBoard,
         name: 'taskDetail'
+    }, {
+        path: '/project/view/:projectId/settings',
+        component: TaskBoard,
+        name: 'projectSettings'
     }
 ]

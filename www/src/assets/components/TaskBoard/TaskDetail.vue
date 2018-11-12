@@ -1,5 +1,5 @@
 <template>
-    <transition name="task-detail">
+    <transition>
         <div v-if="isShowTaskDetail">
             <form id="taskPopup" @submit.prevent="submitEdit">
                 <h2 :class="[limitAddClass]">Doing Task</h2>
@@ -49,7 +49,7 @@
                     <input type="submit" value="CHANGE">
                 </div>
             </form>
-            <div class="backView" v-if="isShowTaskDetail" @click="hideTaskDetail"></div>
+            <div class="backView" @click="hideTaskDetail"></div>
         </div>
     </transition>
 </template>

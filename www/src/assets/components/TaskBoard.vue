@@ -4,7 +4,7 @@
             <h2 class="project-title"><i class="fas fa-tasks"></i><span>{{ project.name }}</span></h2>
             <ul class="project-actions">
                 <li @click="reloadProject"><i class="fas fa-redo"></i>RELOAD</li>
-                <li><i class="fas fa-cog"></i>SETTING</li>
+                <li @click="moveSettings"><i class="fas fa-cog"></i>SETTING</li>
                 <li @click="toggleIsShowTaskAdd"><i class="fas fa-plus-circle"></i>ADD</li>
             </ul>
         </div>
@@ -44,6 +44,7 @@
         <div>
             <task-detail @load-tasks="loadTasks"></task-detail>
             <task-add :class="{ shown: isShowTaskAdd }" v-model="isShowTaskAdd" @load-tasks="loadTasks"></task-add>
+            <project-settings v-model="isShowProjectSettings"></project-settings>
         </div>
     </div>
 </template>
@@ -58,10 +59,11 @@
     import TaskApi from "../scripts/api/TaskApi"
     import TaskDetail from "./TaskBoard/TaskDetail"
     import TaskAdd from "./TaskBoard/TaskAdd"
+    import ProjectSettings from "./TaskBoard/ProjectSettings"
 
     export default {
         name: "TaskBoard",
-        components: {TaskAdd, TaskDetail, TaskLine},
+        components: {ProjectSettings, TaskAdd, TaskDetail, TaskLine},
         data() {
             const project = new Project()
             const todo: Array<Task> = []
@@ -72,6 +74,7 @@
             return {
                 project: project,
                 isShowTaskAdd: false,
+                isShowProjectSettings: false,
                 tasks: {
                     todo: todo,
                     doing: doing,
@@ -107,12 +110,17 @@
                 this.setCurrentTask()
             },
             setCurrentTask() {
-                if (this.taskId == undefined) {
-                    this.$store.commit("setCurrentTask", undefined)
-                    return
+                this.isShowProjectSettings = false
+                if (this.$route.name == "taskDetail") {
+                    if (this.taskId == undefined) {
+                        this.$store.commit("setCurrentTask", undefined)
+                        return
+                    }
+                    const selectedTask = this.findTask(this.taskId)
+                    this.$store.commit("setCurrentTask", selectedTask)
+                } else if (this.$route.name == "projectSettings") {
+                    this.isShowProjectSettings = true
                 }
-                const selectedTask = this.findTask(this.taskId)
-                this.$store.commit("setCurrentTask", selectedTask)
             },
             reloadProject() {
                 this.runInit()
@@ -187,6 +195,9 @@
             },
             toggleIsShowTaskAdd() {
                 this.isShowTaskAdd = !this.isShowTaskAdd
+            },
+            moveSettings() {
+                this.$router.push({name: "projectSettings", params: {projectId: this.projectId}})
             }
         },
         created() {
