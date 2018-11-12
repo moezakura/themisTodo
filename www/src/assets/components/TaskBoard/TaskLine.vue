@@ -1,5 +1,5 @@
 <template>
-    <li :class="[limitAddClass]">
+    <li :class="[limitAddClass]" @click="showTaskDetail">
         <div class="taskTitle">{{ task.name }}</div>
         <div class="taskId">#{{ task.taskId }}</div>
         <div class="taskAssign">
@@ -59,6 +59,16 @@
                 }
 
                 return "normal"
+            }
+        },
+        methods: {
+            showTaskDetail() {
+                this.$router.push({
+                    name: "taskDetail", params: {
+                        projectId: this.task.projectId,
+                        taskId: this.task.taskId,
+                    }
+                })
             }
         }
     }

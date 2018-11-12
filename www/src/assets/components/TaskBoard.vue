@@ -35,6 +35,10 @@
                 </section>
             </div>
         </div>
+
+        <div>
+            <task-detail></task-detail>
+        </div>
     </div>
 </template>
 
@@ -46,10 +50,11 @@
     import TaskLine from "./TaskBoard/TaskLine"
     import Sortable from "sortablejs/Sortable"
     import TaskApi from "../scripts/api/TaskApi"
+    import TaskDetail from "./TaskBoard/TaskDetail"
 
     export default {
         name: "TaskBoard",
-        components: {TaskLine},
+        components: {TaskDetail, TaskLine},
         data() {
             const project = new Project()
             const todo: Array<Task> = []
@@ -68,14 +73,35 @@
             }
         },
         computed: {
-            projectId(): number {
+            projectId(): number | undefined {
+                if (this.$route.params === undefined) {
+                    return
+                }
                 return this.$route.params["projectId"]
+            },
+            taskId(): number | undefined {
+                if (this.$route.params === undefined) {
+                    return
+                }
+                return this.$route.params["taskId"]
+            }
+        },
+        watch: {
+            '$route'(to, from) {
+                this.runInit()
             }
         },
         methods: {
-            loadProjectInfo() {
+            async runInit() {
+                this.loadProjectInfo()
+                await this.loadTasks()
+
+                const selectedTask = this.findTask(this.taskId)
+                this.$store.commit("setCurrentTask", selectedTask)
+            },
+            async loadProjectInfo() {
                 this.$store.commit("incrementLoadingCount")
-                ProjectApi.getProject(this.projectId).then(res => {
+                await ProjectApi.getProject(this.projectId).then(res => {
                     if (res.success) {
                         this.project = res.project
                     }
@@ -84,7 +110,7 @@
                     this.$store.commit("decrementLoadingCount")
                 })
             },
-            loadTasks() {
+            async loadTasks() {
                 this.$store.commit("incrementLoadingCount")
 
                 this.tasks.todo.splice(0, this.tasks.todo.length)
@@ -92,9 +118,10 @@
                 this.tasks.pullRequest.splice(0, this.tasks.pullRequest.length)
                 this.tasks.done.splice(0, this.tasks.done.length)
 
-                ProjectApi.getTasks(this.projectId).then(res => {
+                await ProjectApi.getTasks(this.projectId).then(res => {
                     if (res.success) {
-                        for (const task of res.task) {
+                        for (let task of res.task) {
+                            task.projectId = this.projectId
                             switch (task.status) {
                                 case TaskStatusConvert.toNumber(TaskStatus.TODO):
                                     this.tasks.todo.push(task)
@@ -128,11 +155,21 @@
                 }).finally(() => {
                     this.$store.commit("decrementLoadingCount")
                 })
+            },
+            findTask(taskId: number): Task | undefined {
+                for (const key in this.tasks) {
+                    for (const t of this.tasks[key]) {
+                        if (t.taskId == taskId) {
+                            return <Task>t
+                        }
+                    }
+                }
+
+                return
             }
         },
         created() {
-            this.loadProjectInfo()
-            this.loadTasks()
+            this.runInit()
         },
         mounted() {
             const taskLists = [
