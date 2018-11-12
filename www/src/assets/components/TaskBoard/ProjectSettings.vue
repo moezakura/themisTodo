@@ -14,8 +14,8 @@
                             <span>members</span>
                         </li>
                         <li @click="changeContent('danger')">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span>danger</span>
+                            <i class="fas fa-ban"></i>
+                            <span>delete</span>
                         </li>
                     </ul>
                     <div id="project-settings-content">
@@ -104,7 +104,10 @@
             letter-spacing: 1px;
             width: 100%;
             box-sizing: border-box;
-            padding: 0 8px;
+            padding: 0 8px 0 15px;
+            margin: 5px 0;
+            cursor: default;
+            transition: ease background-color .3s;
 
             &:hover {
                 background-color: rgba(67, 160, 71, 0.15);

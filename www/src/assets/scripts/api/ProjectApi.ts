@@ -4,6 +4,7 @@ import Project from "@scripts/model/api/project/Project"
 import TaskListResult from "@scripts/model/api/TaskListResult"
 import Task from "@scripts/model/api/task/Task"
 import ProjectResult from "@scripts/model/api/ProjectResult"
+import BaseApiResult from "@scripts/model/api/BaseApiResult"
 
 export default class ProjectApi {
     static getList(taskStatus: TaskStatus): Promise<TaskListResult> {
@@ -54,6 +55,23 @@ export default class ProjectApi {
             }
 
             return projectList
+        })
+    }
+
+    static deleteProject(projectId: number): Promise<BaseApiResult> {
+        return fetch(`/api/project/delete/${projectId}`, {
+            method: 'POST',
+            body: "",
+            credentials: "same-origin"
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new BaseApiResult()
+
+            res.message = json["message"]
+            res.success = json["success"]
+
+            return res
         })
     }
 
