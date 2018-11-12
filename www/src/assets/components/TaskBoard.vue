@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="task-board">
         <h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{ project.name }}</span></h2>
         <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
         <a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
@@ -96,6 +96,10 @@
                 this.loadProjectInfo()
                 await this.loadTasks()
 
+                if (this.taskId == undefined) {
+                    this.$store.commit("setCurrentTask", undefined)
+                    return
+                }
                 const selectedTask = this.findTask(this.taskId)
                 this.$store.commit("setCurrentTask", selectedTask)
             },
@@ -194,6 +198,8 @@
     }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+    #task-board {
+        height: calc(100% - 80px);
+    }
 </style>

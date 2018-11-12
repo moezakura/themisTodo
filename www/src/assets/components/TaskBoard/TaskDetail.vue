@@ -1,8 +1,8 @@
 <template>
     <transition name="task-detail">
         <div v-if="isShowTaskDetail">
-            <form id="taskPopup">
-                <h2>Doing Task</h2>
+            <form id="taskPopup" @submit.prevent="submitEdit">
+                <h2 :class="[limitAddClass]">Doing Task</h2>
                 <div id="taskPopupActions">
                     <i class="fas fa-trash" id="taskPopupTrashButton"></i>
                     <i class="fas fa-edit" id="taskPopupEditButton" @click="setEditing(!isEditing)"></i>
@@ -37,8 +37,10 @@
                         <span>{{ task.deadline }}</span>
                         <span>(あと{{ task.limitDate }}日)</span>
                     </div>
-                    <input type="date" id="taskPopupDeadlineChange" v-show="isEditing">
-                    <div id="taskPopupProgressCurrent">&nbsp;</div>
+                    <input type="date" id="taskPopupDeadlineChange" v-show="isEditing" v-model="taskCache.deadline">
+                    <div id="taskPopupProgressCurrent" :style="{'width': `${currentProgress}%`}"
+                         :class="[limitAddClass]">&nbsp;
+                    </div>
                 </div>
                 <textarea id="taskPopupDescription" v-model="taskCache.description" :readonly="!isEditing"></textarea>
                 <div class="input-box" v-show="isEditing">
@@ -55,6 +57,7 @@
     import Task from "../../scripts/model/api/task/Task"
     import UserSelect from "../Common/UserSelect"
     import User from "../../scripts/model/api/user/User"
+    import TaskApi from "../../scripts/api/TaskApi"
 
     export default {
         name: "TaskDetail",
@@ -75,7 +78,7 @@
                 return this.taskCache
             },
             isShowTaskDetail(): boolean {
-                return this.task !== undefined
+                return this.task != undefined && this.task.taskId != undefined
             },
             selectUser: {
                 get(): User {
@@ -88,6 +91,33 @@
                     this.task.assign = value.uuid
                     this.task.assignName = value.displayName
                 }
+            },
+            currentProgress(): number {
+                let createDate = Math.round(this.task.createDate / 1000000),
+                    limitDate = (new Date(this.task.deadline)).getTime(),
+                    allDiff = Math.abs(limitDate - createDate),
+                    limit = Math.abs(limitDate - (new Date()).getTime()),
+                    progress = limit / allDiff * 100
+
+                if (progress > 100) return 100
+                else if (progress < 0) return 0
+                else return progress
+            },
+            limitAddClass(): string {
+                if (this.task.limitDate <= 0) {
+                    return "over"
+                }
+                else if (this.task.limitDate <= 1) {
+                    return "limit1"
+                }
+                else if (this.task.limitDate <= 2) {
+                    return "limit2"
+                }
+                else if (this.task.limitDate <= 3) {
+                    return "limit3"
+                }
+
+                return "normal"
             }
         },
         methods: {
@@ -102,6 +132,41 @@
                     const t = this.$store.getters.getCurrentTask
                     this.taskCache = Object.assign({}, t)
                 }
+            },
+            dateFormat(dateStr: string): string {
+                const date = new Date(dateStr)
+                const y = date.getFullYear()
+                const m = date.getMonth() + 1
+                const d = date.getDate()
+
+                let str_m: string = m.toString()
+                let str_d: string = d.toString()
+                if (m < 10) {
+                    str_m = '0' + m
+                }
+                if (d < 10) {
+                    str_d = '0' + d
+                }
+
+                return y + '-' + str_m + '-' + str_d
+            },
+            submitEdit() {
+                let task = new Task()
+                task.assign = this.selectUser.uuid
+                task.deadline = this.dateFormat(this.taskCache.deadline)
+                task.description = this.taskCache.description
+                task.name = this.taskCache.name
+                task.status = -1
+                this.$store.commit("incrementLoadingCount")
+
+                TaskApi.Update(this.taskCache.createDate, task).then(res => {
+                    if (res.success) {
+                        this.$store.commit("setCurrentTask", this.taskCache)
+                        this.setEditing(false)
+                    }
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
             }
         }
     }
