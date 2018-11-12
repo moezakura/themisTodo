@@ -33,14 +33,17 @@
             UserSelect
         },
         data: () => {
-            const sendUser = new User()
+            const selectUser = new User()
+            selectUser.displayName = ""
+            selectUser.name = ""
+            selectUser.uuid = -1
             return {
                 errorMessage: "",
                 form: {
                     name: "",
                     deadline: "",
                     description: "",
-                    selectUser: sendUser,
+                    selectUser: selectUser,
                 }
             }
         },
@@ -64,12 +67,15 @@
                 this.errorMessage = ""
             },
             clearForm() {
-                const sendUser = new User()
+                const selectUser = new User()
+                selectUser.displayName = ""
+                selectUser.name = ""
+                selectUser.uuid = -1
                 return {
                     name: "",
                     deadline: "",
                     description: "",
-                    selectUser: sendUser,
+                    selectUser: selectUser,
                 }
             },
             submitAdd() {

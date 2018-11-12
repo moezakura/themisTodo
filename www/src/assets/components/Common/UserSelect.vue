@@ -33,7 +33,10 @@
         },
         computed: {
             name: {
-                get(): string | undefined {
+                get(): string {
+                    if (this.value == undefined || this.value.displayName == undefined) {
+                        return ""
+                    }
                     return this.value.displayName
                 },
                 set(value) {
@@ -81,8 +84,13 @@
                 if (this.selectedIndex > this.userList.length - 1) this.selectedIndex = 0
             },
             enterKeyDown() {
-                const selectedUser = this.userList[this.selectedIndex]
+                let selectedUser = this.userList[this.selectedIndex]
                 if (selectedUser === undefined) {
+                    for (const user of this.userList) {
+                        if (user.displayName == name) {
+                            selectedUser = user
+                        }
+                    }
                     return
                 }
                 this.$emit('input', selectedUser)
