@@ -63,6 +63,15 @@
             clearMessage() {
                 this.errorMessage = ""
             },
+            clearForm() {
+                const sendUser = new User()
+                return {
+                    name: "",
+                    deadline: "",
+                    description: "",
+                    selectUser: sendUser,
+                }
+            },
             submitAdd() {
                 this.$store.commit("incrementLoadingCount")
                 let addRequest = new TaskAddRequest()
@@ -73,7 +82,7 @@
                 addRequest.projectId = this.project.uuid
                 TaskApi.Create(addRequest).then(res => {
                     if (res.success) {
-
+                        this.form = this.clearForm()
                     } else {
                         this.errorMessage = res.message
                     }

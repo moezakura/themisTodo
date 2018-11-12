@@ -29,6 +29,11 @@ body {
     text-decoration: none;
     margin: -$buttonHeight+10px 40px 15px 0;
     color: $accentColor;
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     transition: background-color ease .3s;
 
     &:hover {
@@ -113,7 +118,7 @@ body {
     overflow-y: auto;
     letter-spacing: 1.2px;
     transition: right ease .3s;
-    z-index: 99;
+    z-index: 30;
 
     &.shown {
         right: 0;
