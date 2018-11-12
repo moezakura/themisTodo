@@ -9,7 +9,6 @@ import (
 func Init(db *sql.DB) *gin.Engine {
 	r := gin.New()
 
-	r.Static("/fontawesome", "./www/assets/fontawesome/web-fonts-with-css/")
 	r.Static("/assets", "./www/assets")
 
 	baseController := themsController.NewBaseController(db, r)
