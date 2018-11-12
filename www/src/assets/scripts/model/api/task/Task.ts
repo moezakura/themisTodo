@@ -28,4 +28,8 @@ export default class Task {
         this.description = data["description"]
         this.createDate = data["createDate"]
     }
+
+    public toJson(): string {
+        return JSON.stringify(this)
+    }
 }

@@ -3,52 +3,99 @@ import TaskListResult from "@scripts/model/api/TaskListResult"
 import TaskResult from "@scripts/model/api/TaskResult"
 import BaseApiResult from "@scripts/model/api/BaseApiResult"
 import TaskCreateResult from "@scripts/model/api/TaskCreateResult"
+import TaskAddRequest from "@scripts/model/api/TaskAddRequest"
 
 export default class TaskApi {
     static GetTaskFromCreateDate(createDate: string): Promise<TaskResult> {
         return fetch("/api/tasks/view/" + createDate, {
             method: 'GET',
             credentials: "same-origin"
-        }).then(function (response) {
-            return response.json()
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let task = new TaskResult()
+
+            task.success = json["success"]
+            task.message = json["message"]
+            task.task = new Task()
+            task.task.fromAny(json["task"])
+
+            return task
         })
     }
 
-    static GetSearch(taskId, projectId): Promise<TaskListResult> {
+    static GetSearch(taskId: number, projectId: number): Promise<TaskListResult> {
         return fetch(`/api/tasks/search?taskId=${taskId}&projectId=${projectId}`, {
             method: 'GET',
             credentials: "same-origin"
-        }).then(function (response) {
-            return response.json()
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let taskList = new TaskListResult()
+
+            taskList.message = json["message"]
+            taskList.success = json["success"]
+
+            taskList.task = []
+            for (let i of <Array<any>>json["task"]) {
+                let task = new Task()
+                task.fromAny(i)
+
+                taskList.task.push(task)
+            }
+
+            return taskList
         })
     }
 
-    static Create(taskJson): Promise<TaskCreateResult> {
+    static Create(taskAddRequest: TaskAddRequest): Promise<TaskCreateResult> {
         return fetch("/api/tasks/create", {
             method: 'POST',
-            body: JSON.stringify(taskJson),
+            body: taskAddRequest.toJson(),
             credentials: "same-origin"
-        }).then(function (response) {
-            return response.json()
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new TaskCreateResult()
+
+            res.message = json["message"]
+            res.success = json["success"]
+            res.createDate = json["createDate"]
+
+            return res
         })
     }
 
-    static Update(createDate, taskApi): Promise<BaseApiResult> {
+    static Update(createDate: string, task: Task): Promise<BaseApiResult> {
         return fetch("/api/tasks/update/" + createDate, {
             method: 'POST',
-            body: JSON.stringify(taskApi),
+            body: task.toJson(),
             credentials: "same-origin"
-        }).then(function (response) {
-            return response.json()
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new BaseApiResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+
+            return res
         })
     }
 
-    static Delete(createDate): Promise<BaseApiResult> {
+    static Delete(createDate: string): Promise<BaseApiResult> {
         return fetch("/api/tasks/delete/" + createDate, {
             method: 'POST',
             credentials: "same-origin"
-        }).then(function (response) {
-            return response.json()
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new BaseApiResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+
+            return res
         })
     }
 }

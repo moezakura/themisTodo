@@ -152,6 +152,22 @@ body {
     #taskboardAddClose:hover {
         background-color: rgba(black, .3);
     }
+
+    #assign {
+        margin-left: 20px;
+
+        input {
+            width: 100%;
+            min-width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+        }
+
+        .user-select-list li {
+            display: flex;
+        }
+    }
 }
 
 #projectConfigPopup {
