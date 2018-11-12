@@ -2,7 +2,7 @@
     <div id="task-board">
         <h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{ project.name }}</span></h2>
         <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
-        <a id="taskboardAdd" href="#"><i class="fas fa-plus-circle"></i>ADD</a>
+        <a id="taskboardAdd" @click.prevent="toggleIsShowTaskAdd"><i class="fas fa-plus-circle"></i>ADD</a>
         <div id="taskboard">
             <div id="taskBoardMinSized">
                 <section id="todo">
@@ -38,6 +38,7 @@
 
         <div>
             <task-detail></task-detail>
+            <task-add :class="{ shown: isShowTaskAdd }" v-model="isShowTaskAdd"></task-add>
         </div>
     </div>
 </template>
@@ -51,10 +52,11 @@
     import Sortable from "sortablejs/Sortable"
     import TaskApi from "../scripts/api/TaskApi"
     import TaskDetail from "./TaskBoard/TaskDetail"
+    import TaskAdd from "./TaskBoard/TaskAdd";
 
     export default {
         name: "TaskBoard",
-        components: {TaskDetail, TaskLine},
+        components: {TaskAdd, TaskDetail, TaskLine},
         data() {
             const project = new Project()
             const todo: Array<Task> = []
@@ -64,6 +66,7 @@
 
             return {
                 project: project,
+                isShowTaskAdd: false,
                 tasks: {
                     todo: todo,
                     doing: doing,
@@ -170,6 +173,9 @@
                 }
 
                 return
+            },
+            toggleIsShowTaskAdd(){
+                this.isShowTaskAdd = !this.isShowTaskAdd
             }
         },
         created() {

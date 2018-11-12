@@ -1,23 +1,5 @@
 {{define "content"}}
 
-
-<form id="taskboardAddForm" class="basicForm">
-    <h3>New Task</h3>
-    <div id="taskboardAddClose"><i class="fas fa-angle-double-right"></i></div>
-    <div class="error"></div>
-    <p>Name</p>
-    <input type="text" name="name">
-    <p class="label">Creator:<span>{{.Creator.DisplayName}}</span></p>
-    <p class="label">ID:<span id="createTaskId"></span></p>
-    <p>Assign</p>
-    <input type="text" value="" name="assign" id="assign" autocomplete="off">
-    <p>Deadline</p>
-    <input type="date" value="" name="deadline">
-    <p>Description</p>
-    <textarea name="description"></textarea>
-    <input type="submit" value="ADD">
-</form>
-
 <div id="projectConfigPopup">
     <h3>Project Config</h3>
     <div class="error"></div>
