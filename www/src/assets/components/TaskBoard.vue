@@ -43,7 +43,7 @@
 
         <div>
             <task-detail @load-tasks="loadTasks"></task-detail>
-            <task-add :class="{ shown: isShowTaskAdd }" v-model="isShowTaskAdd"></task-add>
+            <task-add :class="{ shown: isShowTaskAdd }" v-model="isShowTaskAdd" @load-tasks="loadTasks"></task-add>
         </div>
     </div>
 </template>

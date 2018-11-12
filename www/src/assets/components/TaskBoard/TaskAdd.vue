@@ -89,6 +89,7 @@
                 TaskApi.Create(addRequest).then(res => {
                     if (res.success) {
                         this.form = this.clearForm()
+                        this.$emit("load-tasks")
                     } else {
                         this.errorMessage = res.message
                     }
