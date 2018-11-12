@@ -1,15 +1,15 @@
 <template>
     <header>
-        <a href="/"><img src="/assets/images/logo.png"></a>
-        <a href="/home">
+        <router-link to="/"><img src="/assets/images/logo.png"></router-link>
+        <router-link to="/home">
             <div>Home</div>
-        </a>
-        <a href="/settings">
+        </router-link>
+        <router-link to="/settings">
             <div>My Setting</div>
-        </a>
-        <a href="/account/add">
+        </router-link>
+        <router-link to="/account/add">
             <div>New Account</div>
-        </a>
+        </router-link>
     </header>
 </template>
 
