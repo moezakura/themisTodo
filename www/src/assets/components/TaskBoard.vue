@@ -52,7 +52,7 @@
     import Sortable from "sortablejs/Sortable"
     import TaskApi from "../scripts/api/TaskApi"
     import TaskDetail from "./TaskBoard/TaskDetail"
-    import TaskAdd from "./TaskBoard/TaskAdd";
+    import TaskAdd from "./TaskBoard/TaskAdd"
 
     export default {
         name: "TaskBoard",
@@ -91,7 +91,7 @@
         },
         watch: {
             '$route'(to, from) {
-                this.runInit()
+                this.setCurrentTask()
             }
         },
         methods: {
@@ -99,6 +99,9 @@
                 this.loadProjectInfo()
                 await this.loadTasks()
 
+                this.setCurrentTask()
+            },
+            setCurrentTask() {
                 if (this.taskId == undefined) {
                     this.$store.commit("setCurrentTask", undefined)
                     return
@@ -174,7 +177,7 @@
 
                 return
             },
-            toggleIsShowTaskAdd(){
+            toggleIsShowTaskAdd() {
                 this.isShowTaskAdd = !this.isShowTaskAdd
             }
         },

@@ -2,7 +2,9 @@
     <form id="taskboardAddForm" class="basicForm" @submit.prevent="submitAdd">
         <h3>New Task</h3>
         <div id="taskboardAddClose" @click="hideTaskAdd"><i class="fas fa-angle-double-right"></i></div>
-        <div class="error" v-show="errorMessage !== undefined && errorMessage.length > 0" @click="clearMessage">{{ errorMessage }}</div>
+        <div class="error" v-show="errorMessage !== undefined && errorMessage.length > 0" @click="clearMessage">{{
+            errorMessage }}
+        </div>
         <p>Name</p>
         <input type="text" name="name" v-model="form.name">
         <p class="label">Creator:<span>{{ displayName }}</span></p>
@@ -58,10 +60,11 @@
                 this.$emit("input", false)
                 this.$emit("change", false)
             },
-            clearMessage(){
-              this.errorMessage = ""
+            clearMessage() {
+                this.errorMessage = ""
             },
             submitAdd() {
+                this.$store.commit("incrementLoadingCount")
                 let addRequest = new TaskAddRequest()
                 addRequest.name = this.form.name
                 addRequest.assign = this.form.selectUser.uuid
@@ -69,11 +72,13 @@
                 addRequest.deadline = this.form.deadline
                 addRequest.projectId = this.project.uuid
                 TaskApi.Create(addRequest).then(res => {
-                    if(res.success){
+                    if (res.success) {
 
-                    }else{
+                    } else {
                         this.errorMessage = res.message
                     }
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
                 })
             }
         }
