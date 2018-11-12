@@ -4,59 +4,61 @@ body {
     height: 100%;
 }
 
-#taskboardTitle {
-    display: block;
-    height: 35px;
-    line-height: 35px;
-    font-size: 18px;
-    margin: 15px 0 0 20px;
-    letter-spacing: 1.2px;
+.project-title-container {
+    display: flex;
+    margin: 10px 20px;
 
-    i {
-        margin-right: 10px;
-    }
-}
+    .project-title {
+        display: block;
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        font-size: 18px;
+        letter-spacing: 1.2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex-grow: 5;
 
-#taskboardAdd,
-#taskboardConfig {
-    display: block;
-    font-size: 16px;
-    height: $buttonHeight;
-    width: 140px;
-    line-height: $buttonHeight;
-    text-align: center;
-    letter-spacing: 1.1px;
-    text-decoration: none;
-    margin: -$buttonHeight+10px 40px 15px 0;
-    color: $accentColor;
-    cursor: default;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    transition: background-color ease .3s;
-
-    &:hover {
-        background-color: accentColor(.15);
+        i {
+            margin-right: 10px;
+        }
     }
 
-    i {
-        margin-right: 10px;
+    .project-actions {
+        display: flex;
+
+        li {
+            display: block;
+            font-size: 16px;
+            height: $buttonHeight;
+            width: 140px;
+            line-height: $buttonHeight;
+            text-align: center;
+            letter-spacing: 1.1px;
+            text-decoration: none;
+            margin: 0 3px;
+            color: $accentColor;
+            cursor: default;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            transition: background-color ease .3s;
+
+            &:hover {
+                background-color: accentColor(.15);
+            }
+
+            i {
+                margin-right: 10px;
+            }
+        }
     }
-}
-
-#taskboardAdd {
-    margin-left: calc(100% - 175px);
-    margin-top: -60px;
-}
-
-#taskboardConfig {
-    margin-left: calc(100% - 175px - 145px);
 }
 
 #taskboard {
     overflow-x: auto;
-    height: calc(100% - 70px);
+    height: calc(100% - 60px);
 
     #taskBoardMinSized {
         display: flex;

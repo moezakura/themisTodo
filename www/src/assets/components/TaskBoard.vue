@@ -1,8 +1,13 @@
 <template>
     <div id="task-board">
-        <h2 id="taskboardTitle"><i class="fas fa-tasks"></i><span>{{ project.name }}</span></h2>
-        <a id="taskboardConfig" href="#"><i class="fas fa-cog"></i>Config</a>
-        <a id="taskboardAdd" @click.prevent="toggleIsShowTaskAdd"><i class="fas fa-plus-circle"></i>ADD</a>
+        <div class="project-title-container">
+            <h2 class="project-title"><i class="fas fa-tasks"></i><span>{{ project.name }}</span></h2>
+            <ul class="project-actions">
+                <li @click="reloadProject"><i class="fas fa-redo"></i>RELOAD</li>
+                <li><i class="fas fa-cog"></i>SETTING</li>
+                <li @click="toggleIsShowTaskAdd"><i class="fas fa-plus-circle"></i>ADD</li>
+            </ul>
+        </div>
         <div id="taskboard">
             <div id="taskBoardMinSized">
                 <section id="todo">
@@ -108,6 +113,9 @@
                 }
                 const selectedTask = this.findTask(this.taskId)
                 this.$store.commit("setCurrentTask", selectedTask)
+            },
+            reloadProject() {
+                this.runInit()
             },
             async loadProjectInfo() {
                 this.$store.commit("incrementLoadingCount")
