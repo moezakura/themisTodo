@@ -172,6 +172,7 @@
                 TaskApi.Update(this.taskCache.createDate, task).then(res => {
                     if (res.success) {
                         this.$store.commit("setCurrentTask", this.taskCache)
+                        this.$emit("load-tasks")
                         this.setEditing(false)
                     }
                 }).finally(() => {
