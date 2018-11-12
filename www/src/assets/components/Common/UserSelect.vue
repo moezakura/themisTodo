@@ -82,6 +82,9 @@
             },
             enterKeyDown() {
                 const selectedUser = this.userList[this.selectedIndex]
+                if (selectedUser === undefined) {
+                    return
+                }
                 this.$emit('input', selectedUser)
                 this.$emit('change', selectedUser)
                 this.userList = []
@@ -91,6 +94,9 @@
             },
             selectMouse(index: number) {
                 const selectedUser = this.userList[index]
+                if (selectedUser === undefined) {
+                    return
+                }
                 this.$emit('input', selectedUser)
                 this.$emit('change', selectedUser)
                 this.userList = []
