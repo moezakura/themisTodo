@@ -5,6 +5,7 @@ import TaskListResult from "@scripts/model/api/TaskListResult"
 import Task from "@scripts/model/api/task/Task"
 import ProjectResult from "@scripts/model/api/ProjectResult"
 import BaseApiResult from "@scripts/model/api/BaseApiResult"
+import ProjectUpdateRequest from "@scripts/model/ProjectUpdateRequest"
 
 export default class ProjectApi {
     static getList(taskStatus: TaskStatus): Promise<TaskListResult> {
@@ -73,6 +74,23 @@ export default class ProjectApi {
 
             return res
         })
+    }
+
+    static updateProject(projectId: number, updateRequest: ProjectUpdateRequest): Promise<BaseApiResult> {
+        return fetch(`/api/project/update/${projectId}`, {
+            method: 'POST',
+            body: updateRequest.toJson(),
+            credentials: "same-origin"
+        }).then(res => {
+            return res.json();
+        }).then(json => {
+            let res = new BaseApiResult()
+
+            res.message = json["message"]
+            res.success = json["success"]
+
+            return res
+        });
     }
 
     static getProject(projectId: number): Promise<ProjectResult> {

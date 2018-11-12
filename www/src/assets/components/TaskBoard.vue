@@ -1,7 +1,7 @@
 <template>
     <div id="task-board">
         <div class="project-title-container">
-            <h2 class="project-title"><i class="fas fa-tasks"></i><span>{{ project.name }}</span></h2>
+            <h2 class="project-title"><i class="fas fa-tasks"></i><span>{{ storeProject.name }}</span></h2>
             <ul class="project-actions">
                 <li @click="reloadProject"><i class="fas fa-redo"></i>RELOAD</li>
                 <li @click="moveSettings"><i class="fas fa-cog"></i>SETTING</li>
@@ -95,6 +95,9 @@
                     return
                 }
                 return this.$route.params["taskId"]
+            },
+            storeProject(): Project {
+                return this.$store.getters.getCurrentProject
             }
         },
         watch: {

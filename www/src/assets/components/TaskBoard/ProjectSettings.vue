@@ -88,6 +88,7 @@
     #project-settings-container {
         display: flex;
         justify-content: space-between;
+        height: calc(100% - 50px)
     }
 
     #project-settings-menus {
@@ -121,5 +122,7 @@
 
     #project-settings-content {
         width: calc(100% - 200px);
+        height: 100%;
+        overflow-y: auto;
     }
 </style>
