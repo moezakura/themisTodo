@@ -291,8 +291,6 @@ body {
 }
 
 .userSearchDialog {
-    position: fixed;
-    display: none;
     z-index: 102;
     background-color: rgb(50, 50, 50);
     max-height: 180px;
@@ -453,7 +451,6 @@ body {
         height: $buttonHeight;
         color: white;
         letter-spacing: 1.2px;
-        font-size: 14px;
         background-color: transparent;
         border: 0;
         border-bottom: solid 2px $accentColor;

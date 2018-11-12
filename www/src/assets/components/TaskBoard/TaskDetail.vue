@@ -21,7 +21,8 @@
                     <div class="taskPopupAssignCreatorColumn">
                         <p>Assign</p>
                         <div id="taskPopupAssignIcon"><!-- TODO: ユーザーアイコンの設定 --></div>
-                        <input value="ASSIGN" id="taskPopupAssign" autocomplete="off">
+                        <user-select :is-show="true" :is-in-project="true" v-model="selectUser"
+                                     :readonly="!isEditing"></user-select>
                     </div>
                     <div class="taskPopupAssignCreatorColumn">
                         <p>Creator</p>
@@ -52,9 +53,12 @@
 
 <script lang="ts">
     import Task from "../../scripts/model/api/task/Task"
+    import UserSelect from "../Common/UserSelect"
+    import User from "../../scripts/model/api/user/User"
 
     export default {
         name: "TaskDetail",
+        components: {UserSelect},
         data: () => {
             const taskCache: Task | undefined = undefined
             return {
@@ -66,20 +70,38 @@
         },
         computed: {
             task(): Task | undefined {
-                this.taskCache = this.$store.getters.getCurrentTask
+                const t = this.$store.getters.getCurrentTask
+                this.taskCache = Object.assign({}, t)
                 return this.taskCache
             },
             isShowTaskDetail(): boolean {
                 return this.task !== undefined
+            },
+            selectUser: {
+                get(): User {
+                    const user = new User()
+                    user.uuid = this.task.assign
+                    user.displayName = this.task.assignName
+                    return user
+                },
+                set(value) {
+                    this.task.assign = value.uuid
+                    this.task.assignName = value.displayName
+                }
             }
         },
         methods: {
             hideTaskDetail() {
                 this.$router.back()
                 this.$store.commit("setCurrentTask", undefined)
+                this.setEditing(false)
             },
             setEditing(isEditing: boolean) {
                 this.isEditing = isEditing
+                if (!this.isEditing) {
+                    const t = this.$store.getters.getCurrentTask
+                    this.taskCache = Object.assign({}, t)
+                }
             }
         }
     }
