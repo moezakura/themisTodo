@@ -118,7 +118,7 @@
                     }
                     const selectedTask = this.findTask(this.taskId)
                     this.$store.commit("setCurrentTask", selectedTask)
-                } else if (this.$route.name == "projectSettings") {
+                } else if (this.$route.meta.isSettings) {
                     this.isShowProjectSettings = true
                 }
             },

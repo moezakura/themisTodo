@@ -2,6 +2,9 @@ import Welcome from '@components/Welcome.vue'
 import Login from '@components/Login.vue'
 import DashBoard from '@components/DashBoard.vue'
 import TaskBoard from '@components/TaskBoard.vue'
+import Overview from '@components/TaskBoard/Settings/Overview.vue'
+import Member from '@components/TaskBoard/Settings/Member.vue'
+import Danger from '@components/TaskBoard/Settings/Danger.vue'
 
 export default [
     {
@@ -21,14 +24,18 @@ export default [
     }, {
         path: '/project/view/:projectId',
         component: TaskBoard,
-        name: 'taskBoard'
-    }, {
-        path: '/project/view/:projectId/task/:taskId',
-        component: TaskBoard,
-        name: 'taskDetail'
-    }, {
-        path: '/project/view/:projectId/settings',
-        component: TaskBoard,
-        name: 'projectSettings'
+        name: 'taskBoard',
+        children: [
+            {
+                path: 'task/:taskId',
+                component: TaskBoard,
+                name: 'taskDetail'
+            }, {
+                path: 'settings',
+                component: TaskBoard,
+                meta: {isSettings: true},
+                name: 'projectSettings',
+            }
+        ]
     }
 ]

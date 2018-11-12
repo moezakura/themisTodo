@@ -1,24 +1,5 @@
 {{define "content"}}
 
-<div id="projectConfigPopup">
-    <h3>Project Config</h3>
-    <div class="error"></div>
-    <form id="projectConfigForm" class="basicForm" autocomplete="off">
-        <p>Name</p>
-        <input type="text" name="name" value="{{.Project.Name}}">
-        <p>Description</p>
-        <textarea name="description">{{.Project.Description}}</textarea>
-        <input type="submit" value="SAVE">
-    </form>
-    <form id="projectMemberAddForm" class="basicForm" autocomplete="off">
-        <p>Member Invite</p>
-        <input type="text" id="userSelect">
-        <input type="submit" value="&#xf234;" class="fa">
-        <p>Member Manage</p>
-        <ul class="usersList"></ul>
-    </form>
-    <div id="deleteProject" class="deleteButton">DELETE PROJECT</div>
-</div>
 <form id="deleteProjectPopup" class="basicForm">
     <h2>DELETE PROJECT</h2>
     <div class="close fas fa-times"></div>

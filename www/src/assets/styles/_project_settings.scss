@@ -1,0 +1,67 @@
+#project-settings {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: $project-settings-width;
+    height: $project-settings-height;
+    background-color: $backgroundColor;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    box-shadow: 0 0 6px rgba(black, .5);
+    z-index: 100;
+
+    .userSelectBox {
+        width: 90%;
+    }
+
+    h3 {
+        text-align: center;
+        font-size: 18px;
+        letter-spacing: 1.2px;
+    }
+
+    p {
+        padding: 0;
+        font-size: 16px;
+        margin: 15px 0 5px 5%;
+    }
+
+    input,
+    textarea {
+        width: 90%;
+    }
+    textarea {
+        min-width: 90%;
+        max-width: 90%;
+    }
+
+    #userSelect {
+        padding-right: $buttonHeight + 10px;
+    }
+
+    #userSelect + input {
+        text-align: center;
+        vertical-align: middle;
+        height: $lineTextHeight;
+        line-height: $lineTextHeight;
+        width: $lineTextHeight;
+        margin: (-15px - $lineTextHeight) 0 10px 95%;
+        transform: translateX(-$lineTextHeight);
+        border: 0;
+        background-color: transparent;
+    }
+
+    #userSelect + input:hover,
+    #userSelect + input:focus {
+        background-color: accentColor(.3);
+    }
+
+    #projectMemberAddForm {
+        .usersList {
+            height: 250px;
+            border: solid 1px rgba(white, .3);
+            overflow-y: auto;
+        }
+    }
+}
