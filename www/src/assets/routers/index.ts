@@ -1,6 +1,6 @@
 import Welcome from '@components/Welcome.vue'
 import Login from '@components/Login.vue'
-import DashBoard from '@components/DashBoard.vue'
+import DashBoard from '@components/Dashboard.vue'
 import TaskBoard from '@components/TaskBoard.vue'
 import Overview from '@components/TaskBoard/Settings/Overview.vue'
 import Member from '@components/TaskBoard/Settings/Member.vue'
