@@ -45,6 +45,9 @@
                 return !this.hideAssign
             },
             limitAddClass(): string {
+                if (this.task.status == 3) {
+                    return "normal"
+                }
                 if (this.task.limitDate <= 0) {
                     return "over"
                 }

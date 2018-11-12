@@ -35,7 +35,8 @@
                     <div id="taskPopupProgressText" v-show="!isEditing">
                         <i class="fas fa-calendar-alt"></i>
                         <span>{{ task.deadline }}</span>
-                        <span>(あと{{ task.limitDate }}日)</span>
+                        <span v-if="!isCompleted">(あと{{ task.limitDate }}日)</span>
+                        <span v-if="isCompleted">(Already Completed!)</span>
                     </div>
                     <input type="date" id="taskPopupDeadlineChange" v-show="isEditing" v-model="taskCache.deadline">
                     <div id="taskPopupProgressCurrent" :style="{'width': `${currentProgress}%`}"
@@ -72,6 +73,12 @@
             }
         },
         computed: {
+            isCompleted(): boolean {
+                if (this.task === undefined || this.task.status === undefined || this.task.status === null) {
+                    return false
+                }
+                return this.task.status === 3
+            },
             task(): Task | undefined {
                 const t = this.$store.getters.getCurrentTask
                 this.taskCache = Object.assign({}, t)
@@ -104,6 +111,9 @@
                 else return progress
             },
             limitAddClass(): string {
+                if (this.task.status == 3) {
+                    return "normal"
+                }
                 if (this.task.limitDate <= 0) {
                     return "over"
                 }
