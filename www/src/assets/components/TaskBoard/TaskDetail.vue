@@ -1,57 +1,63 @@
 <template>
-    <transition>
-        <div v-if="isShowTaskDetail">
-            <form id="taskPopup" @submit.prevent="submitEdit">
-                <h2 :class="[limitAddClass]">Doing Task</h2>
-                <div id="taskPopupActions">
-                    <i class="fas fa-trash" id="taskPopupTrashButton"></i>
-                    <i class="fas fa-edit" id="taskPopupEditButton" @click="setEditing(!isEditing)"></i>
-                    <i class="fas fa-times" id="taskPopupCloseButton" @click="hideTaskDetail"></i>
-                </div>
-                <div class="both"></div>
-                <div class="success" v-show="isSuccess">Update Success.</div>
-                <div class="error" v-show="errorMessage !== undefined && errorMessage.length > 0">{{ errorMessage }}
-                </div>
-                <div id="taskPopupTaskIdTitle">
-                    <label id="taskPopupTaskId">#{{ task.taskId }}</label>
-                    <input value="TITLE" id="taskPopupTitle" v-model="taskCache.name" :readonly="!isEditing">
-                </div>
-                <div class="both"></div>
-                <div id="taskPopupAssignCreatorLine">
-                    <div class="taskPopupAssignCreatorColumn">
-                        <p>Assign</p>
-                        <div id="taskPopupAssignIcon"><!-- TODO: ユーザーアイコンの設定 --></div>
-                        <user-select :is-show="true" :is-in-project="true" v-model="selectUser"
-                                     :readonly="!isEditing"></user-select>
+    <div>
+        <transition>
+            <div v-if="isShowTaskDetail">
+                <form id="taskPopup" @submit.prevent="submitEdit">
+                    <h2 :class="[limitAddClass]">Doing Task</h2>
+                    <div id="taskPopupActions">
+                        <i class="fas fa-trash" id="taskPopupTrashButton" @click="showTaskDeleteOrHide"></i>
+                        <i class="fas fa-edit" id="taskPopupEditButton" @click="setEditing(!isEditing)"></i>
+                        <i class="fas fa-times" id="taskPopupCloseButton" @click="hideTaskDetail"></i>
                     </div>
-                    <div class="taskPopupAssignCreatorColumn">
-                        <p>Creator</p>
-                        <div id="taskPopupCreatorIcon"><!-- TODO: ユーザーアイコンの設定 --></div>
-                        <label id="taskPopupCreator">{{ task.creatorName }}</label>
+                    <div class="both"></div>
+                    <div class="success" v-show="isSuccess">Update Success.</div>
+                    <div class="error" v-show="errorMessage !== undefined && errorMessage.length > 0">{{ errorMessage }}
                     </div>
-                </div>
-                <div class="both"></div>
-                <div id="taskPopupProgressBar">
-                    <div id="taskPopupProgressText" v-show="!isEditing">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>{{ task.deadline }}</span>
-                        <span v-if="!isCompleted">(あと{{ task.limitDate }}日)</span>
-                        <span v-if="isCompleted">(Already Completed!)</span>
+                    <div id="taskPopupTaskIdTitle">
+                        <label id="taskPopupTaskId">#{{ task.taskId }}</label>
+                        <input value="TITLE" id="taskPopupTitle" v-model="taskCache.name" :readonly="!isEditing">
                     </div>
-                    <input type="date" id="taskPopupDeadlineChange" v-show="isEditing" v-model="taskCache.deadline">
-                    <div id="taskPopupProgressCurrent" :style="{'width': `${currentProgress}%`}"
-                         :class="[limitAddClass]">&nbsp;
+                    <div class="both"></div>
+                    <div id="taskPopupAssignCreatorLine">
+                        <div class="taskPopupAssignCreatorColumn">
+                            <p>Assign</p>
+                            <div id="taskPopupAssignIcon"><!-- TODO: ユーザーアイコンの設定 --></div>
+                            <user-select :is-show="true" :is-in-project="true" v-model="selectUser"
+                                         :readonly="!isEditing"></user-select>
+                        </div>
+                        <div class="taskPopupAssignCreatorColumn">
+                            <p>Creator</p>
+                            <div id="taskPopupCreatorIcon"><!-- TODO: ユーザーアイコンの設定 --></div>
+                            <label id="taskPopupCreator">{{ task.creatorName }}</label>
+                        </div>
                     </div>
-                </div>
-                <textarea id="taskPopupDescription" v-model="taskCache.description" :readonly="!isEditing"></textarea>
-                <div class="input-box" v-show="isEditing">
-                    <input type="button" value="CANCEL" @click="setEditing(false)">
-                    <input type="submit" value="CHANGE">
-                </div>
-            </form>
-            <div class="backView" @click="hideTaskDetail"></div>
-        </div>
-    </transition>
+                    <div class="both"></div>
+                    <div id="taskPopupProgressBar">
+                        <div id="taskPopupProgressText" v-show="!isEditing">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{{ task.deadline }}</span>
+                            <span v-if="!isCompleted">(あと{{ task.limitDate }}日)</span>
+                            <span v-if="isCompleted">(Already Completed!)</span>
+                        </div>
+                        <input type="date" id="taskPopupDeadlineChange" v-show="isEditing" v-model="taskCache.deadline">
+                        <div id="taskPopupProgressCurrent" :style="{'width': `${currentProgress}%`}"
+                             :class="[limitAddClass]">&nbsp;
+                        </div>
+                    </div>
+                    <textarea id="taskPopupDescription" v-model="taskCache.description"
+                              :readonly="!isEditing"></textarea>
+                    <div class="input-box" v-show="isEditing">
+                        <input type="button" value="CANCEL" @click="setEditing(false)">
+                        <input type="submit" value="CHANGE">
+                    </div>
+                </form>
+
+                <div class="backView" @click="hideTaskDetail"></div>
+            </div>
+        </transition>
+        <task-delete-or-hide @reload="commitLoadTasks"></task-delete-or-hide>
+        <task-delete-confirm @reload="commitLoadTasks"></task-delete-confirm>
+    </div>
 </template>
 
 <script lang="ts">
@@ -59,10 +65,13 @@
     import UserSelect from "../Common/UserSelect"
     import User from "../../scripts/model/api/user/User"
     import TaskApi from "../../scripts/api/TaskApi"
+    import TaskDeleteOrHide from "./TaskDeleteOrHide"
+    import {ProjectDetailStatus} from "../../scripts/enums/ProjectDetailStatus"
+    import TaskDeleteConfirm from "./TaskDeleteConfirm"
 
     export default {
         name: "TaskDetail",
-        components: {UserSelect},
+        components: {TaskDeleteConfirm, TaskDeleteOrHide, UserSelect},
         data: () => {
             const taskCache: Task | undefined = undefined
             return {
@@ -128,7 +137,10 @@
                 }
 
                 return "normal"
-            }
+            },
+            isShowConfirmDelete(): boolean {
+                return this.$store.getters.getProjectDetailStatus == ProjectDetailStatus.DELETE_CONFIRM
+            },
         },
         methods: {
             hideTaskDetail() {
@@ -142,6 +154,12 @@
                     const t = this.$store.getters.getCurrentTask
                     this.taskCache = Object.assign({}, t)
                 }
+            },
+            showTaskDeleteOrHide() {
+                this.$store.commit("setProjectDetailStatus", ProjectDetailStatus.DELETE_OR_HIDE)
+            },
+            commitLoadTasks() {
+                this.$emit("load-tasks")
             },
             dateFormat(dateStr: string): string {
                 const date = new Date(dateStr)

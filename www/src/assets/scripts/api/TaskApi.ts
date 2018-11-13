@@ -84,7 +84,7 @@ export default class TaskApi {
     }
 
     static Delete(createDate: string): Promise<BaseApiResult> {
-        return fetch("/api/tasks/delete/" + createDate, {
+        return fetch(`/api/tasks/delete/${createDate}`, {
             method: 'POST',
             credentials: "same-origin"
         }).then(res => {

@@ -3,6 +3,7 @@ import Vuex, {StoreOptions} from 'vuex'
 import Project from "@scripts/model/api/project/Project"
 import Task from "@scripts/model/api/task/Task"
 import ProjectSettingsStore from "@scripts/model/ProjectSettingsStore"
+import {ProjectDetailStatus} from "@scripts/enums/ProjectDetailStatus"
 
 export interface RootState {
     headerEnable: boolean,
@@ -10,6 +11,7 @@ export interface RootState {
     currentProject: Project | undefined
     currentTask: Task | undefined
     projectSettings: ProjectSettingsStore
+    projectDetailStatus: ProjectDetailStatus
 }
 
 Vue.use(Vuex)
@@ -21,7 +23,8 @@ const store: StoreOptions<RootState> = {
         loadingCount: 0,
         currentProject: undefined,
         currentTask: undefined,
-        projectSettings: new ProjectSettingsStore()
+        projectSettings: new ProjectSettingsStore(),
+        projectDetailStatus: ProjectDetailStatus.HIDE
     },
     getters: {
         isHeaderEnable: state => state.headerEnable,
@@ -29,6 +32,7 @@ const store: StoreOptions<RootState> = {
         getCurrentProject: state => state.currentProject,
         getCurrentTask: state => state.currentTask,
         getProjectSettings: state => state.projectSettings,
+        getProjectDetailStatus: state => state.projectDetailStatus,
     },
     mutations: {
         setHeaderEnable(state, value) {
@@ -56,7 +60,10 @@ const store: StoreOptions<RootState> = {
             const value = _value["value"]
 
             Vue.set(state.projectSettings, key, value)
-        }
+        },
+        setProjectDetailStatus(state, value) {
+            state.projectDetailStatus = value
+        },
     },
 }
 
