@@ -97,6 +97,9 @@
                 return this.$route.params["taskId"]
             },
             storeProject(): Project {
+                if(this.$store.getters.getCurrentProject == undefined){
+                    return new Project()
+                }
                 return this.$store.getters.getCurrentProject
             }
         },
