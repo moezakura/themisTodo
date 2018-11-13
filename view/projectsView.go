@@ -43,6 +43,10 @@ func (self ProjectsView) GetMembers(c *gin.Context, statusCode int, json *models
 	c.JSON(statusCode, json)
 }
 
+func (self ProjectsView) DeleteMember(c *gin.Context, statusCode int, json *models.ProjectDeleteMemberResultJson) {
+	c.JSON(statusCode, json)
+}
+
 func (self ProjectsView) GetMy(c *gin.Context, statusCode int, json *models.ProjectGetResultJson) {
 	c.JSON(statusCode, json)
 }

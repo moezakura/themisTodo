@@ -28,6 +28,7 @@ func Init(db *sql.DB) *gin.Engine {
 		projects.GET("/info/:projectId", themsController.ProjectsController{baseController}.GetInfo)
 		projects.GET("/tasks/:projectId", themsController.ProjectsController{baseController}.GetTasks)
 		projects.GET("/members/:projectId", themsController.ProjectsController{baseController}.GetMembers)
+		projects.DELETE("/members/:projectId", themsController.ProjectsController{baseController}.DeleteMembers)
 		projects.GET("/my", themsController.ProjectsController{baseController}.GetMy)
 	}
 

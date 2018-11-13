@@ -11,7 +11,7 @@
                     <div class="nameId">{{ member.name }}</div>
                     <div class="displayName">{{ member.displayName }}</div>
                 </div>
-                <div class="delete">
+                <div class="delete" @click="removeUser(member.uuid)">
                     <i class="fas fa-minus-circle"></i>
                 </div>
             </li>
@@ -24,7 +24,8 @@
     import User from "../../../scripts/model/api/user/User"
     import ProjectApi from "../../../scripts/api/ProjectApi"
     import Project from "../../../scripts/model/api/project/Project"
-    import AddMemberRequest from "../../../scripts/model/api/AddMemberRequest";
+    import AddMemberRequest from "../../../scripts/model/api/AddMemberRequest"
+    import DeleteMemberRequest from "../../../scripts/model/api/DeleteMemberRequest"
 
     export default {
         name: "Member",
@@ -53,9 +54,14 @@
                 }
 
                 this.$store.commit("incrementLoadingCount")
-                const updateRequest = new AddMemberRequest()
-                updateRequest.uuid = value.uuid
-                ProjectApi.addMemberToProject(this.project.uuid, updateRequest).then(res => {
+                this.$store.commit("setProjectSettingsProps", {
+                    key: "errorMessage",
+                    value: ""
+                })
+
+                const addRequest = new AddMemberRequest()
+                addRequest.uuid = value.uuid
+                ProjectApi.addMemberToProject(this.project.uuid, addRequest).then(res => {
                     if (res.success) {
                         this.members.push(value)
 
@@ -65,6 +71,11 @@
                         selectUser.uuid = -1
 
                         this.selectUser = selectUser
+                    } else {
+                        this.$store.commit("setProjectSettingsProps", {
+                            key: "errorMessage",
+                            value: res.message
+                        })
                     }
                 }).finally(() => {
                     this.$store.commit("decrementLoadingCount")
@@ -80,6 +91,33 @@
             }).finally(() => {
                 this.$store.commit("decrementLoadingCount")
             })
+        },
+        methods: {
+            removeUser(userId) {
+                this.$store.commit("incrementLoadingCount")
+                this.$store.commit("setProjectSettingsProps", {
+                    key: "errorMessage",
+                    value: ""
+                })
+
+                const deleteRequest = new DeleteMemberRequest()
+                deleteRequest.uuid = userId
+
+                ProjectApi.removeMemberFromProject(this.project.uuid, deleteRequest).then(res => {
+                    if (res.success) {
+                        this.members = this.members.filter(member => {
+                            return member.uuid != userId
+                        })
+                    } else {
+                        this.$store.commit("setProjectSettingsProps", {
+                            key: "errorMessage",
+                            value: res.message
+                        })
+                    }
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
+            }
         }
     }
 </script>

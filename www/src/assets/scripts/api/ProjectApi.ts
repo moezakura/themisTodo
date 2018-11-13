@@ -10,6 +10,7 @@ import ProjectMemberList from "@scripts/projectMemberList"
 import AddMemberRequest from "@scripts/model/api/AddMemberRequest"
 import ProjectMembersResult from "@scripts/model/api/ProjectMembersResult"
 import User from "@scripts/model/api/user/User"
+import DeleteMemberRequest from "@scripts/model/api/DeleteMemberRequest"
 
 export default class ProjectApi {
     static getList(taskStatus: TaskStatus): Promise<TaskListResult> {
@@ -127,6 +128,23 @@ export default class ProjectApi {
         return fetch(`/api/project/addUser/${projectId}`, {
             method: "POST",
             body: addRequest.toJson(),
+            credentials: "same-origin"
+        }).then(res => {
+            return res.json();
+        }).then(json=> {
+            let res = new BaseApiResult()
+
+            res.message = json["message"]
+            res.success = json["success"]
+
+            return res
+        });
+    }
+
+    static removeMemberFromProject(projectId: number, deleteRequest: DeleteMemberRequest): Promise<BaseApiResult>{
+        return fetch(`/api/project/members/${projectId}`, {
+            method: "DELETE",
+            body: deleteRequest.toJson(),
             credentials: "same-origin"
         }).then(res => {
             return res.json();

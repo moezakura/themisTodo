@@ -1,9 +1,9 @@
 package module
 
 import (
+	"../models"
 	"database/sql"
 	"log"
-	"../models"
 )
 
 type ProjectsModule struct {
@@ -192,5 +192,15 @@ func (self *ProjectsModule) Delete(projectId int) (isError bool) {
 		return true
 	}
 
+	return false
+}
+
+func (self *ProjectsModule) Leave(projectId int, userId int) (isError bool) {
+	_, err := self.db.Exec("DELETE FROM users_in_projects WHERE project_id = ? AND user_id = ?;", projectId, userId)
+
+	if err != nil {
+		log.Printf("ProjectsModule.Delete Error (users_in_projects): %+v\n", err)
+		return true
+	}
 	return false
 }

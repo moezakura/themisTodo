@@ -353,11 +353,66 @@ func (self ProjectsController) GetMembers(c *gin.Context) {
 		return
 	}
 
-
 	resultJson.Success = true
 	resultJson.Members = users
 
 	themisView.ProjectsView{}.GetMembers(c, http.StatusOK, resultJson)
+}
+
+func (self ProjectsController) DeleteMembers(c *gin.Context) {
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	resultJson := &models.ProjectDeleteMemberResultJson{}
+
+	if isError {
+		resultJson.Message = "invalid token"
+		themisView.ProjectsView{}.DeleteMember(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	projectIdStr := c.Param("projectId")
+	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
+	projectId := int(projectId64)
+	if err != nil {
+		resultJson.Message = "invalid project id"
+		themisView.ProjectsView{}.DeleteMember(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	isIn := projectModule.IsIn(userUuid, projectId)
+	if !isIn {
+		resultJson.Message = "not found project or not found users"
+		themisView.ProjectsView{}.DeleteMember(c, http.StatusNotFound, resultJson)
+		return
+	}
+
+	var deleteRequest models.ProjectsDeleteUserRequest
+	c.ShouldBindJSON(&deleteRequest)
+
+	if deleteRequest.Uuid < 0 {
+		resultJson.Message = "invalid user id"
+		themisView.ProjectsView{}.DeleteMember(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	isInTarget := projectModule.IsIn(deleteRequest.Uuid, projectId)
+	if !isInTarget {
+		resultJson.Message = "not found project or not found users"
+		themisView.ProjectsView{}.DeleteMember(c, http.StatusNotFound, resultJson)
+		return
+	}
+
+	isError = projectModule.Leave(projectId, deleteRequest.Uuid)
+	if isError {
+		resultJson.Message = "failed leave"
+		themisView.ProjectsView{}.DeleteMember(c, http.StatusInternalServerError, resultJson)
+		return
+	}
+
+	resultJson.Success = true
+
+	themisView.ProjectsView{}.DeleteMember(c, http.StatusOK, resultJson)
 }
 
 func (self ProjectsController) GetMy(c *gin.Context) {

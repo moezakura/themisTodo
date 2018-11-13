@@ -59,6 +59,7 @@
             margin: 0 5%;
 
             li {
+                border-bottom: solid 1px rgba(white, .1);
                 .name {
                     width: calc(100% - #{$iconSize * 2});
                 }
@@ -70,7 +71,7 @@
                     font-size: 18px;
                     transition: ease all .3s;
 
-                    &:hover{
+                    &:hover {
                         color: $redColor;
                     }
                 }
