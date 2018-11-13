@@ -7,7 +7,7 @@
                     <i class="fas fa-times" id="taskDeletePopupClose" @click="clickClose"></i>
                 </div>
                 <p class="taskDeletePopupText" id="taskDeletePopupTextCaution">Would you like to hide or delete
-                    {{ task.name }}?</p>
+                    {{ taskName }}?</p>
                 <p class="taskDeletePopupText"><strong>HIDE</strong>: Hide the task from the task board.</p>
                 <p class="taskDeletePopupText"><strong>DELETE</strong>: Delete the task from the task board.<br>This
                     operation
@@ -37,6 +37,12 @@
             },
             task(): Task {
                 return this.$store.getters.getCurrentTask
+            },
+            taskName(): string {
+                if(this.task == undefined){
+                    return ""
+                }
+                return this.task.name
             },
             projectId() {
                 return this.$store.getters.getCurrentProject.uuid
