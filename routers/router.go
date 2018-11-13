@@ -27,6 +27,7 @@ func Init(db *sql.DB) *gin.Engine {
 		projects.POST("/addUser/:projectId", themsController.ProjectsController{baseController}.PostAddUser)
 		projects.GET("/info/:projectId", themsController.ProjectsController{baseController}.GetInfo)
 		projects.GET("/tasks/:projectId", themsController.ProjectsController{baseController}.GetTasks)
+		projects.GET("/members/:projectId", themsController.ProjectsController{baseController}.GetMembers)
 		projects.GET("/my", themsController.ProjectsController{baseController}.GetMy)
 	}
 

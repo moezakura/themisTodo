@@ -39,6 +39,10 @@ func (self ProjectsView) GetTasks(c *gin.Context, statusCode int, json *models.T
 	c.JSON(statusCode, json)
 }
 
+func (self ProjectsView) GetMembers(c *gin.Context, statusCode int, json *models.ProjectMembersResultJson) {
+	c.JSON(statusCode, json)
+}
+
 func (self ProjectsView) GetMy(c *gin.Context, statusCode int, json *models.ProjectGetResultJson) {
 	c.JSON(statusCode, json)
 }

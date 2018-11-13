@@ -318,6 +318,48 @@ func (self ProjectsController) GetTasks(c *gin.Context) {
 	themisView.ProjectsView{}.GetTasks(c, http.StatusOK, resultJson)
 }
 
+func (self ProjectsController) GetMembers(c *gin.Context) {
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	resultJson := &models.ProjectMembersResultJson{}
+
+	if isError {
+		resultJson.Message = "invalid token"
+		themisView.ProjectsView{}.GetMembers(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	projectIdStr := c.Param("projectId")
+	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
+	projectId := int(projectId64)
+	if err != nil {
+		resultJson.Message = "invalid project id"
+		themisView.ProjectsView{}.GetMembers(c, http.StatusBadRequest, resultJson)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	isIn := projectModule.IsIn(userUuid, projectId)
+	if !isIn {
+		resultJson.Message = "not found project or not found users"
+		themisView.ProjectsView{}.GetMembers(c, http.StatusNotFound, resultJson)
+		return
+	}
+
+	isError, users := projectModule.GetUser(projectId)
+	if isError {
+		resultJson.Message = "not found project or not found users"
+		themisView.ProjectsView{}.GetMembers(c, http.StatusNotFound, resultJson)
+		return
+	}
+
+
+	resultJson.Success = true
+	resultJson.Members = users
+
+	themisView.ProjectsView{}.GetMembers(c, http.StatusOK, resultJson)
+}
+
 func (self ProjectsController) GetMy(c *gin.Context) {
 	getResult := &models.ProjectGetResultJson{}
 	projectsModule := module.NewProjectsModule(self.DB)
