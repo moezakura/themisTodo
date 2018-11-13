@@ -11,8 +11,28 @@ import AddMemberRequest from "@scripts/model/api/AddMemberRequest"
 import ProjectMembersResult from "@scripts/model/api/ProjectMembersResult"
 import User from "@scripts/model/api/user/User"
 import DeleteMemberRequest from "@scripts/model/api/DeleteMemberRequest"
+import ProjectAddRequest from "@scripts/model/api/ProjectAddRequest"
+import ProjectAddResult from "@scripts/model/api/ProjectAddResult"
 
 export default class ProjectApi {
+    static create(addRequest: ProjectAddRequest): Promise<ProjectAddResult> {
+        return fetch(`/api/project/add`, {
+            method: 'POST',
+            body: addRequest.toJson(),
+            credentials: "same-origin"
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new ProjectAddResult()
+
+            res.message = json["message"]
+            res.success = json["success"]
+            res.id = json["id"]
+
+            return res
+        })
+    }
+
     static getList(taskStatus: TaskStatus): Promise<TaskListResult> {
         const status = taskStatus.toString()
         return fetch(`/api/tasks/my?status=${status}`, {
@@ -113,7 +133,7 @@ export default class ProjectApi {
             body: updateRequest.toJson(),
             credentials: "same-origin"
         }).then(res => {
-            return res.json();
+            return res.json()
         }).then(json => {
             let res = new BaseApiResult()
 
@@ -121,41 +141,41 @@ export default class ProjectApi {
             res.success = json["success"]
 
             return res
-        });
+        })
     }
 
-    static addMemberToProject(projectId: number, addRequest: AddMemberRequest): Promise<BaseApiResult>{
+    static addMemberToProject(projectId: number, addRequest: AddMemberRequest): Promise<BaseApiResult> {
         return fetch(`/api/project/addUser/${projectId}`, {
             method: "POST",
             body: addRequest.toJson(),
             credentials: "same-origin"
         }).then(res => {
-            return res.json();
-        }).then(json=> {
+            return res.json()
+        }).then(json => {
             let res = new BaseApiResult()
 
             res.message = json["message"]
             res.success = json["success"]
 
             return res
-        });
+        })
     }
 
-    static removeMemberFromProject(projectId: number, deleteRequest: DeleteMemberRequest): Promise<BaseApiResult>{
+    static removeMemberFromProject(projectId: number, deleteRequest: DeleteMemberRequest): Promise<BaseApiResult> {
         return fetch(`/api/project/members/${projectId}`, {
             method: "DELETE",
             body: deleteRequest.toJson(),
             credentials: "same-origin"
         }).then(res => {
-            return res.json();
-        }).then(json=> {
+            return res.json()
+        }).then(json => {
             let res = new BaseApiResult()
 
             res.message = json["message"]
             res.success = json["success"]
 
             return res
-        });
+        })
     }
 
     static getProject(projectId: number): Promise<ProjectResult> {
