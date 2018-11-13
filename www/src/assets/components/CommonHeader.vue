@@ -4,6 +4,9 @@
         <router-link to="/home">
             <div>Home</div>
         </router-link>
+        <router-link to="/project/new">
+            <div>New Project</div>
+        </router-link>
         <router-link to="/settings">
             <div>My Setting</div>
         </router-link>

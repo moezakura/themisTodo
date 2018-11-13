@@ -2,6 +2,7 @@ import Welcome from '@components/Welcome.vue'
 import Login from '@components/Login.vue'
 import DashBoard from '@components/Dashboard.vue'
 import TaskBoard from '@components/TaskBoard.vue'
+import NewProject from '@components/NewProject.vue'
 
 export default [
     {
@@ -18,6 +19,10 @@ export default [
         path: '/home',
         component: DashBoard,
         name: 'dashboard'
+    }, {
+        path: '/project/new',
+        component: NewProject,
+        name: 'newProject'
     }, {
         path: '/project/view/:projectId',
         component: TaskBoard,
