@@ -260,5 +260,5 @@ func (self AccountController) GetProfile(c *gin.Context) {
 
 	profileResult.Success = true
 	profileResult.User = account
-	themisView.AccountView{}.GetProfile(c, http.StatusInternalServerError, profileResult)
+	themisView.AccountView{}.GetProfile(c, http.StatusOK, profileResult)
 }
