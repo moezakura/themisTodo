@@ -9,10 +9,7 @@ import (
 func Init(db *sql.DB) *gin.Engine {
 	r := gin.New()
 
-	r.Static("/assets", "./www/assets")
-
 	baseController := themsController.NewBaseController(db, r)
-
 
 	// ログイン関連
 	r.POST("/login", themsController.LoginController{baseController}.PostLogin)
@@ -51,6 +48,9 @@ func Init(db *sql.DB) *gin.Engine {
 		account.POST("/update", themsController.AccountController{baseController}.PostUpdate)
 		account.POST("/updateIcon/:accountUuid", themsController.AccountController{baseController}.PostUpdateIcon)
 		account.GET("/profile", themsController.AccountController{baseController}.GetProfile)
+
+		// icon
+		account.GET("/icon/:iconPath", themsController.AccountController{baseController}.GetIcon)
 	}
 	return r
 }

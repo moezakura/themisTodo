@@ -219,7 +219,8 @@ func (self AccountController) PostUpdateIcon(c *gin.Context) {
 		return
 	}
 
-	iconSavePath := fmt.Sprintf("www/assets/accountIcon/%d.png", accountUuid)
+	imageName := utils.RandomString(48)
+	iconSavePath := fmt.Sprintf("data/account_icon/%s.png", imageName)
 
 	img, err := imageupload.Process(c.Request, "icon")
 	if err != nil {
@@ -261,4 +262,7 @@ func (self AccountController) GetProfile(c *gin.Context) {
 	profileResult.Success = true
 	profileResult.User = account
 	themisView.AccountView{}.GetProfile(c, http.StatusOK, profileResult)
+}
+
+func (self AccountController) GetIcon(c *gin.Context) {
 }

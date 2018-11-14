@@ -1,0 +1,1 @@
+DROP DATABASE `themis_todo`;
