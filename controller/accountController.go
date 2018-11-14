@@ -1,16 +1,16 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/olahol/go-imageupload"
-	themisView "../view"
 	"../models"
 	"../module"
 	"../utils"
+	themisView "../view"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/olahol/go-imageupload"
+	"math"
 	"net/http"
 	"strconv"
-	"math"
-	"fmt"
 )
 
 type AccountController struct {
@@ -237,4 +237,28 @@ func (self AccountController) PostUpdateIcon(c *gin.Context) {
 
 	result.Success = true
 	themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusOK, &result)
+}
+
+func (self AccountController) GetProfile(c *gin.Context) {
+	profileResult := &models.AccountProfileResultJson{}
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		profileResult.Message = "invalid token"
+		themisView.AccountView{}.GetProfile(c, http.StatusBadRequest, profileResult)
+		return
+	}
+
+	accountModule := module.NewAccountModule(self.DB)
+	isError, account := accountModule.GetAccount(userUuid)
+	if isError {
+		profileResult.Message = "server error"
+		themisView.AccountView{}.GetProfile(c, http.StatusInternalServerError, profileResult)
+		return
+	}
+
+	profileResult.Success = true
+	profileResult.User = account
+	themisView.AccountView{}.GetProfile(c, http.StatusInternalServerError, profileResult)
 }

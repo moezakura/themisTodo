@@ -25,3 +25,7 @@ func (self AccountView) PostUpdate(c *gin.Context, statusCode int, json *models.
 func (self AccountView) PostUpdateIcon(c *gin.Context, statusCode int, json *models.AccountUpdateIconRequest)  {
 	c.JSON(statusCode, json)
 }
+
+func (self AccountView) GetProfile(c *gin.Context, statusCode int, json *models.AccountProfileResultJson)  {
+	c.JSON(statusCode, json)
+}

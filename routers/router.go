@@ -50,6 +50,7 @@ func Init(db *sql.DB) *gin.Engine {
 		account.GET("/search", themsController.AccountController{baseController}.GetSearch)
 		account.POST("/update", themsController.AccountController{baseController}.PostUpdate)
 		account.POST("/updateIcon/:accountUuid", themsController.AccountController{baseController}.PostUpdateIcon)
+		account.GET("/profile", themsController.AccountController{baseController}.GetProfile)
 	}
 	return r
 }
