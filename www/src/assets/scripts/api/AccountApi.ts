@@ -32,7 +32,7 @@ export default class AccountApi {
     }
 
     static Change(accountObject: Account): Promise<AccountUpdateResult> {
-        return fetch("/account/update", {
+        return fetch("/api/account/update", {
             method: 'POST',
             body: accountObject.toJson(),
             credentials: "same-origin"
