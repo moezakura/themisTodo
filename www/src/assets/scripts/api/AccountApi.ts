@@ -3,6 +3,8 @@ import AccountUpdateResult from "../model/api/AccountUpdateResult"
 import User from "@scripts/model/api/user/User"
 import ProfileResult from "@scripts/model/ProfileResult"
 import AccountUpdateImageResult from "@scripts/model/api/AccountUpdateImageResult"
+import AccountCreateRequest from "@scripts/model/api/AccountCreateRequest"
+import AccountCreateResult from "@scripts/model/api/AccountCreateResult"
 
 export default class AccountApi {
     static GetProfile(): Promise<ProfileResult> {
@@ -39,11 +41,30 @@ export default class AccountApi {
         }).then(response => {
             return response.json()
         }).then(resJson => {
-            const resObj = new AccountUpdateResult()
-            resObj.success = resJson.success
-            resObj.message = resJson.message
+            const res = new AccountUpdateResult()
+            res.success = resJson["success"]
+            res.message = resJson["message"]
 
-            return resObj
+            return res
+        })
+    }
+
+    static create(createRequest: AccountCreateRequest): Promise<AccountCreateResult> {
+        return fetch("/api/account/add", {
+            method: 'POST',
+            body: createRequest.toJson(),
+            credentials: "same-origin"
+        }).then(response => {
+            return response.json()
+        }).then(resJson => {
+            const res = new AccountCreateResult()
+
+            res.success = resJson["success"]
+            res.message = resJson["message"]
+            res.name = resJson["name"]
+            res.password = resJson["password"]
+
+            return res
         })
     }
 
@@ -73,7 +94,7 @@ export default class AccountApi {
             uploadXhr.open("POST", "/api/account/updateIcon")
             uploadXhr.send(uploadData)
         }).then(json => {
-            let res = new AccountUpdateImageResult();
+            let res = new AccountUpdateImageResult()
 
             res.success = json["success"]
             res.message = json["message"]

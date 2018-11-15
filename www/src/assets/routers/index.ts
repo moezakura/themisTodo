@@ -6,7 +6,7 @@ import NewProject from '@components/NewProject.vue'
 import AccountSettings from '@components/AccountSettings.vue'
 import AdminTop from '@components/Admin/AdminTop.vue'
 import AdminDashboard from '@components/Admin/AdminDashboard.vue'
-import NewAccount from '@components/Admin/account/NewAccount.vue'
+import NewAccount from '@components/Admin/Account/NewAccount.vue'
 
 import NotFound from '@components/Errors/NotFound.vue'
 
