@@ -66,7 +66,6 @@ export default class AccountApi {
             })
 
             upload.addEventListener("progress", e => {
-                console.log(e.loaded + " / " + e.total)
                 const progress = e.loaded / e.total
                 progressEvent(progress)
             })
