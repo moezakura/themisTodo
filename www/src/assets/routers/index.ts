@@ -4,8 +4,18 @@ import DashBoard from '@components/Dashboard.vue'
 import TaskBoard from '@components/TaskBoard.vue'
 import NewProject from '@components/NewProject.vue'
 import AccountSettings from '@components/AccountSettings.vue'
+import AdminTop from '@components/Admin/AdminTop.vue'
+import AdminDashboard from '@components/Admin/AdminDashboard.vue'
+import NewAccount from '@components/Admin/account/NewAccount.vue'
+
+import NotFound from '@components/Errors/NotFound.vue'
 
 export default [
+    {
+        path: '*',
+        component: NotFound,
+        meta: {hideHeader: true}
+    },
     {
         path: '/',
         component: Welcome,
@@ -44,5 +54,23 @@ export default [
         path: '/settings',
         component: AccountSettings,
         name: 'settings'
+    }, {
+        path: '/admin',
+        name: 'admin',
+        components: {
+            default: AdminTop,
+            'admin-pages': AdminDashboard,
+        },
+        children: [
+            {
+                path: 'account/new',
+                components: {
+                    default: AdminTop,
+                    'admin-pages': NewAccount,
+                },
+                name: 'newAccount'
+            }
+        ]
+
     }
 ]

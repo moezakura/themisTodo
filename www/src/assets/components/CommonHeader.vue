@@ -8,8 +8,8 @@
             <router-link to="/project/new">
                 <div>New Project</div>
             </router-link>
-            <router-link to="/account/add">
-                <div>New Account</div>
+            <router-link to="/admin">
+                <div>Admin Area</div>
             </router-link>
         </div>
         <div class="right">
