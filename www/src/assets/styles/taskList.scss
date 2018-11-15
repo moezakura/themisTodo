@@ -85,9 +85,14 @@ ul.taskList {
             }
 
             .taskLimit {
+                margin-left: auto;
                 text-align: right;
                 width: 120px;
                 display: flex;
+
+                &.no-assign{
+                    width: 150px;
+                }
 
                 i {
                     width: 25px;

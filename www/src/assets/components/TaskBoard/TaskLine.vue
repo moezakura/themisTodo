@@ -3,12 +3,11 @@
         <div class="taskTitle">{{ task.name }}</div>
         <div class="task-info">
             <div class="taskId">#{{ task.taskId }}</div>
-            <div class="taskAssign">
-                <div class="taskAssignIcon" v-if="isShowAssign"
-                     :style="{'background-image': `url('${backgroundImage}')`}"></div>
-                <div class="taskAssignName" v-if="isShowAssign">{{ task.assignName }}</div>
+            <div class="taskAssign" v-if="isShowAssign">
+                <div class="taskAssignIcon" :style="{'background-image': `url('${backgroundImage}')`}"></div>
+                <div class="taskAssignName">{{ task.assignName }}</div>
             </div>
-            <div class="taskLimit">
+            <div class="taskLimit" :class="{ 'no-assign': !isShowAssign }">
                 <i class="fas fa-calendar-alt"></i>
                 <span class="deadlineDate">{{ isFullDeadline ? task.deadline : task.deadlineMD }}</span>
                 <span class="deadlineDate deadline-limit" v-if="!isCompleted">{{ task.limitDate }}日</span>
