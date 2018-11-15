@@ -1,17 +1,19 @@
 <template>
     <li :class="[limitAddClass]" @click="showTaskDetail">
         <div class="taskTitle">{{ task.name }}</div>
-        <div class="taskId">#{{ task.taskId }}</div>
-        <div class="taskAssign">
-            <div class="taskAssignIcon" v-if="isShowAssign"
-                 :style="{'background-image': `url('${backgroundImage}')`}"></div>
-            <div class="taskAssignName" v-if="isShowAssign">{{ task.assignName }}</div>
-        </div>
-        <div class="taskLimit">
-            <i class="fas fa-calendar-alt"></i>
-            <span class="deadlineDate">{{ isFullDeadline ? task.deadline : task.deadlineMD }}</span>
-            <span class="deadlineDate" v-if="!isCompleted">あと{{ task.limitDate }}日</span>
-            <span class="deadlineDate" v-if="isCompleted">Completed!</span>
+        <div class="task-info">
+            <div class="taskId">#{{ task.taskId }}</div>
+            <div class="taskAssign">
+                <div class="taskAssignIcon" v-if="isShowAssign"
+                     :style="{'background-image': `url('${backgroundImage}')`}"></div>
+                <div class="taskAssignName" v-if="isShowAssign">{{ task.assignName }}</div>
+            </div>
+            <div class="taskLimit">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="deadlineDate">{{ isFullDeadline ? task.deadline : task.deadlineMD }}</span>
+                <span class="deadlineDate deadline-limit" v-if="!isCompleted">{{ task.limitDate }}日</span>
+                <span class="deadlineDate deadline-limit" v-if="isCompleted">DONE!</span>
+            </div>
         </div>
     </li>
 </template>

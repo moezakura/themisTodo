@@ -9,15 +9,16 @@ ul.taskList {
         display: block;
         clear: both;
         margin: 0;
-        padding: 8px 10px 0 20px;
-        transition: background-color ease .3s;
+        padding: 8px 5px 0 20px;
+        transition: filter ease .3s;
+        background-color: $backgroundColor;
 
         &:first-child {
-            padding-top: 0;
+            padding-top: 5px;
         }
 
         &:hover {
-            background-color: rgba(black, .5);
+            filter: brightness(240%);
         }
 
         @import "task_color";
@@ -27,9 +28,9 @@ ul.taskList {
             position: relative;
             clear: both;
             content: " ";
-            width: calc(100% + 20px + 10px);
+            width: calc(100% + 20px + 5px);
             height: 1px;
-            margin: 33px 0 0 -20px;
+            margin: 15px 0 0 -20px;
             background-color: rgba(white, .3);
         }
 
@@ -44,47 +45,72 @@ ul.taskList {
             white-space: nowrap;
         }
 
-        .taskAssign,
-        .taskLimit,
-        .taskId {
-            float: left;
-            text-align: left;
-            letter-spacing: 1.5px;
-            height: 25px;
-            line-height: 25px;
-            width: calc(100% - 150px - 80px);
-        }
+        .task-info {
+            display: flex;
 
-        .taskId {
-            width: 50px;
-        }
-
-        .taskAssign {
-            .taskAssignIcon,
-            .taskAssignName {
-                float: left;
-            }
-            .taskAssignIcon {
-                width: 25px;
+            .taskAssign,
+            .taskLimit,
+            .taskId {
+                text-align: left;
+                letter-spacing: 1px;
+                font-size: 11px;
                 height: 25px;
-                border-radius: 50%;
-                background-size: cover;
-                background-repeat: no-repeat;
+                line-height: 25px;
+                width: calc(100% - 120px - 50px);
             }
-            .taskAssignName {
-                margin-left: 8px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
+
+            .taskId {
+                width: 50px;
             }
-        }
 
-        .taskLimit {
-            text-align: right;
-            width: 180px;
+            .taskAssign {
+                .taskAssignIcon,
+                .taskAssignName {
+                    float: left;
+                }
+                .taskAssignIcon {
+                    width: 25px;
+                    height: 25px;
+                    border-radius: 50%;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                }
+                .taskAssignName {
+                    margin-left: 8px;
+                    width: calc(100% - 8px - 25px);
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
 
-            span {
-                margin: 0 8px;
+            .taskLimit {
+                text-align: right;
+                width: 120px;
+                display: flex;
+
+                i {
+                    width: 25px;
+                    height: 25px;
+                    text-align: center;
+                    line-height: 25px;
+                }
+                span {
+                    margin: 0 2px;
+                    &:first-child {
+                        margin-left: 0;
+                    }
+                }
+
+                .deadlineDate {
+                    text-align: center;
+                    width: calc(100% - 50px - 20px);
+                }
+
+                .deadline-limit {
+                    width: 50px;
+                    text-align: right;
+                }
             }
         }
     }
