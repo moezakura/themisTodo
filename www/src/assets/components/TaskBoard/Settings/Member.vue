@@ -6,7 +6,7 @@
         <ul class="joined-users usersList">
             <li v-for="member in members">
                 <div class="icon"
-                     :style="{'background-image': `url('/api/assets/accountIcon/${member.uuid}.png')`}"></div>
+                     :style="{'background-image': `url('/api/account/icon/${member.iconPath}')`}"></div>
                 <div class="name">
                     <div class="nameId">{{ member.name }}</div>
                     <div class="displayName">{{ member.displayName }}</div>

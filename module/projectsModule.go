@@ -109,7 +109,7 @@ func (self *ProjectsModule) GetProject(userId int) (error bool, project *models.
 func (self *ProjectsModule) GetUser(projectId int) (error bool, accounts []models.Account) {
 	accounts = make([]models.Account, 0)
 
-	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName` FROM `users` WHERE `users`.`uuid` IN (SELECT `user_id` FROM `users_in_projects` WHERE `project_id` = ?);",
+	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName`, `icon_path` FROM `users` WHERE `users`.`uuid` IN (SELECT `user_id` FROM `users_in_projects` WHERE `project_id` = ?);",
 		projectId)
 
 	if err != nil {
@@ -120,7 +120,7 @@ func (self *ProjectsModule) GetUser(projectId int) (error bool, accounts []model
 
 	for rows.Next() {
 		accountOne := models.Account{}
-		if err := rows.Scan(&accountOne.Uuid, &accountOne.Name, &accountOne.DisplayName); err != nil {
+		if err := rows.Scan(&accountOne.Uuid, &accountOne.Name, &accountOne.DisplayName, &accountOne.IconPath); err != nil {
 			log.Printf("ProjectsModule.GetUser Error: %+v\n", err)
 			return true, nil
 		}

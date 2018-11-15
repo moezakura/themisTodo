@@ -98,12 +98,13 @@ export default class ProjectApi {
 
             membersList.members = []
             for (let i of <Array<any>>json["members"]) {
-                let project = new User()
-                project.uuid = i["uuid"]
-                project.name = i["name"]
-                project.displayName = i["displayName"]
+                let member = new User()
+                member.uuid = i["uuid"]
+                member.name = i["name"]
+                member.displayName = i["displayName"]
+                member.iconPath = i["iconPath"]
 
-                membersList.members.push(project)
+                membersList.members.push(member)
             }
 
             return membersList
