@@ -4,8 +4,10 @@ export default class Task {
     public name: string
     public creator: number
     public creatorName: string
+    public creatorIconPath: string
     public assign: number
     public assignName: string
+    public assignIconPath: string
     public status: number
     public deadline: string
     public limitDate: number
@@ -19,8 +21,10 @@ export default class Task {
         this.name = data["name"]
         this.creator = data["creator"]
         this.creatorName = data["creatorName"]
+        this.creatorIconPath = data["creatorIconPath"]
         this.assign = data["assign"]
         this.assignName = data["assignName"]
+        this.assignIconPath = data["assignIconPath"]
         this.status = data["status"]
         this.deadline = data["deadline"]
         this.limitDate = data["limitDate"]

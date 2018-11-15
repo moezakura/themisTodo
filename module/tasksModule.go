@@ -1,11 +1,11 @@
 package module
 
 import (
+	"../models"
 	"database/sql"
 	"log"
-	"../models"
-	"time"
 	"sync"
+	"time"
 )
 
 type TasksModule struct {
@@ -73,7 +73,7 @@ func (self *TasksModule) Add(task *models.Task) *models.Task {
 func (self *TasksModule) GetList(projectId int) (error bool, list []models.Task) {
 	list = []models.Task{}
 
-	rows, err := self.db.Query(`SELECT id, todo.name, creator, assign, status, deadline, description, createDate, u1.displayName, u2.displayName FROM todo_list todo
+	rows, err := self.db.Query(`SELECT id, todo.name, creator, assign, status, deadline, description, createDate, u1.displayName, u1.icon_path, u2.displayName, u2.icon_path FROM todo_list todo
   INNER JOIN users u1 ON u1.uuid = todo.creator
   INNER JOIN users u2 ON u2.uuid = todo.assign
 WHERE project = ? ORDER BY id ASC;`, projectId)
@@ -83,7 +83,7 @@ WHERE project = ? ORDER BY id ASC;`, projectId)
 		return true, nil
 	}
 
-	if err == sql.ErrNoRows{
+	if err == sql.ErrNoRows {
 		return false, list
 	}
 
@@ -93,7 +93,8 @@ WHERE project = ? ORDER BY id ASC;`, projectId)
 		listOne := models.Task{}
 		if err := rows.Scan(&listOne.TaskId, &listOne.Name, &listOne.Creator, &listOne.Assign,
 			&listOne.Status, &listOne.Deadline, &listOne.Description,
-			&listOne.CreateDate, &listOne.CreatorName, &listOne.AssignName); err != nil {
+			&listOne.CreateDate, &listOne.CreatorName, &listOne.CreatorIconPath, &listOne.AssignName,
+			&listOne.AssignIconPath); err != nil {
 			log.Printf("TasksModule.GetList Error: %+v\n", err)
 			return true, nil
 		}
@@ -117,7 +118,9 @@ func (self *TasksModule) Get(createDate int64) (isErr bool, task *models.Task) {
   description,
   createDate,
   u1.displayName,
-  u2.displayName
+  u1.icon_path,
+  u2.displayName,
+  u2.icon_path
 FROM todo_list todo
   INNER JOIN users u1 ON u1.uuid = todo.creator
   INNER JOIN users u2 ON u2.uuid = todo.assign
@@ -136,7 +139,8 @@ WHERE createDate = ?;`, createDate)
 	returnTask := &models.Task{}
 	if err := rows.Scan(&returnTask.TaskId, &returnTask.ProjectId, &returnTask.Name,
 		&returnTask.Creator, &returnTask.Assign, &returnTask.Status, &returnTask.Deadline,
-		&returnTask.Description, &returnTask.CreateDate, &returnTask.CreatorName, &returnTask.AssignName); err != nil {
+		&returnTask.Description, &returnTask.CreateDate, &returnTask.CreatorName, &returnTask.CreatorIconPath,
+		&returnTask.AssignName, &returnTask.AssignIconPath); err != nil {
 		log.Printf("TasksModule.Get Error: %+v\n", err)
 		return true, nil
 	}
@@ -145,7 +149,7 @@ WHERE createDate = ?;`, createDate)
 }
 
 func (self *TasksModule) GetFromTaskId(taskId int, projectId int) (isErr bool, task *models.Task) {
-		self.dbLock.Lock()
+	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
 	rows, err := self.db.Query(`SELECT
   id,
@@ -158,7 +162,9 @@ func (self *TasksModule) GetFromTaskId(taskId int, projectId int) (isErr bool, t
   description,
   createDate,
   u1.displayName,
-  u2.displayName
+  u1.icon_path,
+  u2.displayName,
+  u2.icon_path
 FROM todo_list todo
   INNER JOIN users u1 ON u1.uuid = todo.creator
   INNER JOIN users u2 ON u2.uuid = todo.assign
@@ -177,7 +183,8 @@ WHERE todo.id = ? AND todo.project = ?;`, taskId, projectId)
 	returnTask := &models.Task{}
 	if err := rows.Scan(&returnTask.TaskId, &returnTask.ProjectId, &returnTask.Name,
 		&returnTask.Creator, &returnTask.Assign, &returnTask.Status, &returnTask.Deadline,
-		&returnTask.Description, &returnTask.CreateDate, &returnTask.CreatorName, &returnTask.AssignName); err != nil {
+		&returnTask.Description, &returnTask.CreateDate, &returnTask.CreatorName, &returnTask.CreatorIconPath,
+		&returnTask.AssignName, &returnTask.AssignIconPath); err != nil {
 		log.Printf("TasksModule.Get Error: %+v\n", err)
 		return true, nil
 	}
@@ -228,7 +235,9 @@ func (self *TasksModule) GetTasksFromUser(userUuid, limit int, status models.Tas
   description,
   createDate,
   u1.displayName,
-  u2.displayName
+  u1.icon_path,
+  u2.displayName,
+  u2.icon_path
 FROM todo_list todo
   INNER JOIN users u1 ON u1.uuid = todo.creator
   INNER JOIN users u2 ON u2.uuid = todo.assign
@@ -245,7 +254,8 @@ LIMIT 0, ?;`, userUuid, status, limit)
 		oneTask := models.Task{}
 		if err := rows.Scan(&oneTask.TaskId, &oneTask.ProjectId, &oneTask.Name,
 			&oneTask.Creator, &oneTask.Assign, &oneTask.Status, &oneTask.Deadline,
-			&oneTask.Description, &oneTask.CreateDate, &oneTask.CreatorName, &oneTask.AssignName); err != nil {
+			&oneTask.Description, &oneTask.CreateDate, &oneTask.CreatorName, &oneTask.CreatorIconPath,
+			&oneTask.AssignName, &oneTask.AssignIconPath); err != nil {
 			log.Printf("TasksModule.GetTasksFromUser Error: %+v\n", err)
 			return true, nil
 		}

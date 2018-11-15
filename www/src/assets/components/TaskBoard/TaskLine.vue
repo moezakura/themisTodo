@@ -22,7 +22,7 @@
         props: ["task", "hideAssign", "fullDeadline"],
         data() {
             return {
-                backgroundImage: `/assets/accountIcon/${this.task.assign}.png?t=${new Date().getTime()}`
+                backgroundImage: `/api/account/icon/${this.task.assignIconPath}`
             }
         },
         computed: {

@@ -23,6 +23,7 @@ export default class AccountApi {
                 user.uuid = resUser["uuid"]
                 user.name = resUser["name"]
                 user.displayName = resUser["displayName"]
+                user.iconPath = resUser["iconPath"]
             }
             res.user = user
 

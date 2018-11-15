@@ -5,7 +5,7 @@
         <ul class="usersList userSearchDialog user-select-list" v-if="isEditing">
             <li v-for="(user, key) in userList" :class="{'select': key === selectedIndex}" @click="selectMouse(key)"
                 @mouseenter="hoverMouse(key)">
-                <div class="icon"></div>
+                <div class="icon" :style="{'background-image': `url('/api/account/icon/${user.iconPath}')`}"></div>
                 <div class="name">
                     <div class="nameId">{{ user.name }}</div>
                     <div class="displayName">{{ user.displayName }}</div>

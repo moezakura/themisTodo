@@ -3,19 +3,21 @@ package models
 import "strconv"
 
 type TaskOfJson struct {
-	TaskId      int        `json:"taskId"`
-	ProjectId   int        `json:"projectId"`
-	Name        string     `json:"name"`
-	Creator     int        `json:"creator"`
-	CreatorName string     `json:"creatorName"`
-	Assign      int        `json:"assign"`
-	AssignName  string     `json:"assignName"`
-	Status      TaskStatus `json:"status"`
-	Deadline    string     `json:"deadline"`
-	LimitDate   int        `json:"limitDate"`
-	DeadlineMD  string     `json:"deadlineMD"`
-	Description string     `json:"description"`
-	CreateDate  string     `json:"createDate"`
+	TaskId          int        `json:"taskId"`
+	ProjectId       int        `json:"projectId"`
+	Name            string     `json:"name"`
+	Creator         int        `json:"creator"`
+	CreatorName     string     `json:"creatorName"`
+	CreatorIconPath string     `json:"creatorIconPath"`
+	Assign          int        `json:"assign"`
+	AssignName      string     `json:"assignName"`
+	AssignIconPath  string     `json:"assignIconPath"`
+	Status          TaskStatus `json:"status"`
+	Deadline        string     `json:"deadline"`
+	LimitDate       int        `json:"limitDate"`
+	DeadlineMD      string     `json:"deadlineMD"`
+	Description     string     `json:"description"`
+	CreateDate      string     `json:"createDate"`
 }
 
 func NewTaskOfJson(task Task) *TaskOfJson {
@@ -25,8 +27,10 @@ func NewTaskOfJson(task Task) *TaskOfJson {
 		task.Name,
 		task.Creator,
 		task.CreatorName,
+		task.CreatorIconPath,
 		task.Assign,
 		task.AssignName,
+		task.AssignIconPath,
 		task.Status,
 		task.Deadline,
 		task.LimitDate,

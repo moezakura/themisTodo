@@ -19,6 +19,7 @@ export default class UserApi {
                 user.name = _user["name"]
                 user.uuid = _user["uuid"]
                 user.displayName = _user["displayName"]
+                user.iconPath = _user["iconPath"]
                 res.push(user)
             }
 

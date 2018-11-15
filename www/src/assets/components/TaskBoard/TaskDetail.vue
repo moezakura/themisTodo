@@ -21,13 +21,15 @@
                     <div id="taskPopupAssignCreatorLine">
                         <div class="taskPopupAssignCreatorColumn">
                             <p>Assign</p>
-                            <div id="taskPopupAssignIcon"><!-- TODO: ユーザーアイコンの設定 --></div>
+                            <div id="taskPopupAssignIcon"
+                                 :style="{ 'background-image': `url('${assignIconPath}')` }"></div>
                             <user-select :is-show="true" :is-in-project="true" v-model="selectUser"
                                          :readonly="!isEditing"></user-select>
                         </div>
                         <div class="taskPopupAssignCreatorColumn">
                             <p>Creator</p>
-                            <div id="taskPopupCreatorIcon"><!-- TODO: ユーザーアイコンの設定 --></div>
+                            <div id="taskPopupCreatorIcon"
+                                 :style="{ 'background-image': `url('${creatorIconPath}')` }"></div>
                             <label id="taskPopupCreator">{{ task.creatorName }}</label>
                         </div>
                     </div>
@@ -95,6 +97,12 @@
             },
             isShowTaskDetail(): boolean {
                 return this.task != undefined && this.task.taskId != undefined
+            },
+            assignIconPath(): string {
+                return `/api/account/icon/${this.task.assignIconPath}`
+            },
+            creatorIconPath(): string {
+                return `/api/account/icon/${this.task.creatorIconPath}`
             },
             selectUser: {
                 get(): User {

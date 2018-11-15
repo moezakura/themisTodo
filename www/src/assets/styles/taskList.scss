@@ -56,7 +56,7 @@ ul.taskList {
         }
 
         .taskId {
-            width: 30px;
+            width: 50px;
         }
 
         .taskAssign {
@@ -73,12 +73,15 @@ ul.taskList {
             }
             .taskAssignName {
                 margin-left: 8px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
         }
 
         .taskLimit {
             text-align: right;
-            width: 200px;
+            width: 180px;
 
             span {
                 margin: 0 8px;

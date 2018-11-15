@@ -39,10 +39,11 @@
                 return this.$store.getters.getMyProfile
             },
             userIconPath(): string {
-                if (this.myProfile == undefined || this.myProfile.uuid <= 0) {
+                if (this.myProfile == undefined || this.myProfile.iconPath == undefined ||
+                    this.myProfile.iconPath.length <= 0) {
                     return ""
                 }
-                return `/api/account/icon/${this.myProfile.uuid}`
+                return `/api/account/icon/${this.myProfile.iconPath}`
             },
             uploadProgress(): number {
                 if (this.uploadingBlob.length <= 0) {
@@ -115,6 +116,7 @@
     p {
         text-align: center;
     }
+
     .v-enter,
     .v-leave-to {
         opacity: 0;
