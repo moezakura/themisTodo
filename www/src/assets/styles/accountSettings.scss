@@ -3,7 +3,17 @@
     margin: 10px auto;
 
     #accountSettingsIcon {
-        #accountSettingsIconFake {
+        margin: 0 0 10px 0;
+        padding: 40px 0;
+        border: solid 2px transparent;
+        transition: ease background-color .3s, ease border-color .3s;
+
+        &.drag-over {
+            background-color: accentColor(.1);
+            border-color: accentColor(.4);
+        }
+
+        #accountSettingsIconFake, .uploading-image-body {
             text-align: center;
             width: $bigIconSize;
             height: $bigIconSize;
@@ -14,6 +24,19 @@
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
+            border: solid 1px rgba(white, .7);
+        }
+
+        .uploading-image-body {
+            border: 0;
+            margin: 0;
+        }
+
+        .uploading-image {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            transition: ease height .3s;
         }
 
         #accountSettingsIconFile {
@@ -73,6 +96,20 @@
 
         i.fas:not(.aline):hover {
             background-color: accentColor(.3);
+        }
+    }
+
+    .uploading-progress-bar {
+        width: 80%;
+        height: 2px;
+        margin: 10px auto 0 auto;
+        background-color: rgba(black, .5);
+
+        .uploading-progress-bar-body{
+            width: 50%;
+            height: 2px;
+            background-color: $accentColor;
+            transition: linear width .3s;
         }
     }
 }

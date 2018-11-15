@@ -1,10 +1,10 @@
 package module
 
 import (
+	"../models"
+	"../utils"
 	"database/sql"
 	"log"
-	"../utils"
-	"../models"
 )
 
 type AccountModule struct {
@@ -60,7 +60,7 @@ func (self *AccountModule) Get(name string) int {
 }
 
 func (self *AccountModule) GetAccount(uid int) (isError bool, account *models.Account) {
-	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName` FROM `users` WHERE `uuid` = ?;", uid)
+	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName`, `icon_path` FROM `users` WHERE `uuid` = ?;", uid)
 
 	if err != nil {
 		log.Printf("AccountModule.GetAccount Error: %+v", err)
@@ -72,7 +72,7 @@ func (self *AccountModule) GetAccount(uid int) (isError bool, account *models.Ac
 	gotAccount := &models.Account{}
 
 	if rows.Next() {
-		err = rows.Scan(&gotAccount.Uuid, &gotAccount.Name, &gotAccount.DisplayName)
+		err = rows.Scan(&gotAccount.Uuid, &gotAccount.Name, &gotAccount.DisplayName, &gotAccount.IconPath)
 		if err != nil {
 			log.Printf("AccountModule.GetAccount Error: %+v", err)
 			return true, nil
@@ -85,7 +85,7 @@ func (self *AccountModule) GetAccount(uid int) (isError bool, account *models.Ac
 }
 
 func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isError bool, users []models.AccountSearchResultModel) {
-	queryText := "SELECT `uuid`, `name`, `displayName` FROM `users` WHERE "
+	queryText := "SELECT `uuid`, `name`, `displayName`, `icon_path` FROM `users` WHERE "
 	execArgs := []interface{}{}
 
 	if searchObject.ProjectId > 0 {
@@ -148,7 +148,7 @@ func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isEr
 
 	for rows.Next() {
 		resultModelOne := models.AccountSearchResultModel{}
-		if err := rows.Scan(&resultModelOne.Uuid, &resultModelOne.Name, &resultModelOne.DisplayName); err != nil {
+		if err := rows.Scan(&resultModelOne.Uuid, &resultModelOne.Name, &resultModelOne.DisplayName, &resultModelOne.IconPath); err != nil {
 			log.Printf("AccountModule.Search Error: %+v\n", err)
 			return true, nil
 		}
@@ -177,6 +177,48 @@ func (self *AccountModule) Update(account *models.AccountChangeRequestJson) bool
 	_, err = result.RowsAffected()
 	if err != nil {
 		log.Printf("AccountModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	return false
+}
+
+func (self *AccountModule) UpdateIconPath(uuid int, iconPath string) bool {
+	result, err := self.db.Exec("UPDATE `users` SET `icon_path` = ? WHERE `uuid` = ?;", iconPath, uuid)
+
+	if err != nil {
+		log.Printf("AccountModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		log.Printf("AccountModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	return false
+}
+
+func (self *AccountModule) IsExistFromIconPath(iconPath string) (exist bool) {
+	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName`, `icon_path` FROM `users` WHERE `icon_path` = ?;", iconPath)
+
+	if err != nil {
+		log.Printf("AccountModule.GetAccount Error: %+v", err)
+		return false
+	}
+
+	defer rows.Close()
+
+	gotAccount := &models.Account{}
+
+	if rows.Next() {
+		err = rows.Scan(&gotAccount.Uuid, &gotAccount.Name, &gotAccount.DisplayName, &gotAccount.IconPath)
+		if err != nil {
+			log.Printf("AccountModule.GetAccount Error: %+v", err)
+			return false
+		}
+
 		return true
 	}
 

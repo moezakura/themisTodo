@@ -2,6 +2,7 @@ import Account from "../model/Account"
 import AccountUpdateResult from "../model/api/AccountUpdateResult"
 import User from "@scripts/model/api/user/User"
 import ProfileResult from "@scripts/model/ProfileResult"
+import AccountUpdateImageResult from "@scripts/model/api/AccountUpdateImageResult"
 
 export default class AccountApi {
     static GetProfile(): Promise<ProfileResult> {
@@ -42,6 +43,43 @@ export default class AccountApi {
             resObj.message = resJson.message
 
             return resObj
+        })
+    }
+
+    static uploadImage(uploadData: FormData, progressEvent: (progress: number) => void): Promise<AccountUpdateImageResult> {
+        return new Promise((resolve, reject) => {
+            let uploadXhr = new XMLHttpRequest()
+            let upload = uploadXhr.upload
+            if (upload) {
+                uploadXhr.addEventListener("load", e => {
+                    let json = JSON.parse(uploadXhr.responseText)
+                    resolve(json)
+                })
+            }
+
+            upload.addEventListener("error", e => {
+                reject("some error")
+            })
+            upload.addEventListener("abort", e => {
+                reject("abort")
+            })
+
+            upload.addEventListener("progress", e => {
+                console.log(e.loaded + " / " + e.total)
+                const progress = e.loaded / e.total
+                progressEvent(progress)
+            })
+
+            uploadXhr.open("POST", "/api/account/updateIcon")
+            uploadXhr.send(uploadData)
+        }).then(json => {
+            let res = new AccountUpdateImageResult();
+
+            res.success = json["success"]
+            res.message = json["message"]
+            res.fileId = json["fileId"]
+
+            return res
         })
     }
 }

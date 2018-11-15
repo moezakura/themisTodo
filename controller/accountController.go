@@ -8,8 +8,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/olahol/go-imageupload"
+	"log"
 	"math"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -200,26 +202,23 @@ func (self AccountController) PostUpdateIcon(c *gin.Context) {
 		return
 	}
 
-	accountUuidStr := c.Param("accountUuid")
-	accountUuidI64, err := strconv.ParseInt(accountUuidStr, 10, 32)
-	accountUuid := int(accountUuidI64)
-
-	if err != nil {
-		result.Message = "invalid account id"
-		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
-		return
-	}
-
 	loginModule := module.NewLoginModule(self.DB)
 
-	isErr, sessionUuid := loginModule.GetUserId(c, self.Session)
-	if sessionUuid != accountUuid || isErr {
-		result.Message = "invalid account id"
-		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
+	isErr, accountUuid := loginModule.GetUserId(c, self.Session)
+
+	accountModule := module.NewAccountModule(self.DB)
+	isErr, account := accountModule.GetAccount(accountUuid)
+	if isErr {
+		result.Message = "server error"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusInternalServerError, &result)
 		return
 	}
-
+Retry:
 	imageName := utils.RandomString(48)
+	if accountModule.IsExistFromIconPath(imageName) {
+		goto Retry
+	}
+
 	iconSavePath := fmt.Sprintf("data/account_icon/%s.png", imageName)
 
 	img, err := imageupload.Process(c.Request, "icon")
@@ -234,9 +233,33 @@ func (self AccountController) PostUpdateIcon(c *gin.Context) {
 		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusBadRequest, &result)
 		return
 	}
-	thumb.Save(iconSavePath)
+	err = thumb.Save(iconSavePath)
+	if err != nil {
+		result.Message = "image save error"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusInternalServerError, &result)
+		return
+	}
+
+	oldImageName := account.IconPath
+	account.IconPath = imageName
+	isErr = accountModule.UpdateIconPath(accountUuid, imageName)
+	if isErr {
+		os.Remove(iconSavePath)
+		result.Message = "image save error"
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusInternalServerError, &result)
+		return
+	}
+
+	err = os.Remove(fmt.Sprintf("data/account_icon/%s.png", oldImageName))
+	if err != nil {
+		result.Message = "image save error"
+		log.Printf("oldImage remove error: %+v", err)
+		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusInternalServerError, &result)
+		return
+	}
 
 	result.Success = true
+	result.FileId = imageName
 	themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusOK, &result)
 }
 

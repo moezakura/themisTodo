@@ -3,6 +3,7 @@ import Login from '@components/Login.vue'
 import DashBoard from '@components/Dashboard.vue'
 import TaskBoard from '@components/TaskBoard.vue'
 import NewProject from '@components/NewProject.vue'
+import AccountSettings from '@components/AccountSettings.vue'
 
 export default [
     {
@@ -39,5 +40,9 @@ export default [
                 name: 'projectSettings',
             }
         ]
+    }, {
+        path: '/settings',
+        component: AccountSettings,
+        name: 'settings'
     }
 ]
