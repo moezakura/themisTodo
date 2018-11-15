@@ -251,12 +251,16 @@ Retry:
 		return
 	}
 
-	err = os.Remove(fmt.Sprintf("data/account_icon/%s.png", oldImageName))
-	if err != nil {
-		result.Message = "image save error"
-		log.Printf("oldImage remove error: %+v", err)
-		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusInternalServerError, &result)
-		return
+	oldImagePath := fmt.Sprintf("data/account_icon/%s.png", oldImageName)
+	_, iErr := os.Stat(oldImagePath)
+	if !os.IsNotExist(iErr) {
+		err = os.Remove(oldImagePath)
+		if err != nil {
+			result.Message = "image save error"
+			log.Printf("oldImage remove error: %+v", err)
+			themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusInternalServerError, &result)
+			return
+		}
 	}
 
 	result.Success = true
