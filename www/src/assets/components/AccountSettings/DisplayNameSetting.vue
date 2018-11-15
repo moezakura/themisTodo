@@ -11,14 +11,29 @@
 <script lang="ts">
     import AccountApi from "../../scripts/api/AccountApi"
     import Account from "../../scripts/model/Account"
+    import User from "../../scripts/model/api/user/User"
 
     export default {
         name: "DisplayNameSetting",
         data: () => {
             return {
-                userName: "",
                 changeSuccess: false,
                 errorMessage: "",
+            }
+        },
+        computed: {
+            userName: {
+                get() {
+                    if (this.$store.getters.getMyProfile == undefined) {
+                        return ""
+                    }
+                    return this.$store.getters.getMyProfile.displayName
+                },
+                set(value) {
+                    let profile: User = Object.assign({}, this.$store.getters.getMyProfile)
+                    profile.displayName = value
+                    this.$store.commit("setMyProfile", profile)
+                }
             }
         },
         methods: {
