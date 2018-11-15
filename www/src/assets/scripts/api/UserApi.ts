@@ -1,4 +1,3 @@
-import ProjectUtils from "@scripts/projectUtils"
 import UserSearchRequest from "@scripts/model/api/UserSearchRequest"
 import {UserSearchResult} from "@scripts/model/api/UserSearchResult"
 import User from "@scripts/model/api/user/User"
