@@ -12,6 +12,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -288,4 +289,13 @@ func (self AccountController) GetProfile(c *gin.Context) {
 }
 
 func (self AccountController) GetIcon(c *gin.Context) {
+	iconPathQuery := c.Param("iconPath")
+	iconPath := filepath.Join("data/account_icon/", iconPathQuery+".png")
+
+	_, err := os.Stat(iconPath)
+	if !os.IsNotExist(err) {
+		c.File(iconPath)
+	} else {
+		c.Redirect(http.StatusTemporaryRedirect, "/assets/images/unknown.png")
+	}
 }
