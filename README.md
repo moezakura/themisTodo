@@ -81,6 +81,7 @@ go get -u github.com/gin-contrib/multitemplate
 go get -u github.com/gin-gonic/gin
 go get -u github.com/go-sql-driver/mysql
 go get -u github.com/olahol/go-imageupload
+go get -u github.com/golang-migrate/migrate
 ```
 #### modify file
 Move config.go.example to config.go and modify your mysql config.  

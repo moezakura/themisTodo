@@ -22,7 +22,7 @@
 </head>
 <body>
 <div id="main">
-    <common-header v-show="isHeaderEnable"></common-header>
+    <common-header v-if="isHeaderEnable"></common-header>
     <router-view></router-view>
     <loading-overlay></loading-overlay>
 </div>
