@@ -25,6 +25,7 @@
             changeDisplayName() {
                 let changeObj = new Account()
                 changeObj.displayName = this.userName
+                this.$store.commit("incrementLoadingCount")
                 AccountApi.Change(changeObj).then(json => {
                     if (!json.success) {
                         this.errorMessage = json.message
@@ -33,6 +34,8 @@
                         this.errorMessage = ""
                         this.changeSuccess = true
                     }
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
                 })
             },
             clearMessages() {

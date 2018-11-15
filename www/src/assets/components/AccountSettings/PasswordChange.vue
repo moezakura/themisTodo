@@ -73,6 +73,7 @@
 
                 this.clearMessages()
                 this.loading = true
+                this.$store.commit("incrementLoadingCount")
 
                 AccountApi.Change(changeObj).then(json => {
                     if (!json.success) {
@@ -83,6 +84,7 @@
                         this.changeSuccess = true
                     }
                 }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
                     this.hideCurrentPasswordDialog()
                 })
             }
