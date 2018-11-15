@@ -4,10 +4,12 @@ import Project from "@scripts/model/api/project/Project"
 import Task from "@scripts/model/api/task/Task"
 import ProjectSettingsStore from "@scripts/model/ProjectSettingsStore"
 import {ProjectDetailStatus} from "@scripts/enums/ProjectDetailStatus"
+import User from "@scripts/model/api/user/User"
 
 export interface RootState {
     headerEnable: boolean,
     loadingCount: number,
+    profile: User | undefined,
     currentProject: Project | undefined
     currentTask: Task | undefined
     projectSettings: ProjectSettingsStore
@@ -21,6 +23,7 @@ const store: StoreOptions<RootState> = {
     state: {
         headerEnable: false,
         loadingCount: 0,
+        profile: undefined,
         currentProject: undefined,
         currentTask: undefined,
         projectSettings: new ProjectSettingsStore(),
@@ -29,6 +32,7 @@ const store: StoreOptions<RootState> = {
     getters: {
         isHeaderEnable: state => state.headerEnable,
         isLoadingShow: state => state.loadingCount > 0,
+        getMyProfile: state => state.profile,
         getCurrentProject: state => state.currentProject,
         getCurrentTask: state => state.currentTask,
         getProjectSettings: state => state.projectSettings,
@@ -45,6 +49,9 @@ const store: StoreOptions<RootState> = {
             if (state.loadingCount > 0) {
                 --state.loadingCount
             }
+        },
+        setMyProfile(state, value) {
+            state.profile = value
         },
         setCurrentProject(state, value) {
             state.currentProject = value
