@@ -38,6 +38,7 @@
         }
         .right {
             width: calc(100% - #{200px + 30px});
+            margin: 10px auto;
         }
 
         .admin-menu-title {
@@ -71,10 +72,10 @@
                     width: 100%;
                     height: 100%;
                     margin: -45px 0 0 -25px;
-                    background: -moz-linear-gradient(left, rgba(67,160,71,1) 0%, rgba(67,160,71,0) 100%);
-                    background: -webkit-linear-gradient(left, rgba(67,160,71,1) 0%,rgba(67,160,71,0) 100%);
-                    background: linear-gradient(to right, rgba(67,160,71,1) 0%,rgba(67,160,71,0) 100%);
-                    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#43a047', endColorstr='#0043a047',GradientType=1 );
+                    background: -moz-linear-gradient(left, rgba(67, 160, 71, 1) 0%, rgba(67, 160, 71, 0) 100%);
+                    background: -webkit-linear-gradient(left, rgba(67, 160, 71, 1) 0%, rgba(67, 160, 71, 0) 100%);
+                    background: linear-gradient(to right, rgba(67, 160, 71, 1) 0%, rgba(67, 160, 71, 0) 100%);
+                    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#43a047', endColorstr='#0043a047', GradientType=1);
                     z-index: -1;
                 }
             }

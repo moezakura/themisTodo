@@ -6,6 +6,7 @@ import NewProject from '@components/NewProject.vue'
 import AccountSettings from '@components/AccountSettings.vue'
 import AdminTop from '@components/Admin/AdminTop.vue'
 import AdminDashboard from '@components/Admin/AdminDashboard.vue'
+import ListAccount from '@components/Admin/Account/ListAccount.vue'
 import NewAccount from '@components/Admin/Account/NewAccount.vue'
 
 import NotFound from '@components/Errors/NotFound.vue'
@@ -62,6 +63,13 @@ export default [
             'admin-pages': AdminDashboard,
         },
         children: [
+            {
+                path: 'account/list',
+                components: {
+                    default: AdminTop,
+                    'admin-pages': ListAccount,
+                },
+            },
             {
                 path: 'account/new',
                 components: {

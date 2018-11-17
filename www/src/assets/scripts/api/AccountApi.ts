@@ -1,10 +1,12 @@
 import Account from "../model/Account"
 import AccountUpdateResult from "../model/api/AccountUpdateResult"
 import User from "@scripts/model/api/user/User"
-import ProfileResult from "@scripts/model/ProfileResult"
+import ProfileResult from "@scripts/model/api/ProfileResult"
 import AccountUpdateImageResult from "@scripts/model/api/AccountUpdateImageResult"
 import AccountCreateRequest from "@scripts/model/api/AccountCreateRequest"
 import AccountCreateResult from "@scripts/model/api/AccountCreateResult"
+import AccountListResult from "@scripts/model/api/AccountListResult"
+import Task from "@scripts/model/api/task/Task"
 
 export default class AccountApi {
     static GetProfile(): Promise<ProfileResult> {
@@ -28,6 +30,34 @@ export default class AccountApi {
                 user.iconPath = resUser["iconPath"]
             }
             res.user = user
+
+            return res
+        })
+    }
+
+    static getList(): Promise<AccountListResult> {
+        return fetch("/api/account/list", {
+            method: 'GET',
+            credentials: "same-origin"
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            const res = new AccountListResult()
+
+            res.success = json["success"]
+            res.message = json["success"]
+
+            res.users = []
+            for (let i of <Array<any>>json["users"]) {
+                let user = new User()
+
+                user.uuid = i["uuid"]
+                user.name = i["name"]
+                user.displayName = i["displayName"]
+                user.iconPath = i["iconPath"]
+
+                res.users.push(user)
+            }
 
             return res
         })
