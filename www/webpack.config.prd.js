@@ -92,7 +92,7 @@ module.exports = {
     resolve: {
         extensions: ['*', '.js', '.vue', '.json', '.tsx', '.ts'],
         alias: {
-            vue: 'vue/dist/vue.js',
+            vue: 'vue/dist/vue.min.js',
             '@components': path.resolve(__dirname, './src/assets/components'),
             '@scripts': path.resolve(__dirname, './src/assets/scripts'),
         }
