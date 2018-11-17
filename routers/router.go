@@ -48,12 +48,13 @@ func Init(db *sql.DB) *gin.Engine {
 	account := r.Group("/account")
 	{
 		accountsController := themsController.AccountController{baseController}
-		
+
 		account.POST("/add", accountsController.PostAdd)
 		account.GET("/search", accountsController.GetSearch)
 		account.POST("/update", accountsController.PostUpdate)
 		account.POST("/updateIcon", accountsController.PostUpdateIcon)
 		account.GET("/profile", accountsController.GetProfile)
+		account.GET("/list", accountsController.GetList)
 
 		// icon
 		account.GET("/icon/:iconPath", accountsController.GetIcon)

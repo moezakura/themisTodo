@@ -292,6 +292,30 @@ func (self AccountController) GetProfile(c *gin.Context) {
 	themisView.AccountView{}.GetProfile(c, http.StatusOK, profileResult)
 }
 
+func (self AccountController) GetList(c *gin.Context) {
+	result := &models.AccountListResult{}
+	loginModule := module.NewLoginModule(self.DB)
+	isError, _ := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		result.Message = "invalid token"
+		themisView.AccountView{}.GetList(c, http.StatusBadRequest, result)
+		return
+	}
+
+	accountModule := module.NewAccountModule(self.DB)
+	isError, account := accountModule.GetAccountsList()
+	if isError {
+		result.Message = "server error"
+		themisView.AccountView{}.GetList(c, http.StatusInternalServerError, result)
+		return
+	}
+
+	result.Success = true
+	result.Users = account
+	themisView.AccountView{}.GetList(c, http.StatusOK, result)
+}
+
 func (self AccountController) GetIcon(c *gin.Context) {
 	iconPathQuery := c.Param("iconPath")
 	iconPath := filepath.Join("data/account_icon/", iconPathQuery+".png")

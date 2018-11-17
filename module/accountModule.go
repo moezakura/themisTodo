@@ -84,6 +84,32 @@ func (self *AccountModule) GetAccount(uid int) (isError bool, account *models.Ac
 	return true, nil
 }
 
+func (self *AccountModule) GetAccountsList() (isError bool, account []models.Account) {
+	rows, err := self.db.Query("SELECT `uuid`, `name`, `displayName`, `icon_path` FROM `users`;")
+
+	if err != nil {
+		log.Printf("AccountModule.GetAccountsList Error: %+v", err)
+		return true, nil
+	}
+
+	defer rows.Close()
+
+	gotAccounts := make([]models.Account, 0)
+
+	for rows.Next() {
+		gotAccount := models.Account{}
+		err = rows.Scan(&gotAccount.Uuid, &gotAccount.Name, &gotAccount.DisplayName, &gotAccount.IconPath)
+		if err != nil {
+			log.Printf("AccountModule.GetAccountsList Error: %+v", err)
+			return true, nil
+		}
+
+		gotAccounts = append(gotAccounts, gotAccount)
+	}
+
+	return false, gotAccounts
+}
+
 func (self *AccountModule) Search(searchObject *models.AccountSearchModel) (isError bool, users []models.AccountSearchResultModel) {
 	queryText := "SELECT `uuid`, `name`, `displayName`, `icon_path` FROM `users` WHERE "
 	execArgs := []interface{}{}
