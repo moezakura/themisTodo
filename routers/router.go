@@ -17,40 +17,46 @@ func Init(db *sql.DB) *gin.Engine {
 	// プロジェクト関連
 	projects := r.Group("/project")
 	{
-		projects.POST("/add", themsController.ProjectsController{baseController}.PostAdd)
-		projects.POST("/delete/:projectId", themsController.ProjectsController{baseController}.PostDeleteProject)
+		projectsController := themsController.ProjectsController{baseController}
 
-		projects.POST("/update/:projectId", themsController.ProjectsController{baseController}.PostUpdate)
-		projects.POST("/addUser/:projectId", themsController.ProjectsController{baseController}.PostAddUser)
-		projects.GET("/info/:projectId", themsController.ProjectsController{baseController}.GetInfo)
-		projects.GET("/tasks/:projectId", themsController.ProjectsController{baseController}.GetTasks)
-		projects.GET("/members/:projectId", themsController.ProjectsController{baseController}.GetMembers)
-		projects.DELETE("/members/:projectId", themsController.ProjectsController{baseController}.DeleteMembers)
-		projects.GET("/my", themsController.ProjectsController{baseController}.GetMy)
+		projects.POST("/add", projectsController.PostAdd)
+		projects.POST("/delete/:projectId", projectsController.PostDeleteProject)
+
+		projects.POST("/update/:projectId", projectsController.PostUpdate)
+		projects.POST("/addUser/:projectId", projectsController.PostAddUser)
+		projects.GET("/info/:projectId", projectsController.GetInfo)
+		projects.GET("/tasks/:projectId", projectsController.GetTasks)
+		projects.GET("/members/:projectId", projectsController.GetMembers)
+		projects.DELETE("/members/:projectId", projectsController.DeleteMembers)
+		projects.GET("/my", projectsController.GetMy)
 	}
 
 	// タスク管理
 	tasks := r.Group("/tasks")
 	{
-		tasks.POST("/create", themsController.TasksController{baseController}.PostTaskCreate)
-		tasks.POST("/update/:createDate", themsController.TasksController{baseController}.PostUpdate)
-		tasks.POST("/delete/:createDate", themsController.TasksController{baseController}.PostDelete)
-		tasks.GET("/view/:createDate", themsController.TasksController{baseController}.GetView)
-		tasks.GET("/search", themsController.TasksController{baseController}.GetSearch)
-		tasks.GET("/my", themsController.TasksController{baseController}.GetMy)
+		tasksController := themsController.TasksController{baseController}
+
+		tasks.POST("/create", tasksController.PostTaskCreate)
+		tasks.POST("/update/:createDate", tasksController.PostUpdate)
+		tasks.POST("/delete/:createDate", tasksController.PostDelete)
+		tasks.GET("/view/:createDate", tasksController.GetView)
+		tasks.GET("/search", tasksController.GetSearch)
+		tasks.GET("/my", tasksController.GetMy)
 	}
 
 	//アカウント関連
 	account := r.Group("/account")
 	{
-		account.POST("/add", themsController.AccountController{baseController}.PostAdd)
-		account.GET("/search", themsController.AccountController{baseController}.GetSearch)
-		account.POST("/update", themsController.AccountController{baseController}.PostUpdate)
-		account.POST("/updateIcon", themsController.AccountController{baseController}.PostUpdateIcon)
-		account.GET("/profile", themsController.AccountController{baseController}.GetProfile)
+		accountsController := themsController.AccountController{baseController}
+		
+		account.POST("/add", accountsController.PostAdd)
+		account.GET("/search", accountsController.GetSearch)
+		account.POST("/update", accountsController.PostUpdate)
+		account.POST("/updateIcon", accountsController.PostUpdateIcon)
+		account.GET("/profile", accountsController.GetProfile)
 
 		// icon
-		account.GET("/icon/:iconPath", themsController.AccountController{baseController}.GetIcon)
+		account.GET("/icon/:iconPath", accountsController.GetIcon)
 	}
 	return r
 }
