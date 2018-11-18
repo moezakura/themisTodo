@@ -174,4 +174,4 @@ typings/
 
 
 data/
-dist/
+dist/*
