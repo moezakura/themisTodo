@@ -1,3 +1,6 @@
 [submodule "www/src/assets/font-awesome"]
 	path = www/src/assets/font-awesome
 	url = https://github.com/FortAwesome/Font-Awesome
+[submodule "www/src/assets/fontawesome"]
+	path = www/src/assets/fontawesome
+	url = https://github.com/FortAwesome/Font-Awesome
