@@ -80,9 +80,13 @@
         data() {
             const project = new Project()
             const todo: Array<Task> = []
+            const todoOrigin: Array<Task> = []
             const doing: Array<Task> = []
+            const doingOrigin: Array<Task> = []
             const pullRequest: Array<Task> = []
+            const pullRequestOrigin: Array<Task> = []
             const done: Array<Task> = []
+            const doneOrigin: Array<Task> = []
 
             return {
                 project: project,
@@ -97,10 +101,10 @@
                     done: done,
                 },
                 tasksOrigin: {
-                    todo: todo,
-                    doing: doing,
-                    pullRequest: pullRequest,
-                    done: done,
+                    todo: todoOrigin,
+                    doing: doingOrigin,
+                    pullRequest: pullRequestOrigin,
+                    done: doneOrigin,
                 }
             }
         },
