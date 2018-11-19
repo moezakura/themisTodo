@@ -19,32 +19,32 @@
                 <section id="todo">
                     <div class="statusName">Todo</div>
                     <ul class="taskList" data-status="TODO" ref="task-line-todo">
-                        <li v-for="task in tasks.todo">
-                            <task-line :key="task.createDate" :task="task" :data-task-id="task.createDate"></task-line>
+                        <li v-for="task in tasks.todo" :data-task-id="task.createDate">
+                            <task-line :key="task.createDate" :task="task"></task-line>
                         </li>
                     </ul>
                 </section>
                 <section id="doing">
                     <div class="statusName">Doing</div>
                     <ul class="taskList" data-status="DOING" ref="task-line-doing">
-                        <li v-for="task in tasks.doing">
-                            <task-line :key="task.createDate" :task="task" :data-task-id="task.createDate"></task-line>
+                        <li v-for="task in tasks.doing" :data-task-id="task.createDate">
+                            <task-line :key="task.createDate" :task="task"></task-line>
                         </li>
                     </ul>
                 </section>
                 <section id="pr">
                     <div class="statusName">PullRequest</div>
                     <ul class="taskList" data-status="PULL_REQUEST" ref="task-line-pr">
-                        <li v-for="task in tasks.pullRequest">
-                            <task-line :key="task.createDate" :task="task" :data-task-id="task.createDate"></task-line>
+                        <li v-for="task in tasks.pullRequest" :data-task-id="task.createDate">
+                            <task-line :key="task.createDate" :task="task"></task-line>
                         </li>
                     </ul>
                 </section>
                 <section id="done">
                     <div class="statusName">Done</div>
                     <ul class="taskList" data-status="DONE" ref="task-line-done">
-                        <li v-for="task in tasks.done">
-                            <task-line :key="task.createDate" :task="task" :data-task-id="task.createDate"></task-line>
+                        <li v-for="task in tasks.done" :data-task-id="task.createDate">
+                            <task-line :key="task.createDate" :task="task"></task-line>
                         </li>
                     </ul>
                 </section>
