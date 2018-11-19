@@ -2,14 +2,14 @@
     <div class="project-children">
         <div class="left">
             <h2>Menu</h2>
-            <ul>
+            <ul class="project-children-menu">
                 <li>
                     <router-link :to="{name: 'taskBoard', params:{projectId: projectId}}">TaskBoard</router-link>
                 </li>
                 <li>
                     <router-link :to="{name: 'hiddenTasks', params:{projectId: projectId}}">HiddenTasks</router-link>
                 </li>
-                <li>
+                <li @click="taskListLoad">
                     Reload
                 </li>
             </ul>
@@ -64,10 +64,10 @@
             }
         },
         created() {
-            this.taskListLead()
+            this.taskListLoad()
         },
         methods: {
-            taskListLead() {
+            taskListLoad() {
                 let searchRequest = new TaskSearchRequest()
                 searchRequest.projectId = this.projectId
                 searchRequest.status = TaskStatusConvert.toNumber(TaskStatus.HIDE)
@@ -93,7 +93,7 @@
                 updateRequest.status = TaskStatusConvert.toNumber(<TaskStatus>status)
                 TaskApi.bulkUpdate(updateRequest).then(res => {
                     if (res.success) {
-                        this.taskListLead()
+                        this.taskListLoad()
                     }
                 }).finally(() => {
                     this.$store.commit("decrementLoadingCount")
@@ -112,7 +112,7 @@
 
                 TaskApi.bulkDelete(deleteRequest).then(res => {
                     if (res.success) {
-                        this.taskListLead()
+                        this.taskListLoad()
                     }
                 }).finally(() => {
                     this.$store.commit("decrementLoadingCount")
@@ -123,6 +123,34 @@
 </script>
 
 <style lang="scss" scoped>
+    /** 別に切り分ける可能性あり **/
+    .project-children-menu {
+        li {
+            font-size: 16px;
+            height: 50px;
+            line-height: 50px;
+            letter-spacing: 1px;
+            padding: 0 0 0 20px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: ease background-color .3s;
+
+            &:hover {
+                background-color: rgba(67, 160, 71, .3);
+            }
+
+            a {
+                display: block;
+                width: 100%;
+                height: 100%;
+                text-decoration: none;
+                color: white;
+                letter-spacing: 1px;
+            }
+        }
+    }
+
+    /** BODY **/
     .project-children {
         display: flex;
         height: calc(100% - 75px);
