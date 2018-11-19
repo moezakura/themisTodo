@@ -199,11 +199,116 @@ WHERE `+queryString+";", queryArray...)
 	return false, returnTask
 }
 
+func (self *TasksModule) SearchCreateTimeList(searchReq []string) (isErr bool, task []models.Task) {
+	self.dbLock.Lock()
+	defer self.dbLock.Unlock()
+
+	queryString := ""
+	queryArray := make([]interface{}, 0)
+	for _, value := range searchReq {
+		if len(queryString) > 0 {
+			queryString += " OR "
+		}
+		queryString += " createDate = ? "
+		queryArray = append(queryArray, value)
+	}
+
+	rows, err := self.db.Query(`SELECT
+  id,
+  project,
+  todo.name,
+  creator,
+  assign,
+  status,
+  deadline,
+  description,
+  createDate,
+  u1.displayName,
+  u1.icon_path,
+  u2.displayName,
+  u2.icon_path
+FROM todo_list todo
+  INNER JOIN users u1 ON u1.uuid = todo.creator
+  INNER JOIN users u2 ON u2.uuid = todo.assign
+WHERE `+queryString+";", queryArray...)
+
+	if err != nil {
+		return true, nil
+	}
+
+	defer rows.Close()
+
+	if !rows.Next() {
+		return true, nil
+	}
+
+	returnTask := make([]models.Task, 0)
+
+	for rows.Next() {
+		task := models.Task{}
+		if err := rows.Scan(&task.TaskId, &task.ProjectId, &task.Name, &task.Creator, &task.Assign,
+			&task.Status, &task.Deadline, &task.Description, &task.CreateDate, &task.CreatorName,
+			&task.CreatorIconPath, &task.AssignName, &task.AssignIconPath); err != nil {
+			log.Printf("TasksModule.SearchCreateTimeList Error: %+v\n", err)
+			return true, nil
+		}
+		returnTask = append(returnTask, task)
+	}
+
+	return false, returnTask
+}
+
 func (self *TasksModule) Update(createDate int64, task *models.Task) (isErr bool) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
 	_, err := self.db.Exec("UPDATE `todo_list` SET `name` = ?, `deadline` = ?, `description` = ?, `status` = ?, `assign` = ? WHERE `createDate` = ?;",
 		task.Name, task.Deadline, task.Description, int(task.Status), task.Assign, createDate)
+
+	if err != nil {
+		log.Printf("TasksModule.Update Error: %+v\n", err)
+		return true
+	}
+
+	return false
+}
+
+func (self *TasksModule) UpdateAll(tasks []models.Task, status *models.TaskStatus, assign int, deadline *time.Time) (isErr bool) {
+	self.dbLock.Lock()
+	defer self.dbLock.Unlock()
+
+	updateSetQuery := ""
+	updateArray := make([]interface{}, 0)
+	{
+		if status != nil {
+			updateSetQuery += "`status` = ? "
+			updateArray = append(updateArray, status)
+		}
+		if assign > 0 {
+			if len(updateSetQuery) > 0 {
+				updateSetQuery += ","
+			}
+			updateSetQuery += "`assign` = ? "
+			updateArray = append(updateArray, assign)
+		}
+		if deadline != nil {
+			if len(updateSetQuery) > 0 {
+				updateSetQuery += ","
+			}
+			updateSetQuery += "`assign` = ? "
+			updateArray = append(updateArray, deadline)
+		}
+	}
+
+	updateWhereQuery := ""
+	for _, task := range tasks {
+		if len(updateWhereQuery) > 0 {
+			updateWhereQuery += " OR "
+		}
+		updateArray = append(updateArray, task.CreateDate)
+	}
+
+	_, err := self.db.Exec("UPDATE `todo_list` SET ` +updateSetQuery+ ` WHERE "+updateWhereQuery+";",
+		updateArray...)
 
 	if err != nil {
 		log.Printf("TasksModule.Update Error: %+v\n", err)

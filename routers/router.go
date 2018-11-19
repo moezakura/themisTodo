@@ -38,6 +38,7 @@ func Init(db *sql.DB) *gin.Engine {
 
 		tasks.POST("/create", tasksController.PostTaskCreate)
 		tasks.POST("/update/:createDate", tasksController.PostUpdate)
+		tasks.POST("/bulkUpdate", tasksController.PostBulkUpdate)
 		tasks.POST("/delete/:createDate", tasksController.PostDelete)
 		tasks.GET("/view/:createDate", tasksController.GetView)
 		tasks.GET("/search", tasksController.GetSearch)

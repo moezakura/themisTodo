@@ -116,6 +116,88 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 	themisView.TasksView{}.PostUpdate(c, updateResult)
 }
 
+func (self TasksController) PostBulkUpdate(c *gin.Context) {
+	updateResult := &models.TaskUpdateResultJson{}
+
+	updateTarget := make([]models.Task, 0)
+	var (
+		taskStatusTarget *models.TaskStatus = nil
+		taskAssignTarget int
+		taskDeadlineTarget *time.Time = nil
+	)
+	projectsTarget := make([]int, 0)
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, _ := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		updateResult.Message = "invalid token"
+		themisView.TasksView{}.PostUpdate(c, updateResult)
+		return
+	}
+
+	var updateRequest models.TaskBulkUpdateRequestJson
+	c.ShouldBindJSON(&updateRequest)
+
+	taskStatus := models.TaskStatus(updateRequest.Status)
+	if taskStatus.String() != "OTHER" && taskStatus.String() != "Unknown" {
+		taskStatusTarget = &taskStatus
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	projectModule := module.NewProjectsModule(self.DB)
+	isErr, tasks := taskModule.SearchCreateTimeList(updateRequest.BulkList)
+
+	if isErr {
+		updateResult.Message = "server error"
+		themisView.TasksView{}.PostUpdate(c, updateResult)
+		return
+	}
+
+	for _, task := range tasks {
+		projectsTarget = append(projectsTarget, task.ProjectId)
+	}
+
+	if len(updateRequest.Deadline) > 0 {
+		timeSplits := strings.Split(updateRequest.Deadline, "-")
+		if len(timeSplits) != 3 {
+			updateResult.Message = "invalid deadline format(format is yyyy-mm-dd)"
+			themisView.TasksView{}.PostUpdate(c, updateResult)
+			return
+		}
+
+		errT, userTime := utils.ParseDate(updateRequest.Deadline)
+		if errT {
+			updateResult.Message = "invalid deadline format(date convert is failed)"
+			themisView.TasksView{}.PostUpdate(c, updateResult)
+			return
+		}
+
+		now := time.Now()
+
+		for _, task := range tasks {
+			if userTime.Unix() > now.Unix() {
+				updateTarget = append(updateTarget, task)
+			}
+		}
+		taskDeadlineTarget = &userTime
+	}
+
+	if updateRequest.Assign > 0 {
+		if !projectModule.IsInBulk([]int{updateRequest.Assign}, projectsTarget) {
+			updateResult.Message = "invalid assign id"
+			themisView.TasksView{}.PostUpdate(c, updateResult)
+			return
+		}
+		taskAssignTarget = updateRequest.Assign
+	}
+
+	taskModule.UpdateAll(tasks, taskStatusTarget, taskAssignTarget, taskDeadlineTarget)
+
+	updateResult.Success = true
+	themisView.TasksView{}.PostUpdate(c, updateResult)
+}
+
 func (self TasksController) PostDelete(c *gin.Context) {
 	deleteResult := &models.TaskDeleteResultJson{}
 	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
