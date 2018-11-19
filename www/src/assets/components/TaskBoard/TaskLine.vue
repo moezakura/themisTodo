@@ -1,5 +1,5 @@
 <template>
-    <li :class="[limitAddClass]" @click="showTaskDetail">
+    <div :class="[limitAddClass]" class="task-item" @click="showTaskDetail">
         <div class="taskTitle">{{ task.name }}</div>
         <div class="task-info">
             <div class="taskId">#{{ task.taskId }}</div>
@@ -14,7 +14,7 @@
                 <span class="deadlineDate deadline-limit" v-if="isCompleted">DONE!</span>
             </div>
         </div>
-    </li>
+    </div>
 </template>
 
 <script lang="ts">

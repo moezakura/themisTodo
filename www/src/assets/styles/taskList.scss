@@ -9,113 +9,116 @@ ul.taskList {
         display: block;
         clear: both;
         margin: 0;
-        padding: 8px 5px 0 20px;
-        transition: filter ease .3s;
-        background-color: $backgroundColor;
 
-        &:first-child {
-            padding-top: 5px;
-        }
+        .task-item {
+            padding: 8px 5px 0 20px;
+            transition: filter ease .3s;
+            background-color: $backgroundColor;
 
-        &:hover {
-            filter: brightness(240%);
-        }
-
-        @import "task_color";
-
-        &::after {
-            display: block;
-            position: relative;
-            clear: both;
-            content: " ";
-            width: calc(100% + 20px + 5px);
-            height: 1px;
-            margin: 15px 0 0 -20px;
-            background-color: rgba(white, .3);
-        }
-
-        .taskTitle {
-            width: 100%;
-            height: 35px;
-            line-height: 35px;
-            font-size: 16px;
-            letter-spacing: 1.8px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .task-info {
-            display: flex;
-
-            .taskAssign,
-            .taskLimit,
-            .taskId {
-                text-align: left;
-                letter-spacing: 1px;
-                font-size: 11px;
-                height: 25px;
-                line-height: 25px;
-                width: calc(100% - 120px - 50px);
+            &:first-child {
+                padding-top: 5px;
             }
 
-            .taskId {
-                width: 50px;
+            &:hover {
+                filter: brightness(240%);
             }
 
-            .taskAssign {
-                .taskAssignIcon,
-                .taskAssignName {
-                    float: left;
-                }
-                .taskAssignIcon {
-                    width: 25px;
-                    height: 25px;
-                    border-radius: 50%;
-                    background-size: cover;
-                    background-repeat: no-repeat;
-                    background-position: center;
-                }
-                .taskAssignName {
-                    margin-left: 8px;
-                    width: calc(100% - 8px - 25px);
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
+            @import "task_color";
+
+            &::after {
+                display: block;
+                position: relative;
+                clear: both;
+                content: " ";
+                width: calc(100% + 20px + 5px);
+                height: 1px;
+                margin: 15px 0 0 -20px;
+                background-color: rgba(white, .3);
             }
 
-            .taskLimit {
-                margin-left: auto;
-                text-align: right;
-                width: 120px;
+            .taskTitle {
+                width: 100%;
+                height: 35px;
+                line-height: 35px;
+                font-size: 16px;
+                letter-spacing: 1.8px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .task-info {
                 display: flex;
 
-                &.no-assign{
-                    width: 150px;
+                .taskAssign,
+                .taskLimit,
+                .taskId {
+                    text-align: left;
+                    letter-spacing: 1px;
+                    font-size: 11px;
+                    height: 25px;
+                    line-height: 25px;
+                    width: calc(100% - 120px - 50px);
                 }
 
-                i {
-                    width: 25px;
-                    height: 25px;
-                    text-align: center;
-                    line-height: 25px;
+                .taskId {
+                    width: 50px;
                 }
-                span {
-                    margin: 0 2px;
-                    &:first-child {
-                        margin-left: 0;
+
+                .taskAssign {
+                    .taskAssignIcon,
+                    .taskAssignName {
+                        float: left;
+                    }
+                    .taskAssignIcon {
+                        width: 25px;
+                        height: 25px;
+                        border-radius: 50%;
+                        background-size: cover;
+                        background-repeat: no-repeat;
+                        background-position: center;
+                    }
+                    .taskAssignName {
+                        margin-left: 8px;
+                        width: calc(100% - 8px - 25px);
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
                 }
 
-                .deadlineDate {
-                    text-align: center;
-                    width: calc(100% - 50px - 20px);
-                }
-
-                .deadline-limit {
-                    width: 50px;
+                .taskLimit {
+                    margin-left: auto;
                     text-align: right;
+                    width: 120px;
+                    display: flex;
+
+                    &.no-assign {
+                        width: 150px;
+                    }
+
+                    i {
+                        width: 25px;
+                        height: 25px;
+                        text-align: center;
+                        line-height: 25px;
+                    }
+                    span {
+                        margin: 0 2px;
+                        &:first-child {
+                            margin-left: 0;
+                        }
+                    }
+
+                    .deadlineDate {
+                        text-align: center;
+                        width: calc(100% - 50px - 20px);
+                    }
+
+                    .deadline-limit {
+                        width: 50px;
+                        text-align: right;
+                    }
                 }
             }
         }
