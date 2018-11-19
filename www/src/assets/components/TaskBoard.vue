@@ -182,6 +182,11 @@
                                     this.tasks.done.push(task)
                                     break
                             }
+
+                            const currentTask: Task | undefined = this.$store.getters.getCurrentTask
+                            if (currentTask != undefined && currentTask.createDate == task.createDate) {
+                                this.$store.commit("setCurrentTask", task)
+                            }
                         }
                     }
                 }).finally(() => {
