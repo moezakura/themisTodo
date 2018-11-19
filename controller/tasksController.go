@@ -119,10 +119,9 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 func (self TasksController) PostBulkUpdate(c *gin.Context) {
 	updateResult := &models.TaskUpdateResultJson{}
 
-	updateTarget := make([]models.Task, 0)
 	var (
-		taskStatusTarget *models.TaskStatus = nil
-		taskAssignTarget int
+		taskStatusTarget   *models.TaskStatus = nil
+		taskAssignTarget   int
 		taskDeadlineTarget *time.Time = nil
 	)
 	projectsTarget := make([]int, 0)
@@ -174,12 +173,12 @@ func (self TasksController) PostBulkUpdate(c *gin.Context) {
 		}
 
 		now := time.Now()
-
-		for _, task := range tasks {
-			if userTime.Unix() > now.Unix() {
-				updateTarget = append(updateTarget, task)
-			}
+		if userTime.Unix() > now.Unix() {
+			updateResult.Message = "invalid deadline. deadline is not allow past."
+			themisView.TasksView{}.PostUpdate(c, updateResult)
+			return
 		}
+
 		taskDeadlineTarget = &userTime
 	}
 

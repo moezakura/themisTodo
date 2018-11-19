@@ -26,10 +26,10 @@
             <section class="actions">
                 <h2>選択項目の一括操作</h2>
                 <ul class="action-buttons">
-                    <li>Todo</li>
-                    <li>Doing</li>
-                    <li>PullRequest</li>
-                    <li>Done</li>
+                    <li @click="bulkUpdateStatus('TODO')">Todo</li>
+                    <li @click="bulkUpdateStatus('DOING')">Doing</li>
+                    <li @click="bulkUpdateStatus('PULL_REQUEST')">PullRequest</li>
+                    <li @click="bulkUpdateStatus('DONE')">Done</li>
                     <li class="delete">Delete</li>
                 </ul>
             </section>
@@ -43,6 +43,7 @@
     import TaskStatusConvert, {TaskStatus} from "../scripts/enums/TaskStatus"
     import TaskLineWithCheck from "./TaskBoard/TaskLineWithCheck"
     import TaskWithCheck from "../scripts/model/api/task/TaskWithCheck"
+    import TaskBulkUpdateRequest from "../scripts/model/api/TaskBulkUpdateRequest"
 
     export default {
         name: "TaskHiddenList",
@@ -62,16 +63,41 @@
             }
         },
         created() {
-            let searchRequest = new TaskSearchRequest()
-            searchRequest.projectId = this.projectId
-            searchRequest.status = TaskStatusConvert.toNumber(TaskStatus.HIDE)
+            this.taskListLead()
+        },
+        methods: {
+            taskListLead() {
+                let searchRequest = new TaskSearchRequest()
+                searchRequest.projectId = this.projectId
+                searchRequest.status = TaskStatusConvert.toNumber(TaskStatus.HIDE)
 
-            this.$store.commit("incrementLoadingCount")
-            TaskApi.search(searchRequest).then(res => {
-                this.hiddenTasks = res.task
-            }).finally(() => {
-                this.$store.commit("decrementLoadingCount")
-            })
+                this.$store.commit("incrementLoadingCount")
+                TaskApi.search(searchRequest).then(res => {
+                    this.hiddenTasks = res.task
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
+            },
+            bulkUpdateStatus(status: string) {
+                this.$store.commit("incrementLoadingCount")
+
+                let updateRequest = new TaskBulkUpdateRequest()
+                updateRequest.bulkList = []
+                for (let task of this.hiddenTasks) {
+                    if (task.check) {
+                        updateRequest.bulkList.push(task.createDate)
+                    }
+                }
+
+                updateRequest.status = TaskStatusConvert.toNumber(<TaskStatus>status)
+                TaskApi.bulkUpdate(updateRequest).then(res => {
+                    if (res.success) {
+                        this.taskListLead()
+                    }
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
+            }
         }
     }
 </script>
@@ -127,7 +153,7 @@
                     cursor: default;
                     transition: ease background-color .3s;
 
-                    &:last-child{
+                    &:last-child {
                         border-bottom: 0;
                     }
 

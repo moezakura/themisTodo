@@ -238,9 +238,6 @@ WHERE `+queryString+";", queryArray...)
 
 	defer rows.Close()
 
-	if !rows.Next() {
-		return true, nil
-	}
 
 	returnTask := make([]models.Task, 0)
 
@@ -304,10 +301,11 @@ func (self *TasksModule) UpdateAll(tasks []models.Task, status *models.TaskStatu
 		if len(updateWhereQuery) > 0 {
 			updateWhereQuery += " OR "
 		}
+		updateWhereQuery += " `createDate` = ? "
 		updateArray = append(updateArray, task.CreateDate)
 	}
 
-	_, err := self.db.Exec("UPDATE `todo_list` SET ` +updateSetQuery+ ` WHERE "+updateWhereQuery+";",
+	_, err := self.db.Exec("UPDATE `todo_list` SET "+updateSetQuery+" WHERE "+updateWhereQuery+";",
 		updateArray...)
 
 	if err != nil {

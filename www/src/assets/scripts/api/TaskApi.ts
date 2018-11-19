@@ -5,6 +5,7 @@ import BaseApiResult from "@scripts/model/api/BaseApiResult"
 import TaskCreateResult from "@scripts/model/api/TaskCreateResult"
 import TaskAddRequest from "@scripts/model/api/TaskAddRequest"
 import TaskSearchRequest from "@scripts/model/api/TaskSearchRequest"
+import TaskBulkUpdateRequest from "@scripts/model/api/TaskBulkUpdateRequest"
 
 export default class TaskApi {
     static GetTaskFromCreateDate(createDate: string): Promise<TaskResult> {
@@ -71,6 +72,23 @@ export default class TaskApi {
         return fetch("/api/tasks/update/" + createDate, {
             method: 'POST',
             body: task.toJson(),
+            credentials: "same-origin"
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new BaseApiResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+
+            return res
+        })
+    }
+
+    static bulkUpdate(updateRequest: TaskBulkUpdateRequest): Promise<BaseApiResult> {
+        return fetch("/api/tasks/bulkUpdate", {
+            method: 'POST',
+            body: updateRequest.toJson(),
             credentials: "same-origin"
         }).then(res => {
             return res.json()
