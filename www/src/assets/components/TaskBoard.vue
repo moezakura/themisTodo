@@ -131,6 +131,10 @@
         watch: {
             '$route'(to, from) {
                 this.setCurrentTask()
+
+                if (this.$route.query["search"]) {
+                    this.searchText = this.$route.query["search"]
+                }
             },
             searchText(value) {
                 for (let key in this.tasksOrigin) {
@@ -162,6 +166,7 @@
                             task.assignName.toLowerCase().indexOf(searchStr) > -1)
                     })
 
+                    this.$router.replace({query: {search: value}})
                     this.$set(this.tasks, key, tasksCopy)
                 }
             }
@@ -172,6 +177,9 @@
                 await this.loadTasks()
 
                 this.setCurrentTask()
+                if (this.$route.query["search"]) {
+                    this.searchText = this.$route.query["search"]
+                }
             },
             setCurrentTask() {
                 this.isShowProjectSettings = false
