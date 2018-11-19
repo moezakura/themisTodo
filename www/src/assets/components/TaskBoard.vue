@@ -2,6 +2,9 @@
     <div id="task-board">
         <div class="project-title-container">
             <h2 class="project-title"><i class="fas fa-tasks"></i><span>{{ storeProject.name }}</span></h2>
+            <form class="project-task-search" @submit.prevent>
+                <input type="search" placeholder="TASK SEARCH" v-model="searchText"/>
+            </form>
             <ul class="project-actions">
                 <li @mouseenter="isShowOtherMenu = true" @mouseleave="isShowOtherMenu = false">
                     <i class="fas fa-toolbox"></i>OTHER
@@ -86,7 +89,14 @@
                 isShowTaskAdd: false,
                 isShowProjectSettings: false,
                 isShowOtherMenu: false,
+                searchText: "",
                 tasks: {
+                    todo: todo,
+                    doing: doing,
+                    pullRequest: pullRequest,
+                    done: done,
+                },
+                tasksOrigin: {
                     todo: todo,
                     doing: doing,
                     pullRequest: pullRequest,
@@ -117,6 +127,23 @@
         watch: {
             '$route'(to, from) {
                 this.setCurrentTask()
+            },
+            searchText(value) {
+                for (let key in this.tasksOrigin) {
+                    let tasksCopy = this.tasksOrigin[key].slice(0, this.tasksOrigin[key].length)
+                    tasksCopy = tasksCopy.filter(task => {
+                        const searchStr = value.toLowerCase()
+
+                        if (searchStr.length <= 0) {
+                            return true
+                        }
+                        return (task.name.toLowerCase().indexOf(searchStr) > -1 ||
+                            task.description.toLowerCase().indexOf(searchStr) > -1 ||
+                            task.assignName.toLowerCase().indexOf(searchStr) > -1)
+                    })
+
+                    this.$set(this.tasks, key, tasksCopy)
+                }
             }
         },
         methods: {
@@ -159,10 +186,12 @@
             async loadTasks() {
                 this.$store.commit("incrementLoadingCount")
 
-                this.tasks.todo.splice(0, this.tasks.todo.length)
-                this.tasks.doing.splice(0, this.tasks.doing.length)
-                this.tasks.pullRequest.splice(0, this.tasks.pullRequest.length)
-                this.tasks.done.splice(0, this.tasks.done.length)
+                for (let key in this.tasks) {
+                    this.tasks[key].splice(0, this.tasks[key].length)
+                }
+                for (let key in this.tasksOrigin) {
+                    this.tasksOrigin[key].splice(0, this.tasksOrigin[key].length)
+                }
 
                 await ProjectApi.getTasks(this.projectId).then(res => {
                     if (res.success) {
@@ -171,15 +200,19 @@
                             switch (task.status) {
                                 case TaskStatusConvert.toNumber(TaskStatus.TODO):
                                     this.tasks.todo.push(task)
+                                    this.tasksOrigin.todo.push(task)
                                     break
                                 case TaskStatusConvert.toNumber(TaskStatus.DOING):
                                     this.tasks.doing.push(task)
+                                    this.tasksOrigin.doing.push(task)
                                     break
                                 case TaskStatusConvert.toNumber(TaskStatus.PULL_REQUEST):
                                     this.tasks.pullRequest.push(task)
+                                    this.tasksOrigin.pullRequest.push(task)
                                     break
                                 case TaskStatusConvert.toNumber(TaskStatus.DONE):
                                     this.tasks.done.push(task)
+                                    this.tasksOrigin.done.push(task)
                                     break
                             }
 

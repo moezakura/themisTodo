@@ -24,6 +24,29 @@ body {
         }
     }
 
+    .project-task-search {
+        width: 40%;
+        display: flex;
+
+        input {
+            display: block;
+            box-sizing: border-box;
+            background-color: rgba(black, .3);
+            width: calc(100%);
+            height: $buttonHeight;
+            border: solid 1px $accentColor;
+            color: white;
+            padding: 0 15px;
+            letter-spacing: 1px;
+            font-size: 14px;
+            transition: ease background-color .3s;
+
+            &:focus {
+                background-color: accentColor(.1);
+            }
+        }
+    }
+
     .project-actions {
         display: flex;
 
