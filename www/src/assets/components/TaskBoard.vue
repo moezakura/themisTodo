@@ -136,7 +136,7 @@
                 for (let key in this.tasksOrigin) {
                     let tasksCopy = this.tasksOrigin[key].slice(0, this.tasksOrigin[key].length)
                     tasksCopy = tasksCopy.filter(task => {
-                        const searchStr = value.toLowerCase()
+                        let searchStr = value.toLowerCase()
 
                         if (searchStr.length <= 0) {
                             return true
@@ -144,8 +144,18 @@
 
                         if (searchStr.startsWith("#")) {
                             const taskId = searchStr.slice(1)
-                            return task.taskId == taskId
+                            if (task.taskId == taskId) {
+                                return true
+                            }
                         }
+
+                        if (searchStr.startsWith("@")) {
+                            const userId = searchStr.slice(1)
+                            if (task.assignName == userId) {
+                                return true
+                            }
+                        }
+                        searchStr = searchStr.replace("\\", "")
 
                         return (task.name.toLowerCase().indexOf(searchStr) > -1 ||
                             task.description.toLowerCase().indexOf(searchStr) > -1 ||
