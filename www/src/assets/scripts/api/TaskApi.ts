@@ -6,6 +6,7 @@ import TaskCreateResult from "@scripts/model/api/TaskCreateResult"
 import TaskAddRequest from "@scripts/model/api/TaskAddRequest"
 import TaskSearchRequest from "@scripts/model/api/TaskSearchRequest"
 import TaskBulkUpdateRequest from "@scripts/model/api/TaskBulkUpdateRequest"
+import TaskBulkDeleteRequest from "@scripts/model/api/TaskBulkDeleteRequest"
 
 export default class TaskApi {
     static GetTaskFromCreateDate(createDate: string): Promise<TaskResult> {
@@ -105,6 +106,23 @@ export default class TaskApi {
     static Delete(createDate: string): Promise<BaseApiResult> {
         return fetch(`/api/tasks/delete/${createDate}`, {
             method: 'POST',
+            credentials: "same-origin"
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new BaseApiResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+
+            return res
+        })
+    }
+
+    static bulkDelete(deleteRequest: TaskBulkDeleteRequest): Promise<BaseApiResult> {
+        return fetch(`/api/tasks/bulkDelete`, {
+            method: 'DELETE',
+            body: deleteRequest.toJson(),
             credentials: "same-origin"
         }).then(res => {
             return res.json()

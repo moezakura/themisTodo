@@ -30,7 +30,7 @@
                     <li @click="bulkUpdateStatus('DOING')">Doing</li>
                     <li @click="bulkUpdateStatus('PULL_REQUEST')">PullRequest</li>
                     <li @click="bulkUpdateStatus('DONE')">Done</li>
-                    <li class="delete">Delete</li>
+                    <li class="delete" @click="bulkDelete">Delete</li>
                 </ul>
             </section>
         </div>
@@ -44,6 +44,7 @@
     import TaskLineWithCheck from "./TaskBoard/TaskLineWithCheck"
     import TaskWithCheck from "../scripts/model/api/task/TaskWithCheck"
     import TaskBulkUpdateRequest from "../scripts/model/api/TaskBulkUpdateRequest"
+    import TaskBulkDeleteRequest from "../scripts/model/api/TaskBulkDeleteRequest"
 
     export default {
         name: "TaskHiddenList",
@@ -91,6 +92,25 @@
 
                 updateRequest.status = TaskStatusConvert.toNumber(<TaskStatus>status)
                 TaskApi.bulkUpdate(updateRequest).then(res => {
+                    if (res.success) {
+                        this.taskListLead()
+                    }
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
+            },
+            bulkDelete() {
+                this.$store.commit("incrementLoadingCount")
+
+                let deleteRequest = new TaskBulkDeleteRequest()
+                deleteRequest.bulkList = []
+                for (let task of this.hiddenTasks) {
+                    if (task.check) {
+                        deleteRequest.bulkList.push(task.createDate)
+                    }
+                }
+
+                TaskApi.bulkDelete(deleteRequest).then(res => {
                     if (res.success) {
                         this.taskListLead()
                     }

@@ -238,7 +238,6 @@ WHERE `+queryString+";", queryArray...)
 
 	defer rows.Close()
 
-
 	returnTask := make([]models.Task, 0)
 
 	for rows.Next() {
@@ -323,6 +322,30 @@ func (self *TasksModule) Delete(createDate int64) (isErr bool) {
 
 	if err != nil {
 		log.Printf("TasksModule.Delete Error: %+v\n", err)
+		return true
+	}
+
+	return false
+}
+
+func (self *TasksModule) DeleteAll(createDates []int64) (isErr bool) {
+	self.dbLock.Lock()
+	defer self.dbLock.Unlock()
+
+	deleteWhereQuery := ""
+	deleteArray := make([]interface{}, 0)
+	for _, createDate := range createDates {
+		if len(deleteWhereQuery) > 0 {
+			deleteWhereQuery += " OR "
+		}
+		deleteWhereQuery += " `createDate` = ? "
+		deleteArray = append(deleteArray, createDate)
+	}
+
+	_, err := self.db.Exec("DELETE FROM `todo_list` WHERE "+deleteWhereQuery+";", deleteArray...)
+
+	if err != nil {
+		log.Printf("TasksModule.DeleteAll Error: %+v\n", err)
 		return true
 	}
 

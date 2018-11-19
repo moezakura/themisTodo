@@ -244,6 +244,70 @@ func (self TasksController) PostDelete(c *gin.Context) {
 	themisView.TasksView{}.PostDelete(c, statusCode, deleteResult)
 }
 
+func (self TasksController) DeleteBulkDelete(c *gin.Context) {
+	deleteResult := &models.TaskDeleteResultJson{}
+
+	var deleteRequest models.TaskBulkDeleteRequestJson
+	c.ShouldBindJSON(&deleteRequest)
+
+	deleteList := make([]int64, 0)
+	projectsTarget := make([]int, 0)
+
+	for _, createdTimeString := range deleteRequest.BulkList {
+		createdTime, err := strconv.ParseInt(createdTimeString, 10, 64)
+		if err != nil {
+			deleteResult.Message = "invalid task createdTime"
+			themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+			return
+		}
+		deleteList = append(deleteList, createdTime)
+	}
+
+	loginModule := module.NewLoginModule(self.DB)
+	isError, userUuid := loginModule.GetUserId(c, self.Session)
+
+	if isError {
+		deleteResult.Message = "invalid token"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, tasks := taskModule.SearchCreateTimeList(deleteRequest.BulkList)
+	if len(tasks) != len(deleteRequest.BulkList) {
+		deleteResult.Message = "invalid task createdTime"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+	if isErr {
+		deleteResult.Message = "server error"
+		themisView.TasksView{}.PostDelete(c, http.StatusInternalServerError, deleteResult)
+		return
+	}
+
+	for _, task := range tasks{
+		projectsTarget = append(projectsTarget, task.ProjectId)
+	}
+
+	projectModule := module.NewProjectsModule(self.DB)
+	if !projectModule.IsInBulk([]int{userUuid}, projectsTarget) {
+		deleteResult.Message = "invalid token"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
+
+	var statusCode int
+	if isErr := taskModule.DeleteAll(deleteList); isErr {
+		deleteResult.Message = "delete failed"
+		statusCode = http.StatusBadRequest
+	} else {
+		deleteResult.Success = true
+		deleteResult.Message = ""
+		statusCode = http.StatusOK
+	}
+	themisView.TasksView{}.PostDelete(c, statusCode, deleteResult)
+}
+
 func (self TasksController) PostTaskCreate(c *gin.Context) {
 	addResult := &models.TaskAddResultJson{}
 	loginModule := module.NewLoginModule(self.DB)

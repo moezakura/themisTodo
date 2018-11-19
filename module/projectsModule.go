@@ -175,14 +175,15 @@ func (self *ProjectsModule) IsInBulk(userUuid, projectId []int) (isIn bool) {
 	queryArray := make([]interface{}, 0)
 
 	queryString += "("
+	queryStringUser := ""
 	for _, user := range userUuid {
-		if len(queryString) > 0 {
-			queryString += " OR "
+		if len(queryStringUser) > 0 {
+			queryStringUser += " OR "
 		}
-		queryString += " `user_id` = ? "
+		queryStringUser += " `user_id` = ? "
 		queryArray = append(queryArray, user)
 	}
-	queryString += ") AND ("
+	queryString += queryStringUser + ") AND ("
 	queryStringProject := ""
 	for _, project := range projectId {
 		if len(queryStringProject) > 0 {
@@ -193,7 +194,7 @@ func (self *ProjectsModule) IsInBulk(userUuid, projectId []int) (isIn bool) {
 	}
 	queryString += queryStringProject + ")"
 
-	rows, err := self.db.Query("SELECt count(`user_id`) FROM `users_in_projects` WHERE "+queryString+";",
+	rows, err := self.db.Query("SELECT count(`user_id`) FROM `users_in_projects` WHERE "+queryString+";",
 		queryArray...)
 
 	if err != nil {
