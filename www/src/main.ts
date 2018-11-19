@@ -9,43 +9,51 @@ import LoadingOverlay from '@components/Overlay/LoadingOverlay.vue'
 
 import './assets/styles/cssreset-min.css'
 import './assets/styles/main.scss'
+import AuthApi from "@scripts/api/AuthApi"
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-    mode: 'history',
-    routes: Router
-})
+        mode: 'history',
+        routes: Router
+    })
 
-new Vue({
-    el: "#main",
-    store,
-    router,
-    components: {
-        CommonHeader,
-        LoadingOverlay
-    },
-    computed: {
-        isHeaderEnable(): boolean {
-            return this.$store.getters.isHeaderEnable
-        }
-    },
-    watch: {
-        '$route'(to, from) {
+;(async () => {
+    const res = await AuthApi.auth()
+
+    new Vue({
+        el: "#main",
+        store,
+        router,
+        components: {
+            CommonHeader,
+            LoadingOverlay
+        },
+        computed: {
+            isHeaderEnable(): boolean {
+                return this.$store.getters.isHeaderEnable
+            }
+        },
+        watch: {
+            '$route'(to, from) {
+                this.headerController()
+            }
+        },
+        methods: {
+            headerController() {
+                let showHeader = true
+                if (this.$route.meta !== undefined && this.$route.meta.hideHeader !== undefined) {
+                    showHeader = !this.$route.meta.hideHeader
+                }
+                this.$store.commit("setHeaderEnable", showHeader)
+            }
+        },
+        created() {
+            if (!res.success) {
+                this.$router.push({name: "login"})
+            }
             this.headerController()
         }
-    },
-    methods: {
-        headerController() {
-            let showHeader = true
-            if (this.$route.meta !== undefined && this.$route.meta.hideHeader !== undefined) {
-                showHeader = !this.$route.meta.hideHeader
-            }
-            this.$store.commit("setHeaderEnable", showHeader)
-        }
-    },
-    created() {
-        this.headerController()
-    }
-})
+    })
+})()

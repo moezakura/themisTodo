@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	themisView "../view"
 	"../models"
-	"../utils"
 	"../module"
+	"../utils"
+	themisView "../view"
+	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
@@ -43,4 +43,23 @@ func (self LoginController) PostLogin(c *gin.Context) {
 	loginResult.Message = authToken
 
 	c.JSON(http.StatusOK, loginResult)
+}
+
+func (self LoginController) AuthCheck(c *gin.Context) {
+	loginModule := module.NewLoginModule(self.DB)
+	isError, _ := loginModule.GetUserId(c, self.Session)
+
+	loginResult := &models.LoginResultJson{}
+	status := http.StatusBadRequest
+
+	if isError {
+		loginResult.Success = false
+		loginResult.Message = "invalid token"
+	} else {
+		loginResult.Success = true
+		loginResult.Message = "ok"
+		status = http.StatusOK
+	}
+
+	c.JSON(status, loginResult)
 }

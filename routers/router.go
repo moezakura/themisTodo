@@ -12,7 +12,9 @@ func Init(db *sql.DB) *gin.Engine {
 	baseController := themsController.NewBaseController(db, r)
 
 	// ログイン関連
-	r.POST("/login", themsController.LoginController{baseController}.PostLogin)
+	loginController := themsController.LoginController{baseController}
+	r.POST("/login", loginController.PostLogin)
+	r.OPTIONS("/auth", loginController.AuthCheck)
 
 	// プロジェクト関連
 	projects := r.Group("/project")
