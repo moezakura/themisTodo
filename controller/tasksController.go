@@ -152,10 +152,10 @@ func (self TasksController) PostDelete(c *gin.Context) {
 	}
 
 	var statusCode int
-	if isErr := taskModule.Delete(createdTime); isErr{
+	if isErr := taskModule.Delete(createdTime); isErr {
 		deleteResult.Message = "delete failed"
 		statusCode = http.StatusBadRequest
-	}else{
+	} else {
 		deleteResult.Success = true
 		deleteResult.Message = ""
 		statusCode = http.StatusOK
@@ -285,52 +285,75 @@ func (self TasksController) GetView(c *gin.Context) {
 }
 
 func (self TasksController) GetSearch(c *gin.Context) {
-	getResult := &models.TaskGetResultJson{}
+	getResult := &models.TaskSearchResultJson{}
+	searchRequest := models.TaskSearchRequest{}
+
+	// taskIdがintであればsearchRequestにいれる
 	taskIdTmp, err := strconv.ParseInt(c.Query("taskId"), 10, 64)
-	if err != nil {
-		getResult.Message = "invalid taskId"
-		c.JSON(http.StatusOK, getResult)
-		return
+	if err == nil {
+		searchRequest.TaskId = int(taskIdTmp)
 	}
-	taskId := int(taskIdTmp)
+
+	// projectIdがintであればsearchRequestにいれる
 	projectIdTmp, err := strconv.ParseInt(c.Query("projectId"), 10, 64)
-	if err != nil {
-		getResult.Message = "invalid projectId"
-		c.JSON(http.StatusOK, getResult)
-		return
+	if err == nil {
+		searchRequest.ProjectId = int(projectIdTmp)
 	}
-	projectId := int(projectIdTmp)
+
+	// statusがintであればかつmodels.TaskStatusにパース成功すればsearchRequestにいれる
+	statusTmp, err := strconv.ParseInt(c.Query("status"), 10, 64)
+	if err == nil {
+		taskStatus := models.TaskStatus(statusTmp)
+		if taskStatus.String() != "OTHER" && taskStatus.String() != "Unknown" {
+			searchRequest.Status = taskStatus
+		}
+	}
+
+	// assignがintであればsearchRequestにいれる
+	assignTmp, err := strconv.ParseInt(c.Query("assign"), 10, 64)
+	if err == nil {
+		searchRequest.AssignUserId = int(assignTmp)
+	}
+
+	// creatorがintであればsearchRequestにいれる
+	createTmp, err := strconv.ParseInt(c.Query("creator"), 10, 64)
+	if err == nil {
+		searchRequest.CreateUserId = int(createTmp)
+	}
 
 	loginModule := module.NewLoginModule(self.DB)
 	isError, userUuid := loginModule.GetUserId(c, self.Session)
 
 	if isError {
 		getResult.Message = "invalid token"
-		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
-		return
-	}
-
-	taskModule := module.NewTaskModule(self.DB)
-	isErr, task := taskModule.GetFromTaskId(taskId, projectId)
-	if isErr {
-		getResult.Message = "unknown taskId"
-		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
+		themisView.TasksView{}.GetSearch(c, http.StatusBadRequest, getResult)
 		return
 	}
 
 	projectsModule := module.NewProjectsModule(self.DB)
-	isIn := projectsModule.IsIn(userUuid, task.ProjectId)
+	isIn := projectsModule.IsIn(userUuid, searchRequest.ProjectId)
 	if !isIn {
 		getResult.Message = "permission denied"
-		themisView.TasksView{}.GetView(c, http.StatusForbidden, getResult)
+		themisView.TasksView{}.GetSearch(c, http.StatusForbidden, getResult)
 		return
 	}
 
-	taskTemp := utils.TaskConvert(task)
-	getResult.Success = true
-	getResult.Task = models.NewTaskOfJson(*taskTemp)
+	taskModule := module.NewTaskModule(self.DB)
+	isErr, tasks := taskModule.Search(searchRequest)
+	if isErr {
+		getResult.Message = "unknown taskId"
+		themisView.TasksView{}.GetSearch(c, http.StatusBadRequest, getResult)
+		return
+	}
 
-	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
+	getResult.Tasks = make([]models.TaskOfJson, 0)
+	getResult.Success = true
+	for _, task := range tasks {
+		taskTemp := utils.TaskConvert(&task)
+		getResult.Tasks = append(getResult.Tasks, *models.NewTaskOfJson(*taskTemp))
+	}
+
+	themisView.TasksView{}.GetSearch(c, http.StatusOK, getResult)
 }
 
 func (self TasksController) GetMy(c *gin.Context) {

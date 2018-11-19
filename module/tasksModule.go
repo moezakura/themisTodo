@@ -148,9 +148,12 @@ WHERE createDate = ?;`, createDate)
 	return false, returnTask
 }
 
-func (self *TasksModule) GetFromTaskId(taskId int, projectId int) (isErr bool, task *models.Task) {
+func (self *TasksModule) Search(searchReq models.TaskSearchRequest) (isErr bool, task []models.Task) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
+
+	queryString, queryArray := searchReq.ToSqlQueryAndArgs("todo")
+
 	rows, err := self.db.Query(`SELECT
   id,
   project,
@@ -168,7 +171,7 @@ func (self *TasksModule) GetFromTaskId(taskId int, projectId int) (isErr bool, t
 FROM todo_list todo
   INNER JOIN users u1 ON u1.uuid = todo.creator
   INNER JOIN users u2 ON u2.uuid = todo.assign
-WHERE todo.id = ? AND todo.project = ?;`, taskId, projectId)
+WHERE `+queryString+";", queryArray...)
 
 	if err != nil {
 		return true, nil
@@ -180,13 +183,17 @@ WHERE todo.id = ? AND todo.project = ?;`, taskId, projectId)
 		return true, nil
 	}
 
-	returnTask := &models.Task{}
-	if err := rows.Scan(&returnTask.TaskId, &returnTask.ProjectId, &returnTask.Name,
-		&returnTask.Creator, &returnTask.Assign, &returnTask.Status, &returnTask.Deadline,
-		&returnTask.Description, &returnTask.CreateDate, &returnTask.CreatorName, &returnTask.CreatorIconPath,
-		&returnTask.AssignName, &returnTask.AssignIconPath); err != nil {
-		log.Printf("TasksModule.Get Error: %+v\n", err)
-		return true, nil
+	returnTask := make([]models.Task, 0)
+
+	for rows.Next() {
+		task := models.Task{}
+		if err := rows.Scan(&task.TaskId, &task.ProjectId, &task.Name, &task.Creator, &task.Assign,
+			&task.Status, &task.Deadline, &task.Description, &task.CreateDate, &task.CreatorName,
+			&task.CreatorIconPath, &task.AssignName, &task.AssignIconPath); err != nil {
+			log.Printf("TasksModule.Get Error: %+v\n", err)
+			return true, nil
+		}
+		returnTask = append(returnTask, task)
 	}
 
 	return false, returnTask
