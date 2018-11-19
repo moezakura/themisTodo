@@ -137,6 +137,12 @@
                         if (searchStr.length <= 0) {
                             return true
                         }
+
+                        if (searchStr.startsWith("#")) {
+                            const taskId = searchStr.slice(1)
+                            return task.taskId == taskId
+                        }
+
                         return (task.name.toLowerCase().indexOf(searchStr) > -1 ||
                             task.description.toLowerCase().indexOf(searchStr) > -1 ||
                             task.assignName.toLowerCase().indexOf(searchStr) > -1)
