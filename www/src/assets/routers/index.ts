@@ -8,6 +8,7 @@ import AdminTop from '@components/Admin/AdminTop.vue'
 import AdminDashboard from '@components/Admin/AdminDashboard.vue'
 import ListAccount from '@components/Admin/Account/ListAccount.vue'
 import NewAccount from '@components/Admin/Account/NewAccount.vue'
+import TaskHiddenList from '@components/TaskHiddenList.vue'
 
 import NotFound from '@components/Errors/NotFound.vue'
 
@@ -51,6 +52,10 @@ export default [
                 name: 'projectSettings',
             }
         ]
+    }, {
+        path: '/project/hiddenTasks/:projectId',
+        component: TaskHiddenList,
+        name: 'hiddenTasks',
     }, {
         path: '/settings',
         component: AccountSettings,

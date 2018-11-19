@@ -4,6 +4,7 @@ import TaskResult from "@scripts/model/api/TaskResult"
 import BaseApiResult from "@scripts/model/api/BaseApiResult"
 import TaskCreateResult from "@scripts/model/api/TaskCreateResult"
 import TaskAddRequest from "@scripts/model/api/TaskAddRequest"
+import TaskSearchRequest from "@scripts/model/api/TaskSearchRequest"
 
 export default class TaskApi {
     static GetTaskFromCreateDate(createDate: string): Promise<TaskResult> {
@@ -24,8 +25,8 @@ export default class TaskApi {
         })
     }
 
-    static GetSearch(taskId: number, projectId: number): Promise<TaskListResult> {
-        return fetch(`/api/tasks/search?taskId=${taskId}&projectId=${projectId}`, {
+    static search(searchRequest: TaskSearchRequest): Promise<TaskListResult> {
+        return fetch(`/api/tasks/search${searchRequest.toQueryString()}`, {
             method: 'GET',
             credentials: "same-origin"
         }).then(res => {
@@ -37,7 +38,7 @@ export default class TaskApi {
             taskList.success = json["success"]
 
             taskList.task = []
-            for (let i of <Array<any>>json["task"]) {
+            for (let i of <Array<any>>json["tasks"]) {
                 let task = new Task()
                 task.fromAny(i)
 

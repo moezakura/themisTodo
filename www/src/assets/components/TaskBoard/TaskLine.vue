@@ -20,7 +20,7 @@
 <script lang="ts">
     export default {
         name: "TaskLine",
-        props: ["task", "hideAssign", "fullDeadline"],
+        props: ["task", "hideAssign", "fullDeadline", "allowShowDetail"],
         data() {
             return {
                 backgroundImage: `/api/account/icon/${this.task.assignIconPath}`
@@ -67,12 +67,14 @@
         },
         methods: {
             showTaskDetail() {
-                this.$router.push({
-                    name: "taskDetail", params: {
-                        projectId: this.task.projectId,
-                        taskId: this.task.taskId,
-                    }
-                })
+                if (this.allowShowDetail == undefined || this.allowShowDetail == true) {
+                    this.$router.push({
+                        name: "taskDetail", params: {
+                            projectId: this.task.projectId,
+                            taskId: this.task.taskId,
+                        }
+                    })
+                }
             }
         }
     }

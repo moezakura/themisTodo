@@ -3,7 +3,13 @@
         <div class="project-title-container">
             <h2 class="project-title"><i class="fas fa-tasks"></i><span>{{ storeProject.name }}</span></h2>
             <ul class="project-actions">
-                <li @click="reloadProject"><i class="fas fa-redo"></i>RELOAD</li>
+                <li @mouseenter="isShowOtherMenu = true" @mouseleave="isShowOtherMenu = false">
+                    <i class="fas fa-toolbox"></i>OTHER
+                    <ul class="project-actions-other" v-show="isShowOtherMenu">
+                        <li @click="reloadProject"><i class="fas fa-redo"></i>RELOAD</li>
+                        <li @click="moveHideTasks"><i class="fas fa-eye-slash"></i>HIDE TASKS</li>
+                    </ul>
+                </li>
                 <li @click="moveSettings"><i class="fas fa-cog"></i>SETTING</li>
                 <li @click="toggleIsShowTaskAdd"><i class="fas fa-plus-circle"></i>ADD</li>
             </ul>
@@ -75,6 +81,7 @@
                 project: project,
                 isShowTaskAdd: false,
                 isShowProjectSettings: false,
+                isShowOtherMenu: false,
                 tasks: {
                     todo: todo,
                     doing: doing,
@@ -97,7 +104,7 @@
                 return this.$route.params["taskId"]
             },
             storeProject(): Project {
-                if(this.$store.getters.getCurrentProject == undefined){
+                if (this.$store.getters.getCurrentProject == undefined) {
                     return new Project()
                 }
                 return this.$store.getters.getCurrentProject
@@ -130,6 +137,9 @@
             },
             reloadProject() {
                 this.runInit()
+            },
+            moveHideTasks() {
+                this.$router.push({name: "hiddenTasks", params: {projectId: this.projectId}})
             },
             async loadProjectInfo() {
                 this.$store.commit("incrementLoadingCount")
@@ -235,5 +245,20 @@
 <style lang="scss" scoped>
     #task-board {
         height: calc(100% - 80px);
+
+        .project-actions-other {
+            position: absolute;
+            top: 65px + 10px + 45px;
+            right: 20px + (140px + 3px * 2) * 2 - 15px - 40px;
+            background-color: rgb(30, 30, 30);
+            box-shadow: 3px 6px 6px rgba(0, 0, 0, 0.8);
+            z-index: 50;
+
+            li {
+                padding-left: 15px;
+                text-align: left;
+                width: 180px;
+            }
+        }
     }
 </style>
