@@ -164,6 +164,7 @@
                 }
             },
             showTaskDeleteOrHide() {
+                this.setEditing(false)
                 this.$store.commit("setProjectDetailStatus", ProjectDetailStatus.DELETE_OR_HIDE)
             },
             commitLoadTasks() {
