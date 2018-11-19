@@ -138,6 +138,12 @@ func (self TasksController) PostBulkUpdate(c *gin.Context) {
 	var updateRequest models.TaskBulkUpdateRequestJson
 	c.ShouldBindJSON(&updateRequest)
 
+	if len(updateRequest.BulkList) <= 0{
+		updateResult.Message = "no update list"
+		themisView.TasksView{}.PostUpdate(c, updateResult)
+		return
+	}
+
 	taskStatus := models.TaskStatus(updateRequest.Status)
 	if taskStatus.String() != "OTHER" && taskStatus.String() != "Unknown" {
 		taskStatusTarget = &taskStatus
@@ -252,6 +258,12 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 
 	deleteList := make([]int64, 0)
 	projectsTarget := make([]int, 0)
+
+	if len(deleteRequest.BulkList) <= 0{
+		deleteResult.Message = "no delete list"
+		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
+		return
+	}
 
 	for _, createdTimeString := range deleteRequest.BulkList {
 		createdTime, err := strconv.ParseInt(createdTimeString, 10, 64)
