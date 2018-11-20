@@ -26,6 +26,7 @@
     "sortablejs": "^1.7.0",
     "style-loader": "^0.21.0",
     "vue": "^2.5.16",
+    "vue-at": "^2.3.2",
     "vue-class-component": "^6.3.2",
     "vue-loader": "^15.2.4",
     "vue-property-decorator": "^7.2.0",
@@ -35,7 +36,7 @@
     "vuex-class": "^0.3.1",
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4"
+    "webpack-dev-server": "^3.1.10"
   },
   "devDependencies": {
     "ts-loader": "^5.3.0",
