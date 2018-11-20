@@ -3,6 +3,7 @@ import Router from './assets/routers/index'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
+import AsyncComputed from 'vue-async-computed'
 
 import CommonHeader from '@components/CommonHeader.vue'
 import LoadingOverlay from '@components/Overlay/LoadingOverlay.vue'
@@ -11,6 +12,7 @@ import './assets/styles/cssreset-min.css'
 import './assets/styles/main.scss'
 import AuthApi from "@scripts/api/AuthApi"
 
+Vue.use(AsyncComputed)
 Vue.use(Vuex)
 Vue.use(VueRouter)
 

@@ -46,8 +46,8 @@
                              :class="[limitAddClass]">&nbsp;
                         </div>
                     </div>
-                    <textarea id="taskPopupDescription" v-model="taskCache.description"
-                              :readonly="!isEditing"></textarea>
+                    <task-detail-description v-model="taskCache.description"
+                                             :readonly="!isEditing"></task-detail-description>
                     <div class="input-box" v-show="isEditing">
                         <input type="button" value="CANCEL" @click="setEditing(false)">
                         <input type="submit" value="CHANGE">
@@ -70,10 +70,11 @@
     import TaskDeleteOrHide from "./TaskDeleteOrHide"
     import {ProjectDetailStatus} from "../../scripts/enums/ProjectDetailStatus"
     import TaskDeleteConfirm from "./TaskDeleteConfirm"
+    import TaskDetailDescription from "./TaskDetailDescription"
 
     export default {
         name: "TaskDetail",
-        components: {TaskDeleteConfirm, TaskDeleteOrHide, UserSelect},
+        components: {TaskDetailDescription, TaskDeleteConfirm, TaskDeleteOrHide, UserSelect},
         data: () => {
             const taskCache: Task | undefined = undefined
             return {

@@ -569,6 +569,19 @@ body {
         }
     }
 
+    .atwho-panel {
+        .atwho-view {
+            box-shadow: 3px 5px 5px rgba(black, .7);
+            border-radius: 0;
+            background-color: $backgroundColor;
+            color: white;
+
+            .atwho-cur {
+                background-color: accentColor(.3);
+            }
+        }
+    }
+
     textarea {
         width: 100%;
         height: 400px;
