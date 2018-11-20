@@ -4,10 +4,12 @@
                :allowSpaces="false">
             <template slot="item" scope="s">
                 <span v-if="targetType === 'TASKS'" class="task-id">#{{ s.item.taskId }}</span>
+                <span v-if="targetType === 'MEMBERS'" class="task-icon"
+                      :style="{ 'background-image': `url('/api/account/icon/${s.item.iconPath}')` }"></span>
                 <span v-text="s.item.name"></span>
             </template>
             <textarea id="taskPopupDescription" class="editor" v-model="textAreaValue"
-                      ref="task-popup-description"></textarea>
+                      ref="task-popup-description" :readonly="readonly"></textarea>
         </at-ta>
     </div>
 </template>
@@ -21,7 +23,7 @@
     export default {
         name: "TaskDetailDescription",
         components: {AtTa},
-        props: ['value'],
+        props: ['value', 'readonly'],
         data: () => {
             return {
                 members: [],

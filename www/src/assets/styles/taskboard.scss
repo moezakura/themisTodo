@@ -576,6 +576,38 @@ body {
             background-color: $backgroundColor;
             color: white;
 
+            .atwho-ul {
+                max-height: 500px;
+            }
+
+            .atwho-li {
+                display: flex;
+                height: 38px;
+                line-height: 38px;
+                padding: 2px 4px;
+                border-bottom: solid 1px rgba(white, .3);
+
+                &:last-child {
+                    border-bottom: 0;
+                }
+
+                span {
+                    display: block;
+                }
+                .task-icon {
+                    width: 35px;
+                    height: 35px;
+                    margin-right: 8px;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    border-radius: 50%;
+                }
+                .task-id {
+                    width: 50px;
+                }
+            }
+
             .atwho-cur {
                 background-color: accentColor(.3);
             }
