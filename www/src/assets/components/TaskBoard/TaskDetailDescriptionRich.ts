@@ -62,7 +62,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
 
         let buff = ""
         let descriptionArray = description.split('')
-        let createHTML: Array<VNode | string> = []
+        let createHTML: Array<VNode> = []
         let option = {
             isSharp: false,
             isAt: false,
@@ -108,7 +108,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
                                         "background-image": `url('${userIcon}')`,
                                     }
                                 }),
-                                createElement('span', `@${name}`),
+                                createElement('span', name),
                             ]))
                         }
 
@@ -129,7 +129,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
                         buff = " "
                     } else if (c == "\n") {
                         if (!option.isSharp && !option.isAt && buff.length > 0) {
-                            createHTML.push(buff)
+                            createHTML.push(createElement('span', buff))
                             buff = ""
                         }
                         createHTML.push(createElement('br'))
@@ -148,7 +148,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
             }
         }
         if (buff.length > 0) {
-            createHTML.push(buff)
+            createHTML.push(createElement('span', buff))
         }
 
         return createElement('div', createHTML)

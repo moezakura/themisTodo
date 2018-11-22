@@ -625,13 +625,17 @@ body {
     .task-detail-description-rich {
         overflow-y: auto;
         vertical-align: text-top;
+        line-height: 20px;
 
         span {
             line-height: 20px;
             height: 20px;
-            display: inline-block;
-            margin: 0 1px;
             vertical-align: text-top;
+        }
+
+        .task-id,
+        .task-user {
+            margin: 0 1px;
         }
 
         .task-id {
@@ -644,10 +648,10 @@ body {
             line-height: 20px;
             padding: 0 5px;
             cursor: pointer;
-            text-decoration: underline;
             font-weight: 900;
             background-color: accentColor(.3);
             display: inline-flex;
+            border-radius: 1px;
 
             .task-user-icon {
                 display: inline-block;
