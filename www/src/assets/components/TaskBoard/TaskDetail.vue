@@ -46,8 +46,12 @@
                              :class="[limitAddClass]">&nbsp;
                         </div>
                     </div>
-                    <task-detail-description v-model="taskCache.description"
-                                             :readonly="!isEditing"></task-detail-description>
+                    <div>
+                        <task-detail-description v-model="taskCache.description"
+                                                 :readonly="!isEditing" v-if="isEditing"></task-detail-description>
+                        <task-detail-description-rich :task="task" v-if="!isEditing"
+                                                      class="task-detail-description-rich"></task-detail-description-rich>
+                    </div>
                     <div class="input-box" v-show="isEditing">
                         <input type="button" value="CANCEL" @click="setEditing(false)">
                         <input type="submit" value="CHANGE">
@@ -71,10 +75,17 @@
     import {ProjectDetailStatus} from "../../scripts/enums/ProjectDetailStatus"
     import TaskDeleteConfirm from "./TaskDeleteConfirm"
     import TaskDetailDescription from "./TaskDetailDescription"
+    import TaskDetailDescriptionRich from "./TaskDetailDescriptionRich.ts"
 
     export default {
         name: "TaskDetail",
-        components: {TaskDetailDescription, TaskDeleteConfirm, TaskDeleteOrHide, UserSelect},
+        components: {
+            TaskDetailDescription,
+            TaskDeleteConfirm,
+            TaskDeleteOrHide,
+            UserSelect,
+            TaskDetailDescriptionRich
+        },
         data: () => {
             const taskCache: Task | undefined = undefined
             return {

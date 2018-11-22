@@ -11,6 +11,7 @@
   "author": "mox",
   "license": "ISC",
   "dependencies": {
+    "async-mutex": "^0.1.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-polyfill": "^6.26.0",
