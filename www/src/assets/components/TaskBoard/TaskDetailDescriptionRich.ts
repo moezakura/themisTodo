@@ -19,7 +19,6 @@ export default Vue.component('TaskDetailDescriptionRich', {
         moveTask(taskId) {
             let task: Task = this.$store.getters.getCurrentTask
             if (task != undefined && task.projectId != undefined) {
-                console.log(this.$router)
                 this.$router.push({
                     name: "taskDetail",
                     params: {
