@@ -45,6 +45,15 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     for (const user of users) {
                         this.userCache.push(user)
                     }
+
+                    u = this.userCache.find(user => {
+                        return user.name == name
+                    })
+                    if (u == undefined) {
+                        let user = new User()
+                        user.name = name
+                        this.userCache.push(user)
+                    }
                 }
             })
             return
@@ -68,16 +77,28 @@ export default Vue.component('TaskDetailDescriptionRich', {
             isAt: false,
             tmpStartWithH: "",
             isUrl: false,
-            isNoBuffer: false
+            isNoBuffer: false,
+            StartWithCheck: "",
         }
         for (let i = 0; i < descriptionArray.length; i++) {
             const c = descriptionArray[i]
             switch (c) {
                 case " ":
                 case "\n":
-                    if (option.isSharp || option.isAt) {
+                    if (option.isUrl) {
+                        option.tmpStartWithH = ""
+                        createHTML.push(createElement('a', {
+                            attrs: {
+                                href: buff,
+                                target: "_blank"
+                            },
+                        }, buff))
+                        buff = ""
+                        option.isSharp = false
+                        option.isAt = false
+                    } else if (option.isSharp || option.isAt) {
                         if (option.isSharp) {
-                            const id = buff.trim()
+                            const id = buff.trim().slice(1)
                             createHTML.push(createElement('span', {
                                 attrs: {
                                     class: "task-id"
@@ -87,53 +108,51 @@ export default Vue.component('TaskDetailDescriptionRich', {
                                 },
                             }, `#${id}`))
                         } else if (option.isAt) {
-                            const name = buff.trim()
+                            const name = buff.trim().slice(1)
                             this.getUser(name)
                             const user = this.userCache.find(user => {
                                 return user.name == name
                             })
                             let userIcon = `/api/account/icon/noIcon`
+                            let addClass = ""
+                            let userNameText = "@" + name
                             if (user != undefined && user.iconPath != undefined) {
                                 userIcon = `/api/account/icon/${user.iconPath}`
-                            }
+                                addClass = "task-user"
+                                userNameText = name
 
-                            createHTML.push(createElement('span', {
-                                attrs: {
-                                    class: "task-user"
-                                },
-                            }, [
-                                createElement('div', {
+
+                                createHTML.push(createElement('span', {
                                     attrs: {
-                                        class: "task-user-icon",
+                                        class: addClass
                                     },
-                                    style: {
-                                        "background-image": `url('${userIcon}')`,
-                                    }
-                                }),
-                                createElement('span', name),
-                            ]))
+                                }, [
+                                    createElement('div', {
+                                        attrs: {
+                                            class: "task-user-icon",
+                                        },
+                                        style: {
+                                            "background-image": `url('${userIcon}')`,
+                                        }
+                                    }),
+                                    createElement('span', userNameText),
+                                ]))
+                            } else {
+                                createHTML.push(createElement('span', userNameText))
+                            }
                         }
 
-                        option.isSharp = false
-                        option.isAt = false
-                        if (descriptionArray.length > i + 1) {
-                            const n = descriptionArray[i + 1]
-                            option.isSharp = n === '#'
-                            option.isAt = n === '@'
-                        }
-
-                        buff = ""
-                    } else if (option.isUrl) {
-                        option.tmpStartWithH = ""
-                        createHTML.push(createElement('a', {
-                            attrs: {
-                                href: buff,
-                                target: "_blank"
-                            },
-                        }, buff))
                         buff = ""
                     }
+
+                    option.isSharp = false
+                    option.isAt = false
                     option.isUrl = false
+                    if (descriptionArray.length > i + 1 && c == " ") {
+                        const n = descriptionArray[i + 1]
+                        option.isSharp = n === '#'
+                        option.isAt = n === '@'
+                    }
 
                     if (c == " ") {
                         createHTML.push(createElement('span', buff))
@@ -150,9 +169,11 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     break
                 case '#':
                     option.isSharp = true
+                    buff += c
                     break
                 case '@':
                     option.isAt = true
+                    buff += c
                     break
                 default:
                     if (!option.isNoBuffer) {
