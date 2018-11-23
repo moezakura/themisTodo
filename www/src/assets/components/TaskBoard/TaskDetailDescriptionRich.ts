@@ -61,13 +61,16 @@ export default Vue.component('TaskDetailDescriptionRich', {
 
         let buff = ""
         let descriptionArray = description.split('')
+        descriptionArray.push("\n")
         let createHTML: Array<VNode> = []
         let option = {
             isSharp: false,
             isAt: false,
+            tmpStartWithH: "",
+            isUrl: false,
+            isNoBuffer: false
         }
-        for (const _i in descriptionArray) {
-            const i = Number(_i)
+        for (let i = 0; i < descriptionArray.length; i++) {
             const c = descriptionArray[i]
             switch (c) {
                 case " ":
@@ -120,7 +123,17 @@ export default Vue.component('TaskDetailDescriptionRich', {
                         }
 
                         buff = ""
+                    } else if (option.isUrl) {
+                        option.tmpStartWithH = ""
+                        createHTML.push(createElement('a', {
+                            attrs: {
+                                href: buff,
+                                target: "_blank"
+                            },
+                        }, buff))
+                        buff = ""
                     }
+                    option.isUrl = false
 
                     if (c == " ") {
                         createHTML.push(createElement('span', buff))
@@ -142,7 +155,20 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     option.isAt = true
                     break
                 default:
-                    buff += c
+                    if (!option.isNoBuffer) {
+                        buff += c
+                    }
+
+                    if (option.tmpStartWithH.length > 0 || c.toLowerCase() == "h") {
+                        option.tmpStartWithH += c
+
+                        if (option.tmpStartWithH == "http://" || option.tmpStartWithH == "https://") {
+                            option.isUrl = true
+                            buff = buff.slice(0, -option.tmpStartWithH.length)
+                            createHTML.push(createElement('span', buff))
+                            buff = option.tmpStartWithH
+                        }
+                    }
                     break
             }
         }
