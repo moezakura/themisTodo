@@ -13,6 +13,8 @@ export default Vue.component('TaskDetailDescriptionRich', {
         const userCache: Array<User> = []
         return {
             userCache: userCache,
+            description: "",
+            checkbox: [],
         }
     },
     methods: {
@@ -57,19 +59,33 @@ export default Vue.component('TaskDetailDescriptionRich', {
                 }
             })
             return
+        },
+        updateCheckbox(idx: number, val: boolean) {
+            let d = this.description
+            let i = Number(idx)
+
+            if (val) {
+                d = d.slice(0, i) + "x" + d.slice(i)
+            } else {
+                d = d.slice(0, i - 1) + d.slice(i)
+            }
+
+            this.description = d
+            this.$emit("detailUpdate", this.description)
         }
     },
-    render: function (createElement) {
-        let description = ""
+    created() {
+        this.description = ""
         try {
             let task = this.$store.getters.getCurrentTask
-            description = task.description
+            this.description = task.description
         } catch (e) {
             console.error(e)
         }
-
+    },
+    render: function (createElement) {
         let buff = ""
-        let descriptionArray = description.split('')
+        let descriptionArray = this.description.split('')
         descriptionArray.push("\n")
         let createHTML: Array<VNode> = []
         let option = {
@@ -78,16 +94,18 @@ export default Vue.component('TaskDetailDescriptionRich', {
             tmpStartWithH: "",
             isUrl: false,
             isNoBuffer: false,
-            StartWithCheck: "",
+            startWithCheck: "",
+            strCount: 0,
         }
         for (let i = 0; i < descriptionArray.length; i++) {
             const c = descriptionArray[i]
             switch (c) {
                 case " ":
                 case "\n":
+                    let createHTMLTemp: Array<VNode> = []
                     if (option.isUrl) {
                         option.tmpStartWithH = ""
-                        createHTML.push(createElement('a', {
+                        createHTMLTemp.push(createElement('a', {
                             attrs: {
                                 href: buff,
                                 target: "_blank"
@@ -99,7 +117,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     } else if (option.isSharp || option.isAt) {
                         if (option.isSharp) {
                             const id = buff.trim().slice(1)
-                            createHTML.push(createElement('span', {
+                            createHTMLTemp.push(createElement('span', {
                                 attrs: {
                                     class: "task-id"
                                 },
@@ -122,7 +140,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
                                 userNameText = name
 
 
-                                createHTML.push(createElement('span', {
+                                createHTMLTemp.push(createElement('span', {
                                     attrs: {
                                         class: addClass
                                     },
@@ -138,7 +156,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
                                     createElement('span', userNameText),
                                 ]))
                             } else {
-                                createHTML.push(createElement('span', userNameText))
+                                createHTMLTemp.push(createElement('span', userNameText))
                             }
                         }
 
@@ -148,6 +166,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     option.isSharp = false
                     option.isAt = false
                     option.isUrl = false
+                    option.startWithCheck = ""
                     if (descriptionArray.length > i + 1 && c == " ") {
                         const n = descriptionArray[i + 1]
                         option.isSharp = n === '#'
@@ -155,15 +174,19 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     }
 
                     if (c == " ") {
-                        createHTML.push(createElement('span', buff))
-                        createHTML.push(createElement('span', " "))
+                        createHTMLTemp.push(createElement('span', buff))
+                        createHTMLTemp.push(createElement('span', " "))
                         buff = " "
                     } else if (c == "\n") {
                         if (!option.isSharp && !option.isAt && buff.length > 0) {
-                            createHTML.push(createElement('span', buff))
+                            createHTMLTemp.push(createElement('span', buff))
                             buff = ""
                         }
-                        createHTML.push(createElement('br'))
+                        createHTMLTemp.push(createElement('br'))
+                    }
+
+                    for (const html of createHTMLTemp) {
+                        createHTML.push(html)
                     }
 
                     break
@@ -175,9 +198,58 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     option.isAt = true
                     buff += c
                     break
+                case '[':
+                    option.startWithCheck += c
+                    buff += c
+                    break
+                case ']':
+                    option.startWithCheck += c
+                    if (option.startWithCheck[0] == "[" &&
+                        (option.startWithCheck.length == 2 || option.startWithCheck.length == 3)) {
+                        buff = buff.slice(0, -option.startWithCheck.length)
+                        const prevStr = option.startWithCheck[option.startWithCheck.length - 2]
+                        let checked = false
+                        if (prevStr == "x" || prevStr == "o") {
+                            checked = true
+                        }
+
+                        createHTML.push(createElement('input', {
+                            attrs: {
+                                type: "checkbox",
+                                id: `check-${option.strCount}`,
+                            },
+                            domProps: {
+                                value: option.strCount,
+                                checked: checked,
+                            },
+                            on: {
+                                input: (event) => {
+                                    this.updateCheckbox(event.target.value, event.target.checked)
+                                }
+                            },
+                            class: "check",
+                        }))
+                        createHTML.push(createElement('label', {
+                            attrs: {
+                                for: `check-${option.strCount}`
+                            },
+                            class: "check-body fas",
+                        }, " "))
+                    } else {
+                        buff += c
+                    }
+                    option.startWithCheck = ""
+                    break
                 default:
                     if (!option.isNoBuffer) {
                         buff += c
+                    }
+
+                    if (option.startWithCheck.length > 0) {
+                        option.startWithCheck += c
+                    }
+                    if (option.startWithCheck.length > 3) {
+                        option.startWithCheck = ""
                     }
 
                     if (option.tmpStartWithH.length > 0 || c.toLowerCase() == "h") {
@@ -192,6 +264,7 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     }
                     break
             }
+            option.strCount++
         }
         if (buff.length > 0) {
             createHTML.push(createElement('span', buff))

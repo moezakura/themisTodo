@@ -628,6 +628,7 @@ body {
         line-height: 20px;
 
         span {
+            display: inline-block;
             line-height: 20px;
             height: 20px;
             vertical-align: text-top;
@@ -666,6 +667,34 @@ body {
                 background-repeat: no-repeat;
                 background-position: center;
                 border-radius: 50%;
+            }
+        }
+
+        .check {
+            display: inline;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            transform: scale(0);
+
+            & + label {
+                vertical-align: text-top;
+                margin: 1px 8px 1px 0;
+                display: inline-block;
+                width: 18px;
+                height: 18px;
+                box-sizing: border-box;
+                border: solid 1px white;
+                border-radius: 3px;
+            }
+
+            &:checked + label::after {
+                display: block;
+                content: '\f00c';
+                width: 18px;
+                height: 18px;
+                line-height: 18px;
+                text-align: center;
             }
         }
     }

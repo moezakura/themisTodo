@@ -50,7 +50,8 @@
                         <task-detail-description v-model="taskCache.description"
                                                  :readonly="!isEditing" v-if="isEditing"></task-detail-description>
                         <task-detail-description-rich :task="task" v-if="!isEditing"
-                                                      class="task-detail-description-rich"></task-detail-description-rich>
+                                                      class="task-detail-description-rich"
+                                                      @detailUpdate="detailUpdate"></task-detail-description-rich>
                     </div>
                     <div class="input-box" v-show="isEditing">
                         <input type="button" value="CANCEL" @click="setEditing(false)">
@@ -198,6 +199,10 @@
                 }
 
                 return y + '-' + str_m + '-' + str_d
+            },
+            detailUpdate(detailText) {
+                this.$set(this.taskCache, 'description', detailText)
+                this.submitEdit()
             },
             submitEdit() {
                 let task = new Task()
