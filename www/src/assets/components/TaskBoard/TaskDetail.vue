@@ -213,7 +213,7 @@
                 task.status = -1
                 this.$store.commit("incrementLoadingCount")
 
-                TaskApi.Update(this.taskCache.createDate, task).then(res => {
+                TaskApi.update(this.taskCache.createDate, task).then(res => {
                     if (res.success) {
                         this.$store.commit("setCurrentTask", this.taskCache)
                         this.$emit("load-tasks")

@@ -1,7 +1,7 @@
 import Vue, {VNode} from 'vue'
 import Task from "@scripts/model/api/task/Task"
-import UserApi from "@scripts/api/UserApi"
-import UserSearchRequest from "@scripts/model/api/UserSearchRequest"
+import AccountApi from "@scripts/api/AccountApi"
+import AccountSearchRequest from "@scripts/model/api/AccountSearchRequest"
 import User from "@scripts/model/api/user/User"
 import {Mutex} from 'async-mutex'
 
@@ -38,12 +38,12 @@ export default Vue.component('TaskDetailDescriptionRich', {
                 })
 
                 if (u == undefined) {
-                    let searchRequest: UserSearchRequest = new UserSearchRequest()
+                    let searchRequest: AccountSearchRequest = new AccountSearchRequest()
                     searchRequest.name = name
                     searchRequest.max = 1
                     searchRequest.isInProject = true
 
-                    let users = await UserApi.Search(searchRequest)
+                    let users = await AccountApi.search(searchRequest)
                     for (const user of users) {
                         this.userCache.push(user)
                     }

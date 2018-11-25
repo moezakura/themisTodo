@@ -61,7 +61,7 @@
         },
         created() {
             this.$store.commit("incrementLoadingCount")
-            AccountApi.GetProfile().then(res => {
+            AccountApi.getProfile().then(res => {
                 if (res.success) {
                     this.$store.commit("setMyProfile", res.user)
                 }

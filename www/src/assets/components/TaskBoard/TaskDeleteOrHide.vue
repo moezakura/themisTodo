@@ -56,7 +56,7 @@
                 let task = this.task
                 task.status = TaskStatusConvert.toNumber(TaskStatus.HIDE)
                 this.$store.commit("incrementLoadingCount")
-                TaskApi.Update(task.createDate, task).then(res => {
+                TaskApi.update(task.createDate, task).then(res => {
                     if (res.success) {
                         this.$store.commit("setProjectDetailStatus", ProjectDetailStatus.HIDE)
                         this.$store.commit("setCurrentTask", new Task())

@@ -41,7 +41,7 @@
                 let changeObj = new Account()
                 changeObj.displayName = this.userName
                 this.$store.commit("incrementLoadingCount")
-                AccountApi.Change(changeObj).then(json => {
+                AccountApi.change(changeObj).then(json => {
                     if (!json.success) {
                         this.errorMessage = json.message
                         this.changeSuccess = false

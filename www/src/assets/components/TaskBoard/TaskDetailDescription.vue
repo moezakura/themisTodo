@@ -16,8 +16,8 @@
 
 <script lang="ts">
     import AtTa from 'vue-at/dist/vue-at-textarea.js'
-    import UserSearchRequest from "../../scripts/model/api/UserSearchRequest"
-    import UserApi from "../../scripts/api/UserApi"
+    import AccountSearchRequest from "../../scripts/model/api/AccountSearchRequest"
+    import AccountApi from "../../scripts/api/AccountApi"
     import ProjectApi from "../../scripts/api/ProjectApi"
 
     export default {
@@ -55,14 +55,14 @@
             this.$store.commit("incrementLoadingCount")
             this.$store.commit("incrementLoadingCount")
 
-            const searchRequest = new UserSearchRequest()
+            const searchRequest = new AccountSearchRequest()
             searchRequest.name = "%"
             searchRequest.displayName = "%"
             searchRequest.project = this.projectId
             searchRequest.isInProject = true
             searchRequest.max = 1000
 
-            UserApi.Search(searchRequest).then(res => {
+            AccountApi.search(searchRequest).then(res => {
                 this.members = res
                 for (let i in this.members) {
                     this.members[i].searchKey = this.members[i].name

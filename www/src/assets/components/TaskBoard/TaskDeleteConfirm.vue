@@ -40,7 +40,7 @@
             clickDelete() {
                 let task = this.task
                 this.$store.commit("incrementLoadingCount")
-                TaskApi.Delete(task.createDate).then(res => {
+                TaskApi.delete(task.createDate).then(res => {
                     if (res.success) {
                         this.$store.commit("setProjectDetailStatus", ProjectDetailStatus.HIDE)
                         this.$store.commit("setCurrentTask", new Task())

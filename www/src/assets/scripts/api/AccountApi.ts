@@ -7,9 +7,11 @@ import AccountCreateRequest from "@scripts/model/api/AccountCreateRequest"
 import AccountCreateResult from "@scripts/model/api/AccountCreateResult"
 import AccountListResult from "@scripts/model/api/AccountListResult"
 import Task from "@scripts/model/api/task/Task"
+import AccountSearchRequest from "@scripts/model/api/AccountSearchRequest"
+import {AccountSearchResult} from "@scripts/model/api/AccountSearchResult"
 
 export default class AccountApi {
-    static GetProfile(): Promise<ProfileResult> {
+    static getProfile(): Promise<ProfileResult> {
         return fetch("/api/account/profile", {
             method: 'GET',
             credentials: "same-origin"
@@ -63,7 +65,7 @@ export default class AccountApi {
         })
     }
 
-    static Change(accountObject: Account): Promise<AccountUpdateResult> {
+    static change(accountObject: Account): Promise<AccountUpdateResult> {
         return fetch("/api/account/update", {
             method: 'POST',
             body: accountObject.toJson(),
@@ -93,6 +95,29 @@ export default class AccountApi {
             res.message = resJson["message"]
             res.name = resJson["name"]
             res.password = resJson["password"]
+
+            return res
+        })
+    }
+
+    static search(searchRequest: AccountSearchRequest): Promise<AccountSearchResult> {
+        const queryString = searchRequest.toQueryString()
+
+        return fetch("/api/account/search" + queryString, {
+            method: 'GET'
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res:AccountSearchResult = []
+
+            for(const _user of json){
+                let user = new User()
+                user.name = _user["name"]
+                user.uuid = _user["uuid"]
+                user.displayName = _user["displayName"]
+                user.iconPath = _user["iconPath"]
+                res.push(user)
+            }
 
             return res
         })

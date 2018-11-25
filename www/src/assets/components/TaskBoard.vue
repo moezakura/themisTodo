@@ -266,7 +266,7 @@
                 task.status = changeStatus
                 this.$store.commit("incrementLoadingCount")
 
-                TaskApi.Update(createDate, task).then(res => {
+                TaskApi.update(createDate, task).then(res => {
                     if (res.success) {
                         this.loadTasks()
                     }

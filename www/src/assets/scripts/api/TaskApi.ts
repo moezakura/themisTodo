@@ -9,7 +9,7 @@ import TaskBulkUpdateRequest from "@scripts/model/api/TaskBulkUpdateRequest"
 import TaskBulkDeleteRequest from "@scripts/model/api/TaskBulkDeleteRequest"
 
 export default class TaskApi {
-    static GetTaskFromCreateDate(createDate: string): Promise<TaskResult> {
+    static getTaskFromCreateDate(createDate: string): Promise<TaskResult> {
         return fetch("/api/tasks/view/" + createDate, {
             method: 'GET',
             credentials: "same-origin"
@@ -51,7 +51,7 @@ export default class TaskApi {
         })
     }
 
-    static Create(taskAddRequest: TaskAddRequest): Promise<TaskCreateResult> {
+    static create(taskAddRequest: TaskAddRequest): Promise<TaskCreateResult> {
         return fetch("/api/tasks/create", {
             method: 'POST',
             body: taskAddRequest.toJson(),
@@ -69,7 +69,7 @@ export default class TaskApi {
         })
     }
 
-    static Update(createDate: string, task: Task): Promise<BaseApiResult> {
+    static update(createDate: string, task: Task): Promise<BaseApiResult> {
         return fetch("/api/tasks/update/" + createDate, {
             method: 'POST',
             body: task.toJson(),
@@ -103,7 +103,7 @@ export default class TaskApi {
         })
     }
 
-    static Delete(createDate: string): Promise<BaseApiResult> {
+    static delete(createDate: string): Promise<BaseApiResult> {
         return fetch(`/api/tasks/delete/${createDate}`, {
             method: 'POST',
             credentials: "same-origin"

@@ -1,4 +1,4 @@
-export default class UserSearchRequest {
+export default class AccountSearchRequest {
     public name: string
     public displayName: string
     public project: number

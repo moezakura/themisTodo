@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
-    import UserApi from "../../scripts/api/UserApi"
-    import UserSearchRequest from "../../scripts/model/api/UserSearchRequest"
+    import AccountApi from "../../scripts/api/AccountApi"
+    import AccountSearchRequest from "../../scripts/model/api/AccountSearchRequest"
     import User from "../../scripts/model/api/user/User"
 
     export default {
@@ -45,14 +45,14 @@
                     this.$emit('input', changedValue)
                     this.$emit('change', changedValue)
 
-                    const searchRequest = new UserSearchRequest()
+                    const searchRequest = new AccountSearchRequest()
                     searchRequest.name = value
                     searchRequest.displayName = value
                     searchRequest.project = this.projectId
                     searchRequest.isInProject = this.searchIsInProject
                     searchRequest.max = 20
 
-                    UserApi.Search(searchRequest).then(res => {
+                    AccountApi.search(searchRequest).then(res => {
                         this.userList = res
                     })
                 }

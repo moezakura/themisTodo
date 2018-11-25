@@ -35,7 +35,7 @@
                 loginRequest.id = this.form.userName
                 loginRequest.password = this.form.userPassword
 
-                AuthApi.Login(loginRequest).then(res => {
+                AuthApi.login(loginRequest).then(res => {
                     if (!res.success) {
                         this.errorMessage = res.message
                     } else {

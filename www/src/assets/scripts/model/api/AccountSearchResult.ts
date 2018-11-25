@@ -1,3 +1,3 @@
 import User from "@scripts/model/api/user/User"
 
-export type UserSearchResult = Array<User>
+export type AccountSearchResult = Array<User>

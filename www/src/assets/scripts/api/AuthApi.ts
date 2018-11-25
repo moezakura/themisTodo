@@ -3,7 +3,7 @@ import LoginResult from "@scripts/model/api/LoginResult"
 import BaseApiResult from "@scripts/model/api/BaseApiResult"
 
 export default class AuthApi {
-    static Login(loginObject: LoginRequest): Promise<LoginResult> {
+    static login(loginObject: LoginRequest): Promise<LoginResult> {
         return fetch("/api/login", {
             method: 'POST',
             body: loginObject.toJson(),

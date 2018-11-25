@@ -86,7 +86,7 @@
                 addRequest.description = this.form.description
                 addRequest.deadline = this.form.deadline
                 addRequest.projectId = this.project.uuid
-                TaskApi.Create(addRequest).then(res => {
+                TaskApi.create(addRequest).then(res => {
                     if (res.success) {
                         this.form = this.clearForm()
                         this.$emit("load-tasks")
