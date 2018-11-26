@@ -2,7 +2,7 @@
     <div>
         <at-ta :members="target" name-key="searchKey" :ats="['@', '#']" :filterMatch="searchFilter"
                :allowSpaces="false">
-            <template slot="item" scope="s">
+            <template slot="item" slot-scope="s">
                 <span v-if="targetType === 'TASKS'" class="task-id">#{{ s.item.taskId }}</span>
                 <span v-if="targetType === 'MEMBERS'" class="task-icon"
                       :style="{ 'background-image': `url('/api/account/icon/${s.item.iconPath}')` }"></span>
