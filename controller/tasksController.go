@@ -27,15 +27,6 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		return
 	}
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, _ := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		updateResult.Message = "invalid token"
-		themisView.TasksView{}.PostUpdate(c, updateResult)
-		return
-	}
-
 	var updateRequest models.TaskUpdateRequestJson
 	c.ShouldBindJSON(&updateRequest)
 
@@ -126,19 +117,10 @@ func (self TasksController) PostBulkUpdate(c *gin.Context) {
 	)
 	projectsTarget := make([]int, 0)
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, _ := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		updateResult.Message = "invalid token"
-		themisView.TasksView{}.PostUpdate(c, updateResult)
-		return
-	}
-
 	var updateRequest models.TaskBulkUpdateRequestJson
 	c.ShouldBindJSON(&updateRequest)
 
-	if len(updateRequest.BulkList) <= 0{
+	if len(updateRequest.BulkList) <= 0 {
 		updateResult.Message = "no update list"
 		themisView.TasksView{}.PostUpdate(c, updateResult)
 		return
@@ -213,14 +195,7 @@ func (self TasksController) PostDelete(c *gin.Context) {
 		return
 	}
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		deleteResult.Message = "invalid token"
-		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	taskModule := module.NewTaskModule(self.DB)
 	isErr, task := taskModule.Get(createdTime)
@@ -259,7 +234,7 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 	deleteList := make([]int64, 0)
 	projectsTarget := make([]int, 0)
 
-	if len(deleteRequest.BulkList) <= 0{
+	if len(deleteRequest.BulkList) <= 0 {
 		deleteResult.Message = "no delete list"
 		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
 		return
@@ -275,14 +250,7 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 		deleteList = append(deleteList, createdTime)
 	}
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		deleteResult.Message = "invalid token"
-		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	taskModule := module.NewTaskModule(self.DB)
 	isErr, tasks := taskModule.SearchCreateTimeList(deleteRequest.BulkList)
@@ -297,7 +265,7 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 		return
 	}
 
-	for _, task := range tasks{
+	for _, task := range tasks {
 		projectsTarget = append(projectsTarget, task.ProjectId)
 	}
 
@@ -322,14 +290,7 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 
 func (self TasksController) PostTaskCreate(c *gin.Context) {
 	addResult := &models.TaskAddResultJson{}
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		addResult.Message = "invalid token"
-		themisView.ProjectsView{}.PostTaskBoard(c, addResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	var addRequest models.TaskAddRequestJson
 	c.ShouldBindJSON(&addRequest)
@@ -409,14 +370,7 @@ func (self TasksController) GetView(c *gin.Context) {
 		return
 	}
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		getResult.Message = "invalid token"
-		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	taskModule := module.NewTaskModule(self.DB)
 	isErr, task := taskModule.Get(createdTime)
@@ -478,14 +432,7 @@ func (self TasksController) GetSearch(c *gin.Context) {
 		searchRequest.CreateUserId = int(createTmp)
 	}
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		getResult.Message = "invalid token"
-		themisView.TasksView{}.GetSearch(c, http.StatusBadRequest, getResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	projectsModule := module.NewProjectsModule(self.DB)
 	isIn := projectsModule.IsIn(userUuid, searchRequest.ProjectId)
@@ -522,14 +469,7 @@ func (self TasksController) GetMy(c *gin.Context) {
 		return
 	}
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		getResult.Message = "invalid token"
-		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	taskModule := module.NewTaskModule(self.DB)
 	isErr, tasks := taskModule.GetTasksFromUser(userUuid, 20, taskStatus)

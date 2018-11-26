@@ -109,16 +109,10 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 	result := models.AccountChangeResultJson{}
 
 	loginModule := module.NewLoginModule(self.DB)
-
-	isErr, accountUuid := loginModule.GetUserId(c, self.Session)
-	if isErr {
-		result.Message = "invalid account id"
-		themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusBadRequest, &result)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	accountModule := module.NewAccountModule(self.DB)
-	isErr, account := accountModule.GetAccount(accountUuid)
+	isErr, account := accountModule.GetAccount(userUuid)
 
 	if isErr {
 		result.Message = "invalid account id"
@@ -161,7 +155,7 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 		}
 
 		passwordHash := utils.SHA512(updateRequest.CurrentPassword)
-		isErr, _ := loginModule.IsLoginFromUuid(accountUuid, passwordHash)
+		isErr, _ := loginModule.IsLoginFromUuid(userUuid, passwordHash)
 		if !isErr {
 			accountChangeRequest.Password = updateRequest.Password
 			isChange = true
@@ -182,7 +176,7 @@ func (self AccountController) PostUpdate(c *gin.Context) {
 		return
 	}
 
-	updateRequest.Uuid = accountUuid
+	updateRequest.Uuid = userUuid
 	accountModule.Update(accountChangeRequest)
 	result.Success = true
 	themisView.AccountView{self.BaseView}.PostUpdate(c, http.StatusOK, &result)
@@ -203,12 +197,10 @@ func (self AccountController) PostUpdateIcon(c *gin.Context) {
 		return
 	}
 
-	loginModule := module.NewLoginModule(self.DB)
-
-	isErr, accountUuid := loginModule.GetUserId(c, self.Session)
+	userUuid := c.GetInt("uuid")
 
 	accountModule := module.NewAccountModule(self.DB)
-	isErr, account := accountModule.GetAccount(accountUuid)
+	isErr, account := accountModule.GetAccount(userUuid)
 	if isErr {
 		result.Message = "server error"
 		themisView.AccountView{self.BaseView}.PostUpdateIcon(c, http.StatusInternalServerError, &result)
@@ -243,7 +235,7 @@ Retry:
 
 	oldImageName := account.IconPath
 	account.IconPath = imageName
-	isErr = accountModule.UpdateIconPath(accountUuid, imageName)
+	isErr = accountModule.UpdateIconPath(userUuid, imageName)
 	if isErr {
 		os.Remove(iconSavePath)
 		result.Message = "image save error"
@@ -270,14 +262,7 @@ Retry:
 
 func (self AccountController) GetProfile(c *gin.Context) {
 	profileResult := &models.AccountProfileResultJson{}
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		profileResult.Message = "invalid token"
-		themisView.AccountView{}.GetProfile(c, http.StatusBadRequest, profileResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	accountModule := module.NewAccountModule(self.DB)
 	isError, account := accountModule.GetAccount(userUuid)
@@ -294,14 +279,6 @@ func (self AccountController) GetProfile(c *gin.Context) {
 
 func (self AccountController) GetList(c *gin.Context) {
 	result := &models.AccountListResult{}
-	loginModule := module.NewLoginModule(self.DB)
-	isError, _ := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		result.Message = "invalid token"
-		themisView.AccountView{}.GetList(c, http.StatusBadRequest, result)
-		return
-	}
 
 	accountModule := module.NewAccountModule(self.DB)
 	isError, account := accountModule.GetAccountsList()

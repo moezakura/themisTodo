@@ -16,14 +16,7 @@ type ProjectsController struct {
 
 func (self ProjectsController) PostAdd(c *gin.Context) {
 	addResult := &models.ProjectAddResultJson{}
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		addResult.Message = "invalid token"
-		themisView.ProjectsView{}.PostAdd(c, addResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	var addRequest models.ProjectAddRequestJson
 	c.ShouldBindJSON(&addRequest)
@@ -63,20 +56,12 @@ func (self ProjectsController) PostAdd(c *gin.Context) {
 
 func (self ProjectsController) PostUpdate(c *gin.Context) {
 	addResult := &models.ProjectAddResultJson{}
-	loginModule := module.NewLoginModule(self.DB)
-	isError, _ := loginModule.GetUserId(c, self.Session)
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
 	projectId := int(projectId64)
 	if err != nil {
 		c.String(http.StatusBadRequest, "400 Bad Request")
-		return
-	}
-
-	if isError {
-		addResult.Message = "invalid token"
-		themisView.ProjectsView{}.PostAdd(c, addResult)
 		return
 	}
 
@@ -124,20 +109,12 @@ func (self ProjectsController) PostUpdate(c *gin.Context) {
 
 func (self ProjectsController) PostAddUser(c *gin.Context) {
 	addResult := &models.ProjectAddResultJson{}
-	loginModule := module.NewLoginModule(self.DB)
-	isError, _ := loginModule.GetUserId(c, self.Session)
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
 	projectId := int(projectId64)
 	if err != nil {
 		c.String(http.StatusBadRequest, "400 Bad Request")
-		return
-	}
-
-	if isError {
-		addResult.Message = "invalid token"
-		themisView.ProjectsView{}.PostAddUser(c, addResult)
 		return
 	}
 
@@ -195,14 +172,8 @@ func (self ProjectsController) PostAddUser(c *gin.Context) {
 }
 
 func (self ProjectsController) PostDeleteProject(c *gin.Context) {
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	userUuid := c.GetInt("uuid")
 	resultJson := models.ProjectDeleteResultJson{}
-	if isError {
-		resultJson.Message = "invalid token"
-		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusBadRequest, &resultJson)
-		return
-	}
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
@@ -221,7 +192,7 @@ func (self ProjectsController) PostDeleteProject(c *gin.Context) {
 		return
 	}
 
-	isError = projectModule.Delete(projectId)
+	isError := projectModule.Delete(projectId)
 	if isError {
 		resultJson.Message = "failed delete"
 		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusInternalServerError, &resultJson)
@@ -234,15 +205,8 @@ func (self ProjectsController) PostDeleteProject(c *gin.Context) {
 }
 
 func (self ProjectsController) GetInfo(c *gin.Context) {
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	userUuid := c.GetInt("uuid")
 	resultJson := &models.ProjectInfoResultJson{}
-
-	if isError {
-		resultJson.Message = "invalid token"
-		themisView.ProjectsView{}.GetInfo(c, http.StatusBadRequest, resultJson)
-		return
-	}
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
@@ -274,15 +238,8 @@ func (self ProjectsController) GetInfo(c *gin.Context) {
 }
 
 func (self ProjectsController) GetTasks(c *gin.Context) {
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	userUuid := c.GetInt("uuid")
 	resultJson := &models.TasksGetResultJson{}
-
-	if isError {
-		resultJson.Message = "invalid token"
-		themisView.ProjectsView{}.GetTasks(c, http.StatusBadRequest, resultJson)
-		return
-	}
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
@@ -301,7 +258,7 @@ func (self ProjectsController) GetTasks(c *gin.Context) {
 		return
 	}
 
-	isError, _ = projectModule.GetProject(projectId)
+	isError, _ := projectModule.GetProject(projectId)
 	if isError {
 		resultJson.Message = "not found project"
 		themisView.ProjectsView{}.GetTasks(c, http.StatusNotFound, resultJson)
@@ -319,15 +276,8 @@ func (self ProjectsController) GetTasks(c *gin.Context) {
 }
 
 func (self ProjectsController) GetMembers(c *gin.Context) {
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	userUuid := c.GetInt("uuid")
 	resultJson := &models.ProjectMembersResultJson{}
-
-	if isError {
-		resultJson.Message = "invalid token"
-		themisView.ProjectsView{}.GetMembers(c, http.StatusBadRequest, resultJson)
-		return
-	}
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
@@ -360,15 +310,8 @@ func (self ProjectsController) GetMembers(c *gin.Context) {
 }
 
 func (self ProjectsController) DeleteMembers(c *gin.Context) {
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
+	userUuid := c.GetInt("uuid")
 	resultJson := &models.ProjectDeleteMemberResultJson{}
-
-	if isError {
-		resultJson.Message = "invalid token"
-		themisView.ProjectsView{}.DeleteMember(c, http.StatusBadRequest, resultJson)
-		return
-	}
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
@@ -403,7 +346,7 @@ func (self ProjectsController) DeleteMembers(c *gin.Context) {
 		return
 	}
 
-	isError = projectModule.Leave(projectId, deleteRequest.Uuid)
+	isError := projectModule.Leave(projectId, deleteRequest.Uuid)
 	if isError {
 		resultJson.Message = "failed leave"
 		themisView.ProjectsView{}.DeleteMember(c, http.StatusInternalServerError, resultJson)
@@ -419,14 +362,7 @@ func (self ProjectsController) GetMy(c *gin.Context) {
 	getResult := &models.ProjectGetResultJson{}
 	projectsModule := module.NewProjectsModule(self.DB)
 
-	loginModule := module.NewLoginModule(self.DB)
-	isError, userUuid := loginModule.GetUserId(c, self.Session)
-
-	if isError {
-		getResult.Message = "invalid token"
-		themisView.ProjectsView{}.GetMy(c, http.StatusBadRequest, getResult)
-		return
-	}
+	userUuid := c.GetInt("uuid")
 
 	isError, projects := projectsModule.GetProjects(userUuid)
 	if isError {
