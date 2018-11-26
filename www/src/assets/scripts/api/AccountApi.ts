@@ -9,12 +9,14 @@ import AccountListResult from "@scripts/model/api/AccountListResult"
 import Task from "@scripts/model/api/task/Task"
 import AccountSearchRequest from "@scripts/model/api/AccountSearchRequest"
 import {AccountSearchResult} from "@scripts/model/api/AccountSearchResult"
+import BaseApi from "@scripts/api/BaseApi"
 
-export default class AccountApi {
+export default class AccountApi extends BaseApi {
     static getProfile(): Promise<ProfileResult> {
         return fetch("/api/account/profile", {
             method: 'GET',
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -40,7 +42,8 @@ export default class AccountApi {
     static getList(): Promise<AccountListResult> {
         return fetch("/api/account/list", {
             method: 'GET',
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -69,7 +72,8 @@ export default class AccountApi {
         return fetch("/api/account/update", {
             method: 'POST',
             body: accountObject.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(response => {
             return response.json()
         }).then(resJson => {
@@ -85,7 +89,8 @@ export default class AccountApi {
         return fetch("/api/account/add", {
             method: 'POST',
             body: createRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(response => {
             return response.json()
         }).then(resJson => {
@@ -104,7 +109,8 @@ export default class AccountApi {
         const queryString = searchRequest.toQueryString()
 
         return fetch("/api/account/search" + queryString, {
-            method: 'GET'
+            method: 'GET',
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {

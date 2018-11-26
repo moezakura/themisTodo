@@ -7,6 +7,7 @@ import {ProjectDetailStatus} from "@scripts/enums/ProjectDetailStatus"
 import User from "@scripts/model/api/user/User"
 
 export interface RootState {
+    accessToken: string,
     headerEnable: boolean,
     loadingCount: number,
     profile: User | undefined,
@@ -21,6 +22,7 @@ Vue.use(Vuex)
 const store: StoreOptions<RootState> = {
     // データを保存するためのステートを作成
     state: {
+        accessToken: "",
         headerEnable: false,
         loadingCount: 0,
         profile: undefined,
@@ -30,6 +32,7 @@ const store: StoreOptions<RootState> = {
         projectDetailStatus: ProjectDetailStatus.HIDE
     },
     getters: {
+        getToken: state => state.accessToken,
         isHeaderEnable: state => state.headerEnable,
         isLoadingShow: state => state.loadingCount > 0,
         getMyProfile: state => state.profile,
@@ -39,6 +42,9 @@ const store: StoreOptions<RootState> = {
         getProjectDetailStatus: state => state.projectDetailStatus,
     },
     mutations: {
+        setToken(state, value) {
+            state.accessToken = value
+        },
         setHeaderEnable(state, value) {
             state.headerEnable = value
         },

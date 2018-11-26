@@ -12,13 +12,15 @@ import User from "@scripts/model/api/user/User"
 import DeleteMemberRequest from "@scripts/model/api/DeleteMemberRequest"
 import ProjectAddRequest from "@scripts/model/api/ProjectAddRequest"
 import ProjectAddResult from "@scripts/model/api/ProjectAddResult"
+import BaseApi from "@scripts/api/BaseApi"
 
-export default class ProjectApi {
+export default class ProjectApi extends BaseApi {
     static create(addRequest: ProjectAddRequest): Promise<ProjectAddResult> {
         return fetch(`/api/project/add`, {
             method: 'POST',
             body: addRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -36,7 +38,8 @@ export default class ProjectApi {
         const status = taskStatus.toString()
         return fetch(`/api/tasks/my?status=${status}`, {
             method: 'GET',
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -60,7 +63,8 @@ export default class ProjectApi {
     static getProjects(): Promise<ProjectListResult> {
         return fetch("/api/project/my", {
             method: 'GET',
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -86,7 +90,8 @@ export default class ProjectApi {
     static getMembers(projectId: number): Promise<ProjectMembersResult> {
         return fetch(`/api/project/members/${projectId}`, {
             method: 'GET',
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -114,7 +119,8 @@ export default class ProjectApi {
         return fetch(`/api/project/delete/${projectId}`, {
             method: 'POST',
             body: "",
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -131,7 +137,8 @@ export default class ProjectApi {
         return fetch(`/api/project/update/${projectId}`, {
             method: 'POST',
             body: updateRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -148,7 +155,8 @@ export default class ProjectApi {
         return fetch(`/api/project/addUser/${projectId}`, {
             method: "POST",
             body: addRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -165,7 +173,8 @@ export default class ProjectApi {
         return fetch(`/api/project/members/${projectId}`, {
             method: "DELETE",
             body: deleteRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -181,7 +190,8 @@ export default class ProjectApi {
     static getProject(projectId: number): Promise<ProjectResult> {
         return fetch(`/api/project/info/${projectId}`, {
             method: 'GET',
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -202,7 +212,8 @@ export default class ProjectApi {
     static getTasks(projectId: number): Promise<TaskListResult> {
         return fetch(`/api/project/tasks/${projectId}`, {
             method: 'GET',
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {

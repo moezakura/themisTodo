@@ -7,12 +7,14 @@ import TaskAddRequest from "@scripts/model/api/TaskAddRequest"
 import TaskSearchRequest from "@scripts/model/api/TaskSearchRequest"
 import TaskBulkUpdateRequest from "@scripts/model/api/TaskBulkUpdateRequest"
 import TaskBulkDeleteRequest from "@scripts/model/api/TaskBulkDeleteRequest"
+import BaseApi from "@scripts/api/BaseApi"
 
-export default class TaskApi {
+export default class TaskApi extends BaseApi {
     static getTaskFromCreateDate(createDate: string): Promise<TaskResult> {
         return fetch("/api/tasks/view/" + createDate, {
             method: 'GET',
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -30,7 +32,8 @@ export default class TaskApi {
     static search(searchRequest: TaskSearchRequest): Promise<TaskListResult> {
         return fetch(`/api/tasks/search${searchRequest.toQueryString()}`, {
             method: 'GET',
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -55,7 +58,8 @@ export default class TaskApi {
         return fetch("/api/tasks/create", {
             method: 'POST',
             body: taskAddRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -73,7 +77,8 @@ export default class TaskApi {
         return fetch("/api/tasks/update/" + createDate, {
             method: 'POST',
             body: task.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -90,7 +95,8 @@ export default class TaskApi {
         return fetch("/api/tasks/bulkUpdate", {
             method: 'POST',
             body: updateRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -106,7 +112,8 @@ export default class TaskApi {
     static delete(createDate: string): Promise<BaseApiResult> {
         return fetch(`/api/tasks/delete/${createDate}`, {
             method: 'POST',
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {
@@ -123,7 +130,8 @@ export default class TaskApi {
         return fetch(`/api/tasks/bulkDelete`, {
             method: 'DELETE',
             body: deleteRequest.toJson(),
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(res => {
             return res.json()
         }).then(json => {

@@ -22,6 +22,11 @@ const router = new VueRouter({
     })
 
 ;(async () => {
+    const token = localStorage.getItem("accessToken")
+    if(token != null){
+        store.commit("setToken", token)
+    }
+
     const res = await AuthApi.auth()
 
     new Vue({

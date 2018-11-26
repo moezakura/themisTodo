@@ -1,8 +1,9 @@
 import LoginRequest from '@scripts/model/api/LoginRequest'
 import LoginResult from "@scripts/model/api/LoginResult"
 import BaseApiResult from "@scripts/model/api/BaseApiResult"
+import BaseApi from "@scripts/api/BaseApi"
 
-export default class AuthApi {
+export default class AuthApi extends BaseApi {
     static login(loginObject: LoginRequest): Promise<LoginResult> {
         return fetch("/api/login", {
             method: 'POST',
@@ -21,7 +22,8 @@ export default class AuthApi {
     static auth(): Promise<BaseApiResult> {
         return fetch("/api/auth", {
             method: 'OPTIONS',
-            credentials: "same-origin"
+            credentials: "same-origin",
+            headers: this.getHeader(),
         }).then(response => {
             return response.json()
         }).then(json => {
