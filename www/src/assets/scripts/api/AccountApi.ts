@@ -10,6 +10,7 @@ import Task from "@scripts/model/api/task/Task"
 import AccountSearchRequest from "@scripts/model/api/AccountSearchRequest"
 import {AccountSearchResult} from "@scripts/model/api/AccountSearchResult"
 import BaseApi from "@scripts/api/BaseApi"
+import State from "@scripts/store"
 
 export default class AccountApi extends BaseApi {
     static getProfile(): Promise<ProfileResult> {
@@ -153,6 +154,7 @@ export default class AccountApi extends BaseApi {
             })
 
             uploadXhr.open("POST", "/api/account/updateIcon")
+            uploadXhr.setRequestHeader("x-access-token", State.getters.getToken)
             uploadXhr.send(uploadData)
         }).then(json => {
             let res = new AccountUpdateImageResult()
