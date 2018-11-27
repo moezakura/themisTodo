@@ -13,8 +13,26 @@ export default Vue.component('TaskDetailDescriptionRich', {
         const userCache: Array<User> = []
         return {
             userCache: userCache,
-            description: "",
             checkbox: [],
+            descriptionCache: "",
+        }
+    },
+    computed: {
+        description: {
+            get() {
+                let description = ""
+                try {
+                    let task = this.$store.getters.getCurrentTask
+                    description = task.description
+                } catch (e) {
+                    console.error(e)
+                }
+
+                return description
+            },
+            set(text: string) {
+                this.descriptionCache = text
+            }
         }
     },
     methods: {
@@ -71,17 +89,10 @@ export default Vue.component('TaskDetailDescriptionRich', {
             }
 
             this.description = d
-            this.$emit("detailUpdate", this.description)
+            this.$emit("detailUpdate", this.descriptionCache)
         }
     },
     created() {
-        this.description = ""
-        try {
-            let task = this.$store.getters.getCurrentTask
-            this.description = task.description
-        } catch (e) {
-            console.error(e)
-        }
     },
     render: function (createElement) {
         let buff = ""
