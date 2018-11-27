@@ -14,7 +14,7 @@ func Init(db *sql.DB) *gin.Engine {
 	baseController := themsController.NewBaseController(db, r)
 
 	// ログイン関連
-	loginController := themsController.LoginController{baseController}
+	loginController := &themsController.LoginController{baseController}
 	r.POST("/login", loginController.PostLogin)
 	r.OPTIONS("/auth", loginController.AuthCheck)
 
@@ -22,7 +22,7 @@ func Init(db *sql.DB) *gin.Engine {
 	projects := r.Group("/project")
 	projects.Use(authCheck(db))
 	{
-		projectsController := themsController.ProjectsController{baseController}
+		projectsController := &themsController.ProjectsController{baseController}
 
 		projects.POST("/add", projectsController.PostAdd)
 		projects.POST("/delete/:projectId", projectsController.PostDeleteProject)
@@ -40,7 +40,7 @@ func Init(db *sql.DB) *gin.Engine {
 	tasks := r.Group("/tasks")
 	tasks.Use(authCheck(db))
 	{
-		tasksController := themsController.TasksController{baseController}
+		tasksController := &themsController.TasksController{baseController}
 
 		tasks.POST("/create", tasksController.PostTaskCreate)
 		tasks.POST("/update/:createDate", tasksController.PostUpdate)
@@ -56,7 +56,7 @@ func Init(db *sql.DB) *gin.Engine {
 	account := r.Group("/account")
 	account.Use(authCheck(db))
 	{
-		accountsController := themsController.AccountController{baseController}
+		accountsController := &themsController.AccountController{baseController}
 
 		account.POST("/add", accountsController.PostAdd)
 		account.GET("/search", accountsController.GetSearch)

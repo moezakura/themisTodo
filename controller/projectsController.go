@@ -14,7 +14,7 @@ type ProjectsController struct {
 	*BaseController
 }
 
-func (self ProjectsController) PostAdd(c *gin.Context) {
+func (p *ProjectsController) PostAdd(c *gin.Context) {
 	addResult := &models.ProjectAddResultJson{}
 	userUuid := c.GetInt("uuid")
 
@@ -39,7 +39,7 @@ func (self ProjectsController) PostAdd(c *gin.Context) {
 		return
 	}
 
-	projectsModule := module.NewProjectsModule(self.DB)
+	projectsModule := module.NewProjectsModule(p.DB)
 	err2, id := projectsModule.Add(addRequest.Name, addRequest.Description)
 
 	if err2 {
@@ -54,7 +54,7 @@ func (self ProjectsController) PostAdd(c *gin.Context) {
 	themisView.ProjectsView{}.PostAdd(c, addResult)
 }
 
-func (self ProjectsController) PostUpdate(c *gin.Context) {
+func (p *ProjectsController) PostUpdate(c *gin.Context) {
 	addResult := &models.ProjectAddResultJson{}
 
 	projectIdStr := c.Param("projectId")
@@ -94,7 +94,7 @@ func (self ProjectsController) PostUpdate(c *gin.Context) {
 		addRequest.Description,
 	}
 
-	projectsModule := module.NewProjectsModule(self.DB)
+	projectsModule := module.NewProjectsModule(p.DB)
 	err2 := projectsModule.Update(project)
 
 	if err2 {
@@ -107,7 +107,7 @@ func (self ProjectsController) PostUpdate(c *gin.Context) {
 	themisView.ProjectsView{}.PostUpdate(c, addResult)
 }
 
-func (self ProjectsController) PostAddUser(c *gin.Context) {
+func (p *ProjectsController) PostAddUser(c *gin.Context) {
 	addResult := &models.ProjectAddResultJson{}
 
 	projectIdStr := c.Param("projectId")
@@ -127,7 +127,7 @@ func (self ProjectsController) PostAddUser(c *gin.Context) {
 		return
 	}
 
-	accountModule := module.NewAccountModule(self.DB)
+	accountModule := module.NewAccountModule(p.DB)
 
 	isError, account := accountModule.GetAccount(addRequest.Uuid)
 	if isError || account == nil {
@@ -154,7 +154,7 @@ func (self ProjectsController) PostAddUser(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(p.DB)
 	isErrorProjectAdd := projectModule.AddUser(addRequest.Uuid, projectId)
 	if isErrorProjectAdd {
 		addResult.Message = "server error"
@@ -171,7 +171,7 @@ func (self ProjectsController) PostAddUser(c *gin.Context) {
 	themisView.ProjectsView{}.PostAddUser(c, addResult)
 }
 
-func (self ProjectsController) PostDeleteProject(c *gin.Context) {
+func (p *ProjectsController) PostDeleteProject(c *gin.Context) {
 	userUuid := c.GetInt("uuid")
 	resultJson := models.ProjectDeleteResultJson{}
 
@@ -184,7 +184,7 @@ func (self ProjectsController) PostDeleteProject(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(p.DB)
 	isIn := projectModule.IsIn(userUuid, projectId)
 	if !isIn {
 		resultJson.Message = "invalid user"
@@ -204,7 +204,7 @@ func (self ProjectsController) PostDeleteProject(c *gin.Context) {
 	themisView.ProjectsView{}.PostDeleteProject(c, http.StatusOK, &resultJson)
 }
 
-func (self ProjectsController) GetInfo(c *gin.Context) {
+func (p *ProjectsController) GetInfo(c *gin.Context) {
 	userUuid := c.GetInt("uuid")
 	resultJson := &models.ProjectInfoResultJson{}
 
@@ -217,7 +217,7 @@ func (self ProjectsController) GetInfo(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(p.DB)
 	isIn := projectModule.IsIn(userUuid, projectId)
 	if !isIn {
 		resultJson.Message = "not found project"
@@ -237,7 +237,7 @@ func (self ProjectsController) GetInfo(c *gin.Context) {
 	themisView.ProjectsView{}.GetInfo(c, http.StatusOK, resultJson)
 }
 
-func (self ProjectsController) GetTasks(c *gin.Context) {
+func (p *ProjectsController) GetTasks(c *gin.Context) {
 	userUuid := c.GetInt("uuid")
 	resultJson := &models.TasksGetResultJson{}
 
@@ -250,7 +250,7 @@ func (self ProjectsController) GetTasks(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(p.DB)
 	isIn := projectModule.IsIn(userUuid, projectId)
 	if !isIn {
 		resultJson.Message = "not found project"
@@ -265,7 +265,7 @@ func (self ProjectsController) GetTasks(c *gin.Context) {
 		return
 	}
 
-	tasksModule := module.NewTaskModule(self.DB)
+	tasksModule := module.NewTaskModule(p.DB)
 	isError, tasks := tasksModule.GetList(projectId)
 	tasks = utils.TasksConvert(tasks)
 
@@ -275,7 +275,7 @@ func (self ProjectsController) GetTasks(c *gin.Context) {
 	themisView.ProjectsView{}.GetTasks(c, http.StatusOK, resultJson)
 }
 
-func (self ProjectsController) GetMembers(c *gin.Context) {
+func (p *ProjectsController) GetMembers(c *gin.Context) {
 	userUuid := c.GetInt("uuid")
 	resultJson := &models.ProjectMembersResultJson{}
 
@@ -288,7 +288,7 @@ func (self ProjectsController) GetMembers(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(p.DB)
 	isIn := projectModule.IsIn(userUuid, projectId)
 	if !isIn {
 		resultJson.Message = "not found project or not found users"
@@ -309,7 +309,7 @@ func (self ProjectsController) GetMembers(c *gin.Context) {
 	themisView.ProjectsView{}.GetMembers(c, http.StatusOK, resultJson)
 }
 
-func (self ProjectsController) DeleteMembers(c *gin.Context) {
+func (p *ProjectsController) DeleteMembers(c *gin.Context) {
 	userUuid := c.GetInt("uuid")
 	resultJson := &models.ProjectDeleteMemberResultJson{}
 
@@ -322,7 +322,7 @@ func (self ProjectsController) DeleteMembers(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(p.DB)
 	isIn := projectModule.IsIn(userUuid, projectId)
 	if !isIn {
 		resultJson.Message = "not found project or not found users"
@@ -358,9 +358,9 @@ func (self ProjectsController) DeleteMembers(c *gin.Context) {
 	themisView.ProjectsView{}.DeleteMember(c, http.StatusOK, resultJson)
 }
 
-func (self ProjectsController) GetMy(c *gin.Context) {
+func (p *ProjectsController) GetMy(c *gin.Context) {
 	getResult := &models.ProjectGetResultJson{}
-	projectsModule := module.NewProjectsModule(self.DB)
+	projectsModule := module.NewProjectsModule(p.DB)
 
 	userUuid := c.GetInt("uuid")
 

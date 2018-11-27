@@ -17,7 +17,7 @@ type TasksController struct {
 	*BaseController
 }
 
-func (self TasksController) PostUpdate(c *gin.Context) {
+func (t *TasksController) PostUpdate(c *gin.Context) {
 	updateResult := &models.TaskUpdateResultJson{}
 	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
 
@@ -42,8 +42,8 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
-	projectModule := module.NewProjectsModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
+	projectModule := module.NewProjectsModule(t.DB)
 	isErr, task := taskModule.Get(createdTime)
 
 	if len(updateRequest.Deadline) > 0 {
@@ -107,7 +107,7 @@ func (self TasksController) PostUpdate(c *gin.Context) {
 	themisView.TasksView{}.PostUpdate(c, updateResult)
 }
 
-func (self TasksController) PostBulkUpdate(c *gin.Context) {
+func (t *TasksController) PostBulkUpdate(c *gin.Context) {
 	updateResult := &models.TaskUpdateResultJson{}
 
 	var (
@@ -131,8 +131,8 @@ func (self TasksController) PostBulkUpdate(c *gin.Context) {
 		taskStatusTarget = &taskStatus
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
-	projectModule := module.NewProjectsModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
+	projectModule := module.NewProjectsModule(t.DB)
 	isErr, tasks := taskModule.SearchCreateTimeList(updateRequest.BulkList)
 
 	if isErr {
@@ -185,7 +185,7 @@ func (self TasksController) PostBulkUpdate(c *gin.Context) {
 	themisView.TasksView{}.PostUpdate(c, updateResult)
 }
 
-func (self TasksController) PostDelete(c *gin.Context) {
+func (t *TasksController) PostDelete(c *gin.Context) {
 	deleteResult := &models.TaskDeleteResultJson{}
 	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
 
@@ -197,7 +197,7 @@ func (self TasksController) PostDelete(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
 	isErr, task := taskModule.Get(createdTime)
 
 	if isErr {
@@ -206,7 +206,7 @@ func (self TasksController) PostDelete(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(t.DB)
 	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
 		deleteResult.Message = "invalid task createdTime"
 		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
@@ -225,7 +225,7 @@ func (self TasksController) PostDelete(c *gin.Context) {
 	themisView.TasksView{}.PostDelete(c, statusCode, deleteResult)
 }
 
-func (self TasksController) DeleteBulkDelete(c *gin.Context) {
+func (t *TasksController) DeleteBulkDelete(c *gin.Context) {
 	deleteResult := &models.TaskDeleteResultJson{}
 
 	var deleteRequest models.TaskBulkDeleteRequestJson
@@ -252,7 +252,7 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
 	isErr, tasks := taskModule.SearchCreateTimeList(deleteRequest.BulkList)
 	if len(tasks) != len(deleteRequest.BulkList) {
 		deleteResult.Message = "invalid task createdTime"
@@ -269,7 +269,7 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 		projectsTarget = append(projectsTarget, task.ProjectId)
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(t.DB)
 	if !projectModule.IsInBulk([]int{userUuid}, projectsTarget) {
 		deleteResult.Message = "invalid token"
 		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
@@ -288,7 +288,7 @@ func (self TasksController) DeleteBulkDelete(c *gin.Context) {
 	themisView.TasksView{}.PostDelete(c, statusCode, deleteResult)
 }
 
-func (self TasksController) PostTaskCreate(c *gin.Context) {
+func (t *TasksController) PostTaskCreate(c *gin.Context) {
 	addResult := &models.TaskAddResultJson{}
 	userUuid := c.GetInt("uuid")
 
@@ -313,7 +313,7 @@ func (self TasksController) PostTaskCreate(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(self.DB)
+	projectModule := module.NewProjectsModule(t.DB)
 	if !projectModule.IsIn(addRequest.Assign, addRequest.ProjectId) {
 		addResult.Message = "invalid assign user id"
 		themisView.ProjectsView{}.PostTaskBoard(c, addResult)
@@ -341,7 +341,7 @@ func (self TasksController) PostTaskCreate(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
 	newTask := &models.Task{
 		TaskId:      taskModule.GetLastId(addRequest.ProjectId) + 1,
 		ProjectId:   addRequest.ProjectId,
@@ -361,7 +361,7 @@ func (self TasksController) PostTaskCreate(c *gin.Context) {
 	themisView.ProjectsView{}.PostTaskBoard(c, addResult)
 }
 
-func (self TasksController) GetView(c *gin.Context) {
+func (t *TasksController) GetView(c *gin.Context) {
 	getResult := &models.TaskGetResultJson{}
 	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
 	if err != nil {
@@ -372,7 +372,7 @@ func (self TasksController) GetView(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
 	isErr, task := taskModule.Get(createdTime)
 	if isErr {
 		getResult.Message = "unknown taskId"
@@ -380,7 +380,7 @@ func (self TasksController) GetView(c *gin.Context) {
 		return
 	}
 
-	projectsModule := module.NewProjectsModule(self.DB)
+	projectsModule := module.NewProjectsModule(t.DB)
 	isIn := projectsModule.IsIn(userUuid, task.ProjectId)
 	if !isIn {
 		getResult.Message = "permission denied"
@@ -395,7 +395,7 @@ func (self TasksController) GetView(c *gin.Context) {
 	themisView.TasksView{}.GetView(c, http.StatusOK, getResult)
 }
 
-func (self TasksController) GetSearch(c *gin.Context) {
+func (t *TasksController) GetSearch(c *gin.Context) {
 	getResult := &models.TaskSearchResultJson{}
 	searchRequest := models.TaskSearchRequest{}
 
@@ -434,7 +434,7 @@ func (self TasksController) GetSearch(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	projectsModule := module.NewProjectsModule(self.DB)
+	projectsModule := module.NewProjectsModule(t.DB)
 	isIn := projectsModule.IsIn(userUuid, searchRequest.ProjectId)
 	if !isIn {
 		getResult.Message = "permission denied"
@@ -442,7 +442,7 @@ func (self TasksController) GetSearch(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
 	isErr, tasks := taskModule.Search(searchRequest)
 	if isErr {
 		getResult.Message = "unknown taskId"
@@ -460,7 +460,7 @@ func (self TasksController) GetSearch(c *gin.Context) {
 	themisView.TasksView{}.GetSearch(c, http.StatusOK, getResult)
 }
 
-func (self TasksController) GetMy(c *gin.Context) {
+func (t *TasksController) GetMy(c *gin.Context) {
 	getResult := &models.TasksGetResultJson{}
 	taskStatus, err := models.StringToTaskStatus(c.Query("status"))
 	if err != nil {
@@ -471,7 +471,7 @@ func (self TasksController) GetMy(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(self.DB)
+	taskModule := module.NewTaskModule(t.DB)
 	isErr, tasks := taskModule.GetTasksFromUser(userUuid, 20, taskStatus)
 	if isErr {
 		getResult.Message = "unknown taskId"

@@ -13,7 +13,7 @@ type LoginController struct {
 	*BaseController
 }
 
-func (self LoginController) PostLogin(c *gin.Context) {
+func (l *LoginController) PostLogin(c *gin.Context) {
 	var loginRequest models.LoginRequestJson
 	c.ShouldBindJSON(&loginRequest)
 
@@ -25,7 +25,7 @@ func (self LoginController) PostLogin(c *gin.Context) {
 	}
 
 	loginRequest.Password = utils.SHA512(loginRequest.Password)
-	loginModule := module.NewLoginModule(self.DB)
+	loginModule := module.NewLoginModule(l.DB)
 
 	err, uuid := loginModule.IsLogin(loginRequest.Id, loginRequest.Password)
 
@@ -35,7 +35,7 @@ func (self LoginController) PostLogin(c *gin.Context) {
 		return
 	}
 
-	authToken := self.Session.GetToken(uuid)
+	authToken := l.Session.GetToken(uuid)
 
 	loginResult.Success = true
 	loginResult.Message = authToken
@@ -43,9 +43,9 @@ func (self LoginController) PostLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, loginResult)
 }
 
-func (self LoginController) AuthCheck(c *gin.Context) {
-	loginModule := module.NewLoginModule(self.DB)
-	isError, _ := loginModule.GetUserId(c, self.Session)
+func (l *LoginController) AuthCheck(c *gin.Context) {
+	loginModule := module.NewLoginModule(l.DB)
+	isError, _ := loginModule.GetUserId(c, l.Session)
 
 	loginResult := &models.LoginResultJson{}
 	status := http.StatusBadRequest
