@@ -628,11 +628,11 @@ body {
 
     .task-detail-description-rich {
         overflow-y: auto;
-        vertical-align: text-top;
         line-height: 20px;
 
         span {
             display: inline;
+            vertical-align: bottom;
         }
 
         .space {
