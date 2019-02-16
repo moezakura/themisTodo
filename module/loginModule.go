@@ -62,11 +62,7 @@ func (self *LoginModule) IsLoginFromUuid(uuid int, password string) (error bool,
 }
 
 func (self *LoginModule) GetUserId(c *gin.Context, session *SessionModule) (error bool, uuid int) {
-	token, err := c.Cookie("token")
-
-	if err != nil {
-		return true, -1
-	}
+	token := c.GetHeader("X-Access-Token")
 
 	exist, userUuid := session.GetUuid(token)
 	if !exist {

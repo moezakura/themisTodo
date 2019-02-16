@@ -40,7 +40,7 @@
                         this.errorMessage = res.message
                     } else {
                         localStorage.setItem("accessToken", res.message)
-                        this.$store.commit("setAccessToken", res.message)
+                        this.$store.commit("setToken", res.message)
 
                         this.$router.push({name: 'dashboard'})
                     }
