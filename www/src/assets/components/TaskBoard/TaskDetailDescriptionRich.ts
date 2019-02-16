@@ -206,12 +206,14 @@ export default Vue.component('TaskDetailDescriptionRich', {
 
                     break
                 case '#':
-                    option.isSharp = true
-                    buff += c
-                    break
                 case '@':
-                    option.isAt = true
-                    buff += c
+                    if (c == '#') {
+                        option.isSharp = true
+                    } else if (c == '@') {
+                        option.isAt = true
+                    }
+                    createHTML.push(createElement('span', buff))
+                    buff = c
                     break
                 case '[':
                     option.startWithCheck += c
