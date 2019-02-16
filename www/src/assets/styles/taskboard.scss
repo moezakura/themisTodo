@@ -181,6 +181,7 @@ body {
         font-size: 18px;
         transition: all ease .3s;
     }
+
     #taskboardAddClose:hover {
         background-color: rgba(black, .3);
     }
@@ -517,6 +518,7 @@ body {
                 border-right: 1px solid rgba(white, .5);
                 padding-right: 9px;
             }
+
             &:nth-child(2) {
                 padding-left: 10px;
             }
@@ -594,6 +596,7 @@ body {
                 span {
                     display: block;
                 }
+
                 .task-icon {
                     width: 35px;
                     height: 35px;
@@ -603,6 +606,7 @@ body {
                     background-position: center;
                     border-radius: 50%;
                 }
+
                 .task-id {
                     width: 50px;
                 }
@@ -628,15 +632,17 @@ body {
         line-height: 20px;
 
         span {
-            display: inline-block;
-            line-height: 20px;
-            height: 20px;
-            vertical-align: text-top;
+            display: inline;
+        }
+
+        .space {
+            display: inline;
         }
 
         .task-id,
         .task-user {
             margin: 0 1px;
+            vertical-align: bottom;
         }
 
         .task-id {

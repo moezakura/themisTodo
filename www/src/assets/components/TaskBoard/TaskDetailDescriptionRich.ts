@@ -186,8 +186,12 @@ export default Vue.component('TaskDetailDescriptionRich', {
 
                     if (c == " ") {
                         createHTMLTemp.push(createElement('span', buff))
-                        createHTMLTemp.push(createElement('span', " "))
-                        buff = " "
+                        createHTMLTemp.push(createElement('pre', {
+                            attrs: {
+                                class: "space",
+                            },
+                        }, " "))
+                        buff = ""
                     } else if (c == "\n") {
                         if (!option.isSharp && !option.isAt && buff.length > 0) {
                             createHTMLTemp.push(createElement('span', buff))
