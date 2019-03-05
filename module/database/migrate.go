@@ -21,20 +21,21 @@ func Migrate(db *sql.DB, migrate *migrate.Migrate) {
 	if err != nil {
 		panic(err.Error())
 	}
+	log.Printf("current database version: %d\n", v)
 
 	// migrate v4
-	log.Printf("migrate %d => 4\n", v)
 	if v < 4 {
+		log.Printf("migrate %d => 4\n", v)
 		err := migrate.Steps(4 - int(v))
 		if err != nil {
 			log.Fatalf("migrate faild (%d => 4). %+v\n", v, err)
 		}
 		m.ToV4()
+		v = 4
 	}
-	v = 4
 
-	log.Printf("migrate %d => 6\n", v)
 	if v < 6 {
+		log.Printf("migrate %d => 6\n", v)
 		err := migrate.Steps(6 - int(v))
 		if err != nil {
 			log.Fatalf("migrate faild (%d => 6). %+v\n", v, err)
