@@ -48,21 +48,97 @@ func (self *TasksModule) Add(task *models.Task) *models.Task {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
 
-	stmt, err := self.db.Prepare("INSERT INTO `todo_list` (`id`, `project`, `name`, `creator`, `assign`, `status`, `deadline`, `description`, `createDate`) VALUE (?, ?, ?, ?, ?, ?, ?, ?, ?)")
-
+	tx, err := self.db.Begin()
 	if err != nil {
-		log.Printf("TasksModule.Add Error: (1) %+v", err)
+		log.Printf("TasksModule.Add Error: (txError) %+v", err)
+		return nil
+	}
+	// insert list
+	listStmt, err := tx.Prepare("INSERT INTO `todo_list` (`id`, `project`,`creator`,`createDate`) VALUE (?, ?, ?, ?)")
+	if err != nil {
+		log.Printf("TasksModule.Add Error: (Statement error) %+v\n", err)
+		err := tx.Rollback()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Transaction rolback error) %+v\n", err)
+		}
 		return nil
 	}
 
-	defer stmt.Close()
+	defer func() {
+		err := listStmt.Close()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Statement close error) %+v\n", err)
+		}
+	}()
 
 	now := time.Now().UnixNano()
-	_, err = stmt.Exec(task.TaskId, task.ProjectId, task.Name, task.Creator, task.Assign,
-		task.Status, task.Deadline, task.Description, now)
+	_, err = listStmt.Exec(task.TaskId, task.ProjectId, task.Creator, now)
 	if err != nil {
-		log.Printf("TasksModule.Add Error: (2) %+v", err)
+		log.Printf("TasksModule.Add Error: (Statement exec error) %+v", err)
+		err := tx.Rollback()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Transaction rolback error) %+v\n", err)
+		}
 		return nil
+	}
+
+	// insert history
+	historyStmt, err := tx.Prepare("INSERT INTO `todo_list_history` (name, editor, status, deadline, description, createDate, updateDate, assign) VALUE (?, ?, ?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		log.Printf("TasksModule.Add Error: (Statement error) %+v\n", err)
+		err := tx.Rollback()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Transaction rolback error) %+v\n", err)
+		}
+		return nil
+	}
+	defer func() {
+		err := historyStmt.Close()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Statement close error) %+v\n", err)
+		}
+	}()
+	_, err = historyStmt.Exec(task.Name, task.Creator, task.Status, task.Deadline, task.Description, now, now, task.Assign)
+	if err != nil {
+		log.Printf("TasksModule.Add Error: (Statement exec error) %+v", err)
+		err := tx.Rollback()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Transaction rolback error) %+v\n", err)
+		}
+		return nil
+	}
+
+	// update list (connect history)
+	listConnectStmt, err := tx.Prepare("UPDATE `todo_list` SET `adopted` = ? WHERE createDate = ?;")
+	if err != nil {
+		log.Printf("TasksModule.Add Error: (Statement error) %+v\n", err)
+		err := tx.Rollback()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Transaction rolback error) %+v\n", err)
+		}
+		return nil
+	}
+
+	defer func() {
+		err := listConnectStmt.Close()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Statement close error) %+v\n", err)
+		}
+	}()
+
+	_, err = listConnectStmt.Exec(now, now)
+	if err != nil {
+		log.Printf("TasksModule.Add Error: (Statement exec error) %+v", err)
+		err := tx.Rollback()
+		if err != nil {
+			log.Printf("TasksModule.Add Error: (Transaction rolback error) %+v\n", err)
+		}
+		return nil
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("TasksModule.Add Error: (Transaction commit error) %+v\n", err)
 	}
 
 	task.CreateDate = now
