@@ -366,15 +366,49 @@ WHERE `+queryString+";", queryArray...)
 	return false, returnTask
 }
 
-func (self *TasksModule) Update(createDate int64, task *models.Task) (isErr bool) {
+func (self *TasksModule) Update(createDate int64, editor int, task *models.Task) (isErr bool) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
-	_, err := self.db.Exec("UPDATE `todo_list` SET `name` = ?, `deadline` = ?, `description` = ?, `status` = ?, `assign` = ? WHERE `createDate` = ?;",
-		task.Name, task.Deadline, task.Description, int(task.Status), task.Assign, createDate)
-
+	tx, err := self.db.Begin()
 	if err != nil {
-		log.Printf("TasksModule.Update Error: %+v\n", err)
+		log.Printf("TasksModule.Update Error: (Transaction begin error) %+v\n", err)
 		return true
+	}
+
+	now := time.Now().UnixNano()
+	stmt, err := tx.Prepare("INSERT INTO `todo_list_history` (name, editor, status, deadline, description, createDate, updateDate, assign) VALUE (?, ?, ?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		log.Printf("TasksModule.Update Error: (query error) %+v\n", err)
+		if tx.Rollback() != nil{
+			log.Printf("TasksModule.Update Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+	defer func() {
+		err := stmt.Close()
+		if err != nil {
+			log.Printf("TasksModule.Update Error: (stmt close error) %+v\n", err)
+		}
+	}()
+	_, err = stmt.Exec(task.Name, editor, int(task.Status), task.Deadline, task.Description, createDate, now, task.Assign)
+	if err != nil {
+		log.Printf("TasksModule.Update Error: (stmt exec error) %+v\n", err)
+		if tx.Rollback() != nil{
+			log.Printf("TasksModule.Update Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	_, err = tx.Exec("UPDATE `todo_list` SET adopted = ? WHERE `createDate` = ?;", now, createDate)
+	if err != nil {
+		log.Printf("TasksModule.Update Error: (exec error) %+v\n", err)
+		if tx.Rollback() != nil{
+			log.Printf("TasksModule.Update Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+	if tx.Commit() != nil{
+		log.Printf("TasksModule.Update Error: (Transaction commit error) %+v\n", err)
 	}
 
 	return false

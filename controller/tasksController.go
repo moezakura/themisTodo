@@ -101,7 +101,8 @@ func (t *TasksController) PostUpdate(c *gin.Context) {
 		task.Assign = updateRequest.Assign
 	}
 
-	taskModule.Update(createdTime, task)
+	uuid, _ := c.Get("uuid")
+	taskModule.Update(createdTime, uuid.(int), task)
 
 	updateResult.Success = true
 	themisView.TasksView{}.PostUpdate(c, updateResult)
