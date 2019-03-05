@@ -8,6 +8,7 @@ import (
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
+	"log"
 	"os"
 	"time"
 )
@@ -16,12 +17,30 @@ func main() {
 	os.Mkdir("data", 0777)
 	os.Mkdir("data/account_icon", 0777)
 
-	connectText := fmt.Sprintf("%s:%s@tcp(%s)/%s?multiStatements=true",
-		MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DB_NAME)
-	db, err := sql.Open("mysql", connectText)
-	if err != nil {
-		panic(err.Error())
+	var (
+		db    *sql.DB
+		dbErr error
+	)
+	for i := 0; i < 30; i++ {
+		connectText := fmt.Sprintf("%s:%s@tcp(%s)/%s?multiStatements=true",
+			MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DB_NAME)
+		_db, dbErr := sql.Open("mysql", connectText)
+		err := _db.Ping()
+		if dbErr != nil || err != nil {
+			if dbErr == nil && err != nil {
+				dbErr = err
+			}
+			log.Printf("DB ERROR %+v \n", dbErr)
+			time.Sleep(1 * time.Second)
+		} else {
+			db = _db
+			break
+		}
 	}
+	if db == nil {
+		panic(dbErr.Error())
+	}
+
 	db.SetConnMaxLifetime(30 * time.Minute)
 	db.SetMaxOpenConns(15000)
 	db.SetMaxIdleConns(3000)
