@@ -3,6 +3,7 @@ package module
 import (
 	"../models"
 	"database/sql"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -280,10 +281,6 @@ WHERE ` + whereString + ";"
 		}
 	}()
 
-	if !rows.Next() {
-		return true, nil
-	}
-
 	returnTask := make([]models.Task, 0)
 
 	for rows.Next() {
@@ -296,6 +293,7 @@ WHERE ` + whereString + ";"
 			return true, nil
 		}
 		if updateDate == 0 {
+			fmt.Println("SKIP!")
 			continue
 		}
 		returnTask = append(returnTask, task)
@@ -379,7 +377,7 @@ func (self *TasksModule) Update(createDate int64, editor int, task *models.Task)
 	stmt, err := tx.Prepare("INSERT INTO `todo_list_history` (name, editor, status, deadline, description, createDate, updateDate, assign) VALUE (?, ?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Printf("TasksModule.Update Error: (query error) %+v\n", err)
-		if tx.Rollback() != nil{
+		if tx.Rollback() != nil {
 			log.Printf("TasksModule.Update Error: (Transaction rollback error) %+v\n", err)
 		}
 		return true
@@ -393,7 +391,7 @@ func (self *TasksModule) Update(createDate int64, editor int, task *models.Task)
 	_, err = stmt.Exec(task.Name, editor, int(task.Status), task.Deadline, task.Description, createDate, now, task.Assign)
 	if err != nil {
 		log.Printf("TasksModule.Update Error: (stmt exec error) %+v\n", err)
-		if tx.Rollback() != nil{
+		if tx.Rollback() != nil {
 			log.Printf("TasksModule.Update Error: (Transaction rollback error) %+v\n", err)
 		}
 		return true
@@ -402,60 +400,77 @@ func (self *TasksModule) Update(createDate int64, editor int, task *models.Task)
 	_, err = tx.Exec("UPDATE `todo_list` SET adopted = ? WHERE `createDate` = ?;", now, createDate)
 	if err != nil {
 		log.Printf("TasksModule.Update Error: (exec error) %+v\n", err)
-		if tx.Rollback() != nil{
+		if tx.Rollback() != nil {
 			log.Printf("TasksModule.Update Error: (Transaction rollback error) %+v\n", err)
 		}
 		return true
 	}
-	if tx.Commit() != nil{
+	if tx.Commit() != nil {
 		log.Printf("TasksModule.Update Error: (Transaction commit error) %+v\n", err)
 	}
 
 	return false
 }
 
-func (self *TasksModule) UpdateAll(tasks []models.Task, status *models.TaskStatus, assign int, deadline *time.Time) (isErr bool) {
+func (self *TasksModule) UpdateAll(tasks []models.Task, editor int, status *models.TaskStatus, assign int, deadline *time.Time) (isErr bool) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
+	tx, err := self.db.Begin()
+	if err != nil {
+		log.Printf("TasksModule.UpdateAll Error: (Transaction begin error) %+v\n", err)
+		return true
+	}
 
-	updateSetQuery := ""
-	updateArray := make([]interface{}, 0)
-	{
+	for _, task := range tasks {
+		now := time.Now().UnixNano()
+		updatedDeadline := deadline
+
 		if status != nil {
-			updateSetQuery += "`status` = ? "
-			updateArray = append(updateArray, status)
+			task.Status = *status
 		}
 		if assign > 0 {
-			if len(updateSetQuery) > 0 {
-				updateSetQuery += ","
-			}
-			updateSetQuery += "`assign` = ? "
-			updateArray = append(updateArray, assign)
+			task.Assign = assign
 		}
-		if deadline != nil {
-			if len(updateSetQuery) > 0 {
-				updateSetQuery += ","
+		if deadline == nil {
+			_updatedDeadline, _ := time.Parse("2006-01-02", task.Deadline)
+			updatedDeadline = &_updatedDeadline
+		}
+
+		stmt, err := tx.Prepare("INSERT INTO `todo_list_history` (name, editor, status, deadline, description, createDate, updateDate, assign) VALUE (?, ?, ?, ?, ?, ?, ?, ?)")
+		if err != nil {
+			log.Printf("TasksModule.UpdateAll Error: (query error) %+v\n", err)
+			if tx.Rollback() != nil {
+				log.Printf("TasksModule.UpdateAll Error: (Transaction rollback error) %+v\n", err)
 			}
-			updateSetQuery += "`assign` = ? "
-			updateArray = append(updateArray, deadline)
+			return true
+		}
+		defer func() {
+			err := stmt.Close()
+			if err != nil {
+				log.Printf("TasksModule.UpdateAll Error: (stmt close error) %+v\n", err)
+			}
+		}()
+		_, err = stmt.Exec(task.Name, editor, task.Status, updatedDeadline, task.Description, task.CreateDate, now, task.Assign)
+		if err != nil {
+			log.Printf("TasksModule.UpdateAll Error: (stmt exec error) %+v\n", err)
+			if tx.Rollback() != nil {
+				log.Printf("TasksModule.UpdateAll Error: (Transaction rollback error) %+v\n", err)
+			}
+			return true
+		}
+		task.Adopted = now
+
+		_, err = tx.Exec("UPDATE `todo_list` SET adopted = ? WHERE `createDate` = ?;", now, task.CreateDate)
+		if err != nil {
+			log.Printf("TasksModule.UpdateAll Error: (exec error) %+v\n", err)
+			if tx.Rollback() != nil {
+				log.Printf("TasksModule.UpdateAll Error: (Transaction rollback error) %+v\n", err)
+			}
+			return true
 		}
 	}
-
-	updateWhereQuery := ""
-	for _, task := range tasks {
-		if len(updateWhereQuery) > 0 {
-			updateWhereQuery += " OR "
-		}
-		updateWhereQuery += " `createDate` = ? "
-		updateArray = append(updateArray, task.CreateDate)
-	}
-
-	_, err := self.db.Exec("UPDATE `todo_list` SET "+updateSetQuery+" WHERE "+updateWhereQuery+";",
-		updateArray...)
-
-	if err != nil {
-		log.Printf("TasksModule.Update Error: %+v\n", err)
-		return true
+	if tx.Commit() != nil {
+		log.Printf("TasksModule.UpdateAll Error: (Transaction commit error) %+v\n", err)
 	}
 
 	return false

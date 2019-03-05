@@ -16,4 +16,5 @@ type Task struct {
 	DeadlineMD      string     `json:"deadlineMD"`
 	Description     string     `json:"description"`
 	CreateDate      int64      `json:"createDate"`
+	Adopted         int64      `json:"updateDate"`
 }

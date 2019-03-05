@@ -180,7 +180,8 @@ func (t *TasksController) PostBulkUpdate(c *gin.Context) {
 		taskAssignTarget = updateRequest.Assign
 	}
 
-	taskModule.UpdateAll(tasks, taskStatusTarget, taskAssignTarget, taskDeadlineTarget)
+	uuid, _ := c.Get("uuid")
+	taskModule.UpdateAll(tasks, uuid.(int), taskStatusTarget, taskAssignTarget, taskDeadlineTarget)
 
 	updateResult.Success = true
 	themisView.TasksView{}.PostUpdate(c, updateResult)
