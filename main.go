@@ -2,6 +2,7 @@ package main
 
 import (
 	"./routers"
+	"./module/database"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
@@ -76,6 +77,8 @@ func db_migrate(db *sql.DB) {
 	if err != nil {
 		panic(err)
 	}
+
+	database.Migrate(db, m)
 
 	err = m.Up()
 	if err != nil {
