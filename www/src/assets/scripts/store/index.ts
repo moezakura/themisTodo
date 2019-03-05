@@ -8,6 +8,7 @@ import User from "@scripts/model/api/user/User"
 
 export interface RootState {
     accessToken: string,
+    isLogin: boolean,
     headerEnable: boolean,
     loadingCount: number,
     profile: User | undefined,
@@ -23,6 +24,7 @@ const store: StoreOptions<RootState> = {
     // データを保存するためのステートを作成
     state: {
         accessToken: "",
+        isLogin: false,
         headerEnable: false,
         loadingCount: 0,
         profile: undefined,
@@ -33,6 +35,7 @@ const store: StoreOptions<RootState> = {
     },
     getters: {
         getToken: state => state.accessToken,
+        isLogin: state => state.isLogin,
         isHeaderEnable: state => state.headerEnable,
         isLoadingShow: state => state.loadingCount > 0,
         getMyProfile: state => state.profile,
@@ -44,6 +47,9 @@ const store: StoreOptions<RootState> = {
     mutations: {
         setToken(state, value) {
             state.accessToken = value
+        },
+        setIsLogin(state, value) {
+            state.isLogin = value
         },
         setHeaderEnable(state, value) {
             state.headerEnable = value
