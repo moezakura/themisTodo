@@ -599,20 +599,21 @@ func (self *TasksModule) GetTasksFromUser(userUuid, limit int, status models.Tas
 	rows, err := self.db.Query(`SELECT
   id,
   project,
-  todo.name,
+  tlh.name,
   creator,
-  assign,
-  status,
-  deadline,
-  description,
-  createDate,
+  tlh.assign,
+  tlh.status,
+  tlh.deadline,
+  tlh.description,
+  todo.createDate,
   u1.displayName,
   u1.icon_path,
   u2.displayName,
   u2.icon_path
 FROM todo_list todo
+  INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
   INNER JOIN users u1 ON u1.uuid = todo.creator
-  INNER JOIN users u2 ON u2.uuid = todo.assign
+  INNER JOIN users u2 ON u2.uuid = tlh.assign
 WHERE assign = ? AND status = ?
 LIMIT 0, ?;`, userUuid, status, limit)
 
