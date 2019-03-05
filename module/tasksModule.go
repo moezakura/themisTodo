@@ -314,34 +314,41 @@ func (self *TasksModule) SearchCreateTimeList(searchReq []string) (isErr bool, t
 		if len(queryString) > 0 {
 			queryString += " OR "
 		}
-		queryString += " createDate = ? "
+		queryString += " todo.createDate = ? "
 		queryArray = append(queryArray, value)
 	}
 
 	rows, err := self.db.Query(`SELECT
   id,
   project,
-  todo.name,
+  tlh.name,
   creator,
-  assign,
-  status,
-  deadline,
-  description,
-  createDate,
+  tlh.assign,
+  tlh.status,
+  tlh.deadline,
+  tlh.description,
+  todo.createDate,
   u1.displayName,
   u1.icon_path,
   u2.displayName,
   u2.icon_path
 FROM todo_list todo
+  INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
   INNER JOIN users u1 ON u1.uuid = todo.creator
-  INNER JOIN users u2 ON u2.uuid = todo.assign
+  INNER JOIN users u2 ON u2.uuid = tlh.assign
 WHERE `+queryString+";", queryArray...)
 
 	if err != nil {
+		log.Printf("TasksModule.SearchCreateTimeList Error:(query error) %+v\n", err)
 		return true, nil
 	}
 
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Printf("TasksModule.SearchCreateTimeList Error: (rows close) %+v\n", err)
+		}
+	}()
 
 	returnTask := make([]models.Task, 0)
 
