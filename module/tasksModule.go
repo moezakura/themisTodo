@@ -149,9 +149,10 @@ func (self *TasksModule) Add(task *models.Task) *models.Task {
 func (self *TasksModule) GetList(projectId int) (error bool, list []models.Task) {
 	list = []models.Task{}
 
-	rows, err := self.db.Query(`SELECT id, todo.name, creator, assign, status, deadline, description, createDate, u1.displayName, u1.icon_path, u2.displayName, u2.icon_path FROM todo_list todo
+	rows, err := self.db.Query(`SELECT id, tlh.name, creator, tlh.assign, tlh.status, tlh.deadline, tlh.description, todo.createDate, u1.displayName, u1.icon_path, u2.displayName, u2.icon_path FROM todo_list todo
+  INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
   INNER JOIN users u1 ON u1.uuid = todo.creator
-  INNER JOIN users u2 ON u2.uuid = todo.assign
+  INNER JOIN users u2 ON u2.uuid = tlh.assign
 WHERE project = ? ORDER BY id ASC;`, projectId)
 
 	if err != nil && err != sql.ErrNoRows {
@@ -163,7 +164,12 @@ WHERE project = ? ORDER BY id ASC;`, projectId)
 		return false, list
 	}
 
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: (rows close) %+v\n", err)
+		}
+	}()
 
 	for rows.Next() {
 		listOne := models.Task{}
@@ -186,27 +192,33 @@ func (self *TasksModule) Get(createDate int64) (isErr bool, task *models.Task) {
 	rows, err := self.db.Query(`SELECT
   id,
   project,
-  todo.name,
+  tlh.name,
   creator,
-  assign,
-  status,
-  deadline,
-  description,
-  createDate,
+  tlh.assign,
+  tlh.status,
+  tlh.deadline,
+  tlh.description,
+  todo.createDate,
   u1.displayName,
   u1.icon_path,
   u2.displayName,
   u2.icon_path
 FROM todo_list todo
+  INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
   INNER JOIN users u1 ON u1.uuid = todo.creator
-  INNER JOIN users u2 ON u2.uuid = todo.assign
-WHERE createDate = ?;`, createDate)
+  INNER JOIN users u2 ON u2.uuid = tlh.assign
+WHERE todo.createDate = ?;`, createDate)
 
 	if err != nil {
 		return true, nil
 	}
 
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Printf("TasksModule.Get Error: (rows close) %+v\n", err)
+		}
+	}()
 
 	if !rows.Next() {
 		return true, nil
@@ -228,32 +240,45 @@ func (self *TasksModule) Search(searchReq models.TaskSearchRequest) (isErr bool,
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
 
-	queryString, queryArray := searchReq.ToSqlQueryAndArgs("todo")
-
-	rows, err := self.db.Query(`SELECT
+	joinString, whereString, queryArray := searchReq.ToSqlQueryAndArgs("tlh", "todo")
+	joinQuery := `INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate`
+	if len(joinString) > 0 {
+		joinQuery += ` AND ` + joinString
+	}
+	query := `SELECT
   id,
   project,
-  todo.name,
+  tlh.name,
   creator,
-  assign,
-  status,
-  deadline,
-  description,
-  createDate,
+  tlh.assign,
+  tlh.status,
+  tlh.deadline,
+  tlh.description,
+  todo.createDate,
   u1.displayName,
   u1.icon_path,
   u2.displayName,
-  u2.icon_path
+  u2.icon_path,
+  tlh.updateDate
 FROM todo_list todo
+  ` + joinQuery + `
   INNER JOIN users u1 ON u1.uuid = todo.creator
-  INNER JOIN users u2 ON u2.uuid = todo.assign
-WHERE `+queryString+";", queryArray...)
+  INNER JOIN users u2 ON u2.uuid = tlh.assign
+WHERE ` + whereString + ";"
+
+	rows, err := self.db.Query(query, queryArray...)
 
 	if err != nil {
+		log.Printf("TasksModule.Search Error:(query error) %+v\n", err)
 		return true, nil
 	}
 
-	defer rows.Close()
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Printf("TasksModule.Search Error: (rows close) %+v\n", err)
+		}
+	}()
 
 	if !rows.Next() {
 		return true, nil
@@ -263,11 +288,15 @@ WHERE `+queryString+";", queryArray...)
 
 	for rows.Next() {
 		task := models.Task{}
+		var updateDate int64
 		if err := rows.Scan(&task.TaskId, &task.ProjectId, &task.Name, &task.Creator, &task.Assign,
 			&task.Status, &task.Deadline, &task.Description, &task.CreateDate, &task.CreatorName,
-			&task.CreatorIconPath, &task.AssignName, &task.AssignIconPath); err != nil {
-			log.Printf("TasksModule.Get Error: %+v\n", err)
+			&task.CreatorIconPath, &task.AssignName, &task.AssignIconPath, &updateDate); err != nil {
+			log.Printf("TasksModule.Search Error:(scan error) %+v\n", err)
 			return true, nil
+		}
+		if updateDate == 0 {
+			continue
 		}
 		returnTask = append(returnTask, task)
 	}

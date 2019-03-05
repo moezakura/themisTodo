@@ -8,13 +8,15 @@ type TaskSearchRequest struct {
 	CreateUserId int
 }
 
-func (t TaskSearchRequest) ToSqlQueryAndArgs(tableName string) (queryText string, queryArgs []interface{}) {
+func (t TaskSearchRequest) ToSqlQueryAndArgs(joinTableName, tableName string) (joinText, queryText string, queryArgs []interface{}) {
 	whereSQL := ""
+	joinSQL := ""
+	joinArray := make([]interface{}, 0)
 	whereArray := make([]interface{}, 0)
 
 	if t.Status != TASK_STATUS_OTHER {
-		whereSQL += tableName + ".status = ? "
-		whereArray = append(whereArray, t.Status)
+		joinSQL += joinTableName + ".status = ? "
+		joinArray = append(joinArray, t.Status)
 	}
 
 	if t.TaskId > 0 {
@@ -34,11 +36,11 @@ func (t TaskSearchRequest) ToSqlQueryAndArgs(tableName string) (queryText string
 	}
 
 	if t.AssignUserId > 0 {
-		if len(whereSQL) > 0 {
-			whereSQL += " AND "
+		if len(joinSQL) > 0 {
+			joinSQL += " AND "
 		}
-		whereSQL += tableName + ".assign = ? "
-		whereArray = append(whereArray, t.AssignUserId)
+		joinSQL += joinTableName + ".assign = ? "
+		joinArray = append(joinArray, t.AssignUserId)
 	}
 
 	if t.CreateUserId > 0 {
@@ -48,6 +50,7 @@ func (t TaskSearchRequest) ToSqlQueryAndArgs(tableName string) (queryText string
 		whereSQL += tableName + ".creator = ? "
 		whereArray = append(whereArray, t.CreateUserId)
 	}
+	whereArray = append(joinArray, whereArray...)
 
-	return whereSQL, whereArray
+	return joinSQL, whereSQL, whereArray
 }
