@@ -479,11 +479,50 @@ func (self *TasksModule) UpdateAll(tasks []models.Task, editor int, status *mode
 func (self *TasksModule) Delete(createDate int64) (isErr bool) {
 	self.dbLock.Lock()
 	defer self.dbLock.Unlock()
-	_, err := self.db.Exec("DELETE FROM `todo_list` WHERE `createDate` = ?;", createDate)
-
+	tx, err := self.db.Begin()
 	if err != nil {
-		log.Printf("TasksModule.Delete Error: %+v\n", err)
+		log.Printf("TasksModule.Delete Error: (Transaction begin error) %+v\n", err)
 		return true
+	}
+
+	_, err = tx.Exec("SET FOREIGN_KEY_CHECKS = 0;")
+	if err != nil {
+		log.Printf("TasksModule.Delete Error: (exec error - todo_list delete) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.Delete Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	_, err = tx.Exec("DELETE FROM `todo_list` WHERE `createDate` = ?;", createDate)
+	if err != nil {
+		log.Printf("TasksModule.Delete Error: (exec error - todo_list delete) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.Delete Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	_, err = tx.Exec("DELETE FROM `todo_list_history` WHERE `createDate` = ?;", createDate)
+	if err != nil {
+		log.Printf("TasksModule.Delete Error: (exec error - todo_list_history delete) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.Delete Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	_, err = tx.Exec("SET FOREIGN_KEY_CHECKS = 1;")
+	if err != nil {
+		log.Printf("TasksModule.Delete Error: (exec error - todo_list delete) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.Delete Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	if tx.Commit() != nil {
+		log.Printf("TasksModule.Delete Error: (Transaction commit error) %+v\n", err)
 	}
 
 	return false

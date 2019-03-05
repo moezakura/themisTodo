@@ -1,2 +1,2 @@
 ALTER TABLE `todo_list` ADD `adopted` BIGINT NULL DEFAULT NULL AFTER `createDate`;
-ALTER TABLE `todo_list` ADD CONSTRAINT `todo_list_ibfk_3` FOREIGN KEY (`adopted`) REFERENCES `todo_list_history`(`updateDate`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE `todo_list` ADD CONSTRAINT `todo_list_ibfk_3` FOREIGN KEY (`adopted`) REFERENCES `todo_list_history`(`updateDate`) ON DELETE RESTRICT ON UPDATE SET NULL;
