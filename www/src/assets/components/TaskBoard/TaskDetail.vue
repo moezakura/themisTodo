@@ -3,7 +3,7 @@
         <transition>
             <div v-if="isShowTaskDetail">
                 <form id="taskPopup" @submit.prevent="submitEdit">
-                    <h2 :class="[limitAddClass]">Doing Task</h2>
+                    <h2 :class="[limitAddClass]">{{ taskStatusText }} Task</h2>
                     <div id="taskPopupActions">
                         <i class="fas fa-trash" id="taskPopupTrashButton" @click="showTaskDeleteOrHide"></i>
                         <i class="fas fa-edit" id="taskPopupEditButton" @click="setEditing(!isEditing)"></i>
@@ -158,6 +158,19 @@
                 }
 
                 return "normal"
+            },
+            taskStatusText(): string {
+                switch (this.task.status) {
+                    case 0:
+                        return "Todo"
+                    case 1:
+                        return "Doing"
+                    case 2:
+                        return "PullRequest"
+                    case 3:
+                        return "Done"
+                }
+                return "Unknown"
             },
             isShowConfirmDelete(): boolean {
                 return this.$store.getters.getProjectDetailStatus == ProjectDetailStatus.DELETE_CONFIRM
