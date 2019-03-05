@@ -207,6 +207,10 @@ export default Vue.component('TaskDetailDescriptionRich', {
                     break
                 case '#':
                 case '@':
+                    if (option.tmpStartWithH == "http://" || option.tmpStartWithH == "https://") {
+                        buff += c
+                        continue
+                    }
                     if (c == '#') {
                         option.isSharp = true
                     } else if (c == '@') {
