@@ -487,7 +487,7 @@ func (self *TasksModule) Delete(createDate int64) (isErr bool) {
 
 	_, err = tx.Exec("SET FOREIGN_KEY_CHECKS = 0;")
 	if err != nil {
-		log.Printf("TasksModule.Delete Error: (exec error - todo_list delete) %+v\n", err)
+		log.Printf("TasksModule.Delete Error: (exec error - FOREIGN_KEY_CHECKS=0) %+v\n", err)
 		if tx.Rollback() != nil {
 			log.Printf("TasksModule.Delete Error: (Transaction rollback error) %+v\n", err)
 		}
@@ -514,7 +514,7 @@ func (self *TasksModule) Delete(createDate int64) (isErr bool) {
 
 	_, err = tx.Exec("SET FOREIGN_KEY_CHECKS = 1;")
 	if err != nil {
-		log.Printf("TasksModule.Delete Error: (exec error - todo_list delete) %+v\n", err)
+		log.Printf("TasksModule.Delete Error: (exec error - FOREIGN_KEY_CHECKS=1) %+v\n", err)
 		if tx.Rollback() != nil {
 			log.Printf("TasksModule.Delete Error: (Transaction rollback error) %+v\n", err)
 		}
@@ -542,11 +542,50 @@ func (self *TasksModule) DeleteAll(createDates []int64) (isErr bool) {
 		deleteArray = append(deleteArray, createDate)
 	}
 
-	_, err := self.db.Exec("DELETE FROM `todo_list` WHERE "+deleteWhereQuery+";", deleteArray...)
-
+	tx, err := self.db.Begin()
 	if err != nil {
-		log.Printf("TasksModule.DeleteAll Error: %+v\n", err)
+		log.Printf("TasksModule.DeleteAll Error: (Transaction begin error) %+v\n", err)
 		return true
+	}
+
+	_, err = tx.Exec("SET FOREIGN_KEY_CHECKS = 0;")
+	if err != nil {
+		log.Printf("TasksModule.DeleteAll Error: (exec error - FOREIGN_KEY_CHECKS=0) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.DeleteAll Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	_, err = tx.Exec("DELETE FROM `todo_list` WHERE "+deleteWhereQuery+";", deleteArray...)
+	if err != nil {
+		log.Printf("TasksModule.DeleteAll Error: (exec error - todo_list delete) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.DeleteAll Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	_, err = tx.Exec("DELETE FROM `todo_list_history` WHERE "+deleteWhereQuery+";", deleteArray...)
+	if err != nil {
+		log.Printf("TasksModule.DeleteAll Error: (exec error - todo_list_history delete) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.DeleteAll Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	_, err = tx.Exec("SET FOREIGN_KEY_CHECKS = 1;")
+	if err != nil {
+		log.Printf("TasksModule.DeleteAll Error: (exec error - FOREIGN_KEY_CHECKS=1) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.DeleteAll Error: (Transaction rollback error) %+v\n", err)
+		}
+		return true
+	}
+
+	if tx.Commit() != nil {
+		log.Printf("TasksModule.DeleteAll Error: (Transaction commit error) %+v\n", err)
 	}
 
 	return false
