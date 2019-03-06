@@ -166,4 +166,24 @@ export default class TaskApi extends BaseApi {
             return res
         })
     }
+
+    static applyHistory(createDate: string, updateDate: string): Promise<BaseApiResult> {
+        const req = {
+            update_date: updateDate,
+        }
+        return fetch(`/api/tasks/history/${createDate}`, {
+            method: 'POST',
+            headers: this.getHeader(),
+            body: JSON.stringify(req),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new BaseApiResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+
+            return res
+        })
+    }
 }

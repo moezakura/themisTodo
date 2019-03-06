@@ -308,7 +308,9 @@
                 if (!this.taskHistoryList.isShow) {
                     this.$set(this.taskHistoryList, 'selected', "")
                     this.$set(this.taskHistoryList, 'selectedTask', undefined)
-                    this.$store.commit("setCurrentTask", this.taskHistoryList.originTask)
+                    if (this.taskHistoryList.originTask !== undefined) {
+                        this.$store.commit("setCurrentTask", this.taskHistoryList.originTask)
+                    }
                     this.$set(this.taskHistoryList, 'originTask', undefined)
                 }
 
@@ -324,7 +326,9 @@
                 this.$set(this.taskHistoryList, 'selected', "")
                 this.$set(this.taskHistoryList, 'isShow', false)
                 this.$set(this.taskHistoryList, 'selectedTask', undefined)
-                this.$store.commit("setCurrentTask", this.taskHistoryList.originTask)
+                if (this.taskHistoryList.originTask !== undefined) {
+                    this.$store.commit("setCurrentTask", this.taskHistoryList.originTask)
+                }
                 this.$set(this.taskHistoryList, 'originTask', undefined)
             },
             selectHistory(value: string): void {
@@ -360,7 +364,15 @@
                 this.$store.commit("setCurrentTask", currentTask)
             },
             applyClick(): void {
-                
+                this.$store.commit("incrementLoadingCount")
+                TaskApi.applyHistory(this.currentTaskCreateDate, this.currentTaskUpdateDate).then((res) => {
+                    if(res.success){
+                        this.$store.commit("setCurrentTask", this.taskCache)
+                        this.$set(this.taskHistoryList, 'originTask', undefined)
+                        this.$emit("load-tasks")
+                    }
+                    this.$store.commit("decrementLoadingCount")
+                })
             }
         }
     }

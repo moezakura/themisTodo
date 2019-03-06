@@ -49,6 +49,7 @@ func Init(db *sql.DB) *gin.Engine {
 		tasks.DELETE("/bulkDelete", tasksController.DeleteBulkDelete)
 		tasks.GET("/view/:createDate", tasksController.GetView)
 		tasks.GET("/history/:createDate", tasksController.GetHistoryList)
+		tasks.POST("/history/:createDate", tasksController.PostApplyHistory)
 		tasks.GET("/search", tasksController.GetSearch)
 		tasks.GET("/my", tasksController.GetMy)
 	}

@@ -531,3 +531,56 @@ func (t *TasksController) GetHistoryList(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, result)
 }
+
+func (t *TasksController) PostApplyHistory(c *gin.Context) {
+	userUuid := c.GetInt("uuid")
+	_createDate := c.Param("createDate")
+
+	res := models.TaskHistoryApplyResultJson{}
+	var req models.TaskHistoryApplyRequestJson
+	if c.ShouldBindJSON(&req) != nil {
+		res.Message = "invalid json"
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	updateDate, err := strconv.ParseInt(req.UpdateDate, 10, 64)
+	if err != nil {
+		res.Message = "invalid updateDate"
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	createDate, err := strconv.ParseInt(_createDate, 10, 64)
+	if err != nil {
+		res.Message = "invalid createDate"
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	pm := module.NewProjectsModule(t.DB)
+	tm := module.NewTaskModule(t.DB)
+
+	isErr, task := tm.Get(createDate)
+	if isErr {
+		res.Message = "not found createDate"
+		c.JSON(http.StatusNotFound, res)
+		return
+	}
+
+	if !pm.IsIn(userUuid, task.ProjectId) {
+		res.Message = "not found createDate"
+		c.JSON(http.StatusNotFound, res)
+		return
+	}
+
+	if err := tm.ApplyHistory(createDate, updateDate); err != nil {
+		res.Message = "history apply failed"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	res.Success = true
+	res.Message = "ok"
+	c.JSON(http.StatusOK, res)
+}

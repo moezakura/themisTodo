@@ -4,6 +4,7 @@ import (
 	"../models"
 	"database/sql"
 	"fmt"
+	"github.com/pkg/errors"
 	"log"
 	"sync"
 	"time"
@@ -229,7 +230,7 @@ WHERE todo.createDate = ?;`, createDate)
 	returnTask := &models.Task{}
 	if err := rows.Scan(&returnTask.TaskId, &returnTask.ProjectId, &returnTask.Name,
 		&returnTask.Creator, &returnTask.Assign, &returnTask.Status, &returnTask.Deadline,
-		&returnTask.Description, &returnTask.CreateDate,&returnTask.Adopted, &returnTask.CreatorName,
+		&returnTask.Description, &returnTask.CreateDate, &returnTask.Adopted, &returnTask.CreatorName,
 		&returnTask.CreatorIconPath, &returnTask.AssignName, &returnTask.AssignIconPath); err != nil {
 		log.Printf("TasksModule.Get Error: %+v\n", err)
 		return true, nil
@@ -684,5 +685,50 @@ WHERE createDate = ? ORDER BY tlh.updateDate DESC ;`, createDate)
 	}
 
 	return history, nil
+}
 
+func (t *TasksModule) ApplyHistory(createDate, updateDate int64) error {
+	t.dbLock.Lock()
+	defer t.dbLock.Unlock()
+
+	rows, err := t.db.Query("SELECT COUNT(*) FROM todo_list_history WHERE updateDate = ? AND createDate = ?;", updateDate, createDate)
+	if err != nil {
+		log.Printf("TasksModule.ApplyHistory Error: (exec error) %+v\n", err)
+		return err
+	}
+
+	if rows.Next() {
+		var count int
+		err := rows.Scan(&count)
+		if err != nil {
+			log.Printf("TasksModule.ApplyHistory Error: (exec error) %+v\n", err)
+			return err
+		}
+		if count == 0 {
+			return errors.New("invalid createDate and updateDate.")
+		}
+	} else {
+		return errors.New("invalid createDate and updateDate.")
+	}
+
+	tx, err := t.db.Begin()
+	if err != nil {
+		log.Printf("TasksModule.ApplyHistory Error: (Transaction begin error) %+v\n", err)
+		return err
+	}
+
+	_, err = tx.Exec("UPDATE `todo_list` SET adopted =? WHERE `createDate` = ?;", updateDate, createDate)
+	if err != nil {
+		log.Printf("TasksModule.ApplyHistory Error: (exec error) %+v\n", err)
+		if tx.Rollback() != nil {
+			log.Printf("TasksModule.ApplyHistory Error: (Transaction rollback error) %+v\n", err)
+		}
+		return err
+	}
+
+	if tx.Commit() != nil {
+		log.Printf("TasksModule.ApplyHistory Error: (Transaction commit error) %+v\n", err)
+	}
+
+	return nil
 }
