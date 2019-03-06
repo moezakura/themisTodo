@@ -487,3 +487,47 @@ func (t *TasksController) GetMy(c *gin.Context) {
 
 	themisView.TasksView{}.GetMy(c, http.StatusOK, getResult)
 }
+
+func (t *TasksController) GetHistoryList(c *gin.Context) {
+	userUuid := c.GetInt("uuid")
+	result := models.TaskHistoryJson{}
+	result.Success = false
+	createDate, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
+
+	if err != nil {
+		result.Message = "invalid taskId"
+		c.JSON(http.StatusBadRequest, result)
+		return
+	}
+
+	pm := module.NewProjectsModule(t.DB)
+	tm := module.NewTaskModule(t.DB)
+
+	isErr, task := tm.Get(createDate)
+	if isErr {
+		result.Message = "invalid taskId"
+		c.JSON(http.StatusBadRequest, result)
+		return
+	}
+
+	if !pm.IsIn(userUuid, task.ProjectId) {
+		result.Message = "invalid taskId"
+		c.JSON(http.StatusBadRequest, result)
+		return
+	}
+
+	history, err := tm.GetHistoryList(task.CreateDate)
+	if err != nil {
+		result.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, result)
+		return
+	}
+	result.Success = true
+	result.Message = ""
+	result.Payload = make([]models.TaskHistoryOfJson, 0)
+	for _, h := range history {
+		h.Task = *utils.TaskHistoryItemConvert(&h.Task)
+		result.Payload = append(result.Payload, h.ToJson())
+	}
+	c.JSON(http.StatusOK, result)
+}

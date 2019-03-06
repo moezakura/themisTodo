@@ -637,3 +637,48 @@ LIMIT 0, ?;`, userUuid, status, limit)
 
 	return false, list
 }
+
+func (t *TasksModule) GetHistoryList(createDate int64) (history []models.TaskHistory, err error) {
+	t.dbLock.Lock()
+	defer t.dbLock.Unlock()
+
+	history = make([]models.TaskHistory, 0)
+	rows, err := t.db.Query(
+		`SELECT
+tlh.createDate, tlh.updateDate, tlh.name, tlh.editor, tlh.status, tlh.assign, tlh.deadline, tlh.description,
+u1.displayName, u1.icon_path, u2.displayName, u2.icon_path
+ FROM todo_list_history tlh
+   INNER JOIN users u1 ON u1.uuid = tlh.editor
+   INNER JOIN users u2 ON u2.uuid = tlh.assign
+WHERE createDate = ? ORDER BY tlh.updateDate DESC ;`, createDate)
+	if err != nil {
+		log.Printf("TasksModule.GetHistoryList Error:(query error) %+v\n", err)
+		return nil, err
+	}
+	defer func() {
+		if rows.Close() != nil {
+			log.Printf("TasksModule.GetHistoryList Error:(rows close error) %+v\n", err)
+		}
+	}()
+
+	for rows.Next() {
+		historyItem := models.TaskHistory{}
+		historyTaskItem := models.TaskHistoryItem{}
+
+		err := rows.Scan(&historyItem.CreateDate, &historyItem.UpdateDate, &historyTaskItem.Name,
+			&historyTaskItem.Editor, &historyTaskItem.Status, &historyTaskItem.Assign, &historyTaskItem.Deadline,
+			&historyTaskItem.Description, &historyTaskItem.EditorName, &historyTaskItem.EditorIconPath,
+			&historyTaskItem.AssignName, &historyTaskItem.AssignIconPath)
+		if err != nil {
+			log.Printf("TasksModule.GetHistoryList Error:(scan error) %+v\n", err)
+			return nil, err
+		}
+		historyTaskItem.CreateDate = historyItem.CreateDate
+		historyTaskItem.UpdateDate = historyItem.UpdateDate
+		historyItem.Task = historyTaskItem
+		history = append(history, historyItem)
+	}
+
+	return history, nil
+
+}

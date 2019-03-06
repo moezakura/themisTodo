@@ -24,3 +24,15 @@ func TaskConvert(task *models.Task) *models.Task {
 
 	return task
 }
+
+func TaskHistoryItemConvert(task *models.TaskHistoryItem) *models.TaskHistoryItem {
+	var e bool
+	e, task.DeadlineMD = GetDateMD(task.Deadline)
+	if e {
+		log.Printf("Utils.TaskConvert")
+	}
+
+	task.LimitDate = DiffDay(task.Deadline)
+
+	return task
+}

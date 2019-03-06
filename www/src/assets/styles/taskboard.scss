@@ -392,8 +392,8 @@ body {
     }
 
     #taskPopupActions {
-        margin: -$buttonHeight 0 15px calc(100% - #{$buttonHeight * 3} + 20px);
-        width: $buttonHeight * 3;
+        margin: -$buttonHeight 0 15px calc(100% - #{$buttonHeight * 4} + 20px);
+        width: $buttonHeight * 4;
 
         i {
             float: left;
@@ -405,7 +405,7 @@ body {
             font-size: 14px;
             box-sizing: border-box;
             padding-left: 3px;
-            transition: ease .4s background-color;
+            transition: background-color ease .4s;
 
             &:hover {
                 background-color: accentColor(.15);
@@ -717,6 +717,110 @@ body {
                 display: none;
             }
         }
+    }
+}
+
+#taskHistoryList {
+    position: fixed;
+    left: calc(50% + #{$taskPopupWidth} / 2 + 5px);
+    top: 50%;
+    z-index: 90;
+    background-color: $backgroundColor;
+    padding: 10px 5px;
+    box-sizing: border-box;
+    width: 250px;
+    box-shadow: 0 0 6px rgba(black, .5);
+
+    .title-bar {
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        font-size: 18px;
+        padding-left: 15px;
+        background-color: rgba(black, 0.5);
+        letter-spacing: 1.5px;
+        margin: -10px -5px 0 -5px;
+        display: flex;
+
+        .fas {
+            margin: 0 0 0 auto;
+            width: $buttonHeight;
+            height: $buttonHeight;
+            line-height: $buttonHeight;
+            text-align: center;
+            display: block;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: background-color ease .4s;
+
+            &:hover {
+                background-color: accentColor(.15);
+            }
+        }
+    }
+
+    ul {
+        box-sizing: border-box;
+        padding: 8px 0;
+
+        li {
+            height: 40px;
+            line-height: 40px;
+            margin: 3px 0;
+            letter-spacing: 1.3px;
+            box-sizing: border-box;
+            padding: 0 8px 0 24px;
+            transition: background-color ease .2s;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+
+            &.selected {
+                background-color: accentColor(.8);
+                display: flex;
+
+                &::before {
+                    display: block;
+                    width: 20px;
+                    margin: 0 4px 0 -20px;
+                    text-align: center;
+                    font-family: 'Font Awesome 5 Free', sans-serif;
+                    content: "\f00c";
+                    font-weight: 900;
+                }
+            }
+
+            &:hover {
+                background-color: accentColor(.15);
+            }
+
+            &.selected:hover {
+                background-color: $accentColor;
+            }
+        }
+    }
+
+    .apply-button {
+        display: block;
+        width: 100%;
+        color: white;
+        box-sizing: border-box;
+        padding: 0 12px;
+        margin-top: 5px;
+        height: $buttonHeight;
+        line-height: $buttonHeight;
+        letter-spacing: 1.5px;
+        border: 1px solid accentColor(.5);
+        background-color: accentColor(.05);
+        transition: ease background-color .3s;
+        text-align: center;
+        user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+
+        &:hover {
+            background-color: accentColor(.2);
+        }
+
     }
 }
 

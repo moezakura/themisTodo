@@ -8,6 +8,7 @@ import TaskSearchRequest from "@scripts/model/api/TaskSearchRequest"
 import TaskBulkUpdateRequest from "@scripts/model/api/TaskBulkUpdateRequest"
 import TaskBulkDeleteRequest from "@scripts/model/api/TaskBulkDeleteRequest"
 import BaseApi from "@scripts/api/BaseApi"
+import TaskHistory from "@scripts/model/api/task/TaskHistory"
 
 export default class TaskApi extends BaseApi {
     static getTaskFromCreateDate(createDate: string): Promise<TaskResult> {
@@ -139,6 +140,28 @@ export default class TaskApi extends BaseApi {
 
             res.success = json["success"]
             res.message = json["message"]
+
+            return res
+        })
+    }
+
+    static getHistory(createDate: string): Promise<Array<TaskHistory> | undefined> {
+        return fetch(`/api/tasks/history/${createDate}`, {
+            method: 'GET',
+            headers: this.getHeader(),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            if (!json["success"]) {
+                return undefined
+            }
+
+            let res: Array<TaskHistory> = []
+            for (const th of json["payload"]) {
+                const t = new TaskHistory()
+                t.fromAny(th)
+                res.push(t)
+            }
 
             return res
         })
