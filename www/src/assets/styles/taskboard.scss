@@ -761,6 +761,7 @@ body {
     ul {
         box-sizing: border-box;
         padding: 8px 0;
+        overflow-y: auto;
 
         li {
             height: 40px;
@@ -781,7 +782,7 @@ body {
                 &::before {
                     display: block;
                     width: 20px;
-                    margin: 0 4px 0 -20px;
+                    margin: 0 2px 0 -22px;
                     text-align: center;
                     font-family: 'Font Awesome 5 Free', sans-serif;
                     content: "\f00c";

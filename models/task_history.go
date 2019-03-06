@@ -40,7 +40,7 @@ type TaskHistoryItemJson struct {
 	AssignName     string     `json:"assign_name"`
 	AssignIconPath string     `json:"assign_icon_path"`
 	Deadline       string     `json:"deadline"`
-	LimitDate      int        `json:"limitDate"`
+	LimitDate      int        `json:"limit_date"`
 	DeadlineMD     string     `json:"deadline_md"`
 	Description    string     `json:"description"`
 	CreateDate     string     `json:"create_date"`
@@ -57,7 +57,7 @@ type TaskHistoryItem struct {
 	AssignName     string     `json:"assign_name"`
 	AssignIconPath string     `json:"assign_icon_path"`
 	Deadline       string     `json:"deadline"`
-	LimitDate      int        `json:"limitDate"`
+	LimitDate      int        `json:"limit_date"`
 	DeadlineMD     string     `json:"deadline_md"`
 	Description    string     `json:"description"`
 	CreateDate     int64      `json:"create_date"`

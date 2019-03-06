@@ -71,11 +71,12 @@
 					<i class="fas fa-chevron-left" @click="hideTaskHistoryList"></i>
 				</div>
 				<ul :style="{height: `calc(${taskHistoryList.height} - (45px * 2 + 5px + 10px))` }">
-					<li v-for="i in taskHistoryList.list" :class="{ selected: currentTaskUpdateDate === i.updateDate }">
+					<li v-for="i in taskHistoryList.list" :class="{ selected: currentTaskUpdateDate === i.updateDate }"
+					    @click="selectHistory(i.updateDate)">
 						{{ i.updateDateFormat }}
 					</li>
 				</ul>
-				<div class="apply-button">APPLY</div>
+				<div class="apply-button" @click="applyClick">APPLY</div>
 			</div>
 		</transition>
 		<task-delete-or-hide @reload="commitLoadTasks"></task-delete-or-hide>
@@ -107,6 +108,7 @@
         data: () => {
             const taskCache: Task | undefined = undefined
             const taskHistoryList: Array<TaskHistory> | undefined = undefined
+            const taskHistoryTask: TaskHistory | undefined = undefined
 
             return {
                 isSuccess: false,
@@ -117,6 +119,9 @@
                     isShow: false,
                     topPos: "0px",
                     height: "0px",
+                    selected: "",
+                    originTask: taskCache,
+                    selectedTask: taskHistoryTask,
                     list: taskHistoryList
                 }
             }
@@ -198,7 +203,10 @@
                 return this.$store.getters.getCurrentTask.createDate
             },
             currentTaskUpdateDate(): string {
-                return this.$store.getters.getCurrentTask.createDate
+                if (this.taskHistoryList.selected !== undefined && this.taskHistoryList.selected.length > 0) {
+                    return this.taskHistoryList.selected
+                }
+                return this.$store.getters.getCurrentTask.updateDate
             },
             isShowConfirmDelete(): boolean {
                 return this.$store.getters.getProjectDetailStatus == ProjectDetailStatus.DELETE_CONFIRM
@@ -207,8 +215,10 @@
         watch: {
             "taskHistoryList.isShow"(value): void {
                 if (value) {
+                    this.$store.commit("incrementLoadingCount")
                     TaskApi.getHistory(this.currentTaskCreateDate).then((list) => {
                         if (list === undefined) {
+                            this.$store.commit("decrementLoadingCount")
                             return
                         }
                         for (const i in list) {
@@ -222,6 +232,7 @@
                                 ("00" + date.getSeconds()).slice(-2)
                         }
                         this.$set(this.taskHistoryList, "list", list)
+                        this.$store.commit("decrementLoadingCount")
                     })
                 }
             }
@@ -294,6 +305,12 @@
             },
             showToggleTaskHistoryList(): void {
                 this.$set(this.taskHistoryList, 'isShow', !this.taskHistoryList.isShow)
+                if (!this.taskHistoryList.isShow) {
+                    this.$set(this.taskHistoryList, 'selected', "")
+                    this.$set(this.taskHistoryList, 'selectedTask', undefined)
+                    this.$store.commit("setCurrentTask", this.taskHistoryList.originTask)
+                    this.$set(this.taskHistoryList, 'originTask', undefined)
+                }
 
                 let height = this.$refs["taskPopup"].offsetHeight
                 if (this.isEditing) {
@@ -304,7 +321,46 @@
                 this.$set(this.taskHistoryList, 'height', `${height}px`)
             },
             hideTaskHistoryList(): void {
+                this.$set(this.taskHistoryList, 'selected', "")
                 this.$set(this.taskHistoryList, 'isShow', false)
+                this.$set(this.taskHistoryList, 'selectedTask', undefined)
+                this.$store.commit("setCurrentTask", this.taskHistoryList.originTask)
+                this.$set(this.taskHistoryList, 'originTask', undefined)
+            },
+            selectHistory(value: string): void {
+                this.$set(this.taskHistoryList, 'selected', value)
+                let task: TaskHistory | undefined = undefined
+                for (const t of this.taskHistoryList.list) {
+                    if (value === t.updateDate) {
+                        task = t
+                    }
+                }
+
+                if (task === undefined) {
+                    return
+                }
+
+                if (this.taskHistoryList.originTask === undefined) {
+                    this.$set(this.taskHistoryList, 'originTask', this.task)
+                }
+                this.$set(this.taskHistoryList, "selectedTask", task)
+
+                const t = task.task
+                let currentTask = this.$store.getters.getCurrentTask
+                currentTask.name = t.name
+                currentTask.status = t.status
+                currentTask.assign = t.assign
+                currentTask.assignName = t.assignName
+                currentTask.assignIconPath = t.assignIconPath
+                currentTask.deadline = t.deadline
+                currentTask.limitDate = t.limitDate
+                currentTask.deadlineMD = t.deadlineMD
+                currentTask.description = t.description
+                currentTask.createDate = t.createDate
+                this.$store.commit("setCurrentTask", currentTask)
+            },
+            applyClick(): void {
+                
             }
         }
     }

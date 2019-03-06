@@ -14,6 +14,7 @@ export default class Task {
     public deadlineMD: string
     public description: string
     public createDate: string
+    public updateDate: string
 
     public fromAny(data: any) {
         this.taskId = data["taskId"]
@@ -31,6 +32,7 @@ export default class Task {
         this.deadlineMD = data["deadlineMD"]
         this.description = data["description"]
         this.createDate = data["createDate"]
+        this.updateDate = data["updateDate"]
     }
 
     public toJson(): string {

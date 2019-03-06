@@ -18,6 +18,7 @@ type TaskOfJson struct {
 	DeadlineMD      string     `json:"deadlineMD"`
 	Description     string     `json:"description"`
 	CreateDate      string     `json:"createDate"`
+	Adopted         string     `json:"updateDate"`
 }
 
 func NewTaskOfJson(task Task) *TaskOfJson {
@@ -37,6 +38,7 @@ func NewTaskOfJson(task Task) *TaskOfJson {
 		task.DeadlineMD,
 		task.Description,
 		strconv.FormatInt(task.CreateDate, 10),
+		strconv.FormatInt(task.Adopted, 10),
 	}
 }
 
