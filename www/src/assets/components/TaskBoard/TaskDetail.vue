@@ -35,6 +35,9 @@
 						</div>
 					</div>
 					<div class="both"></div>
+					<div class="timer-button">
+						<task-timer-simple-controller></task-timer-simple-controller>
+					</div>
 					<div id="taskPopupProgressBar">
 						<div id="taskPopupProgressText" v-show="!isEditing">
 							<i class="fas fa-calendar-alt"></i>
@@ -95,10 +98,12 @@
     import TaskDetailDescription from "./TaskDetailDescription"
     import TaskDetailDescriptionRich from "./TaskDetailDescriptionRich.ts"
     import TaskHistory from "@scripts/model/api/task/TaskHistory"
+    import TaskTimerSimpleController from "@components/TaskTimer/TaskTimerSimpleController.vue"
 
     export default {
         name: "TaskDetail",
         components: {
+            TaskTimerSimpleController,
             TaskDetailDescription,
             TaskDeleteConfirm,
             TaskDeleteOrHide,

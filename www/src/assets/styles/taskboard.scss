@@ -525,6 +525,10 @@ body {
         }
     }
 
+    .timer-button {
+        margin: 5px 0;
+    }
+
     #taskPopupProgressBar {
         height: $iconSize;
         line-height: $iconSize;
