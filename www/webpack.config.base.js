@@ -52,7 +52,7 @@ module.exports = (isDev) => {
                             options: {
                                 url: false,
                                 sourceMap: enabledSourceMap,
-                                minimize: !enabledSourceMap,
+                                // minimize: !enabledSourceMap,
                                 importLoaders: 2
                             },
                         },
