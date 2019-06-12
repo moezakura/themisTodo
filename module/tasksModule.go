@@ -182,6 +182,13 @@ WHERE project = ? ORDER BY id ASC;`, projectId)
 			log.Printf("TasksModule.GetList Error: %+v\n", err)
 			return true, nil
 		}
+		deadline, err := time.Parse("2006-01-02T15:04:05-07:00", listOne.Deadline)
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: %+v\n", err)
+		} else {
+			deadlineFormatted := deadline.Format("2006-01-02")
+			listOne.Deadline = deadlineFormatted
+		}
 		list = append(list, listOne)
 	}
 
