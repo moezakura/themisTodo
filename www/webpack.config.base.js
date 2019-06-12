@@ -60,6 +60,9 @@ module.exports = (isDev) => {
                             loader: 'sass-loader',
                             options: {
                                 sourceMap: enabledSourceMap,
+                                data: `
+                                @import './src/assets/styles/_value.scss';
+                                `
                             }
                         }
                     ],

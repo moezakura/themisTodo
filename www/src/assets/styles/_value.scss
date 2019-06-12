@@ -1,0 +1,49 @@
+$backgroundColor: rgb(30, 30, 30);
+$accentColor: rgb(67, 160, 71);
+$linkColor: rgb(187, 222, 251);
+$redColor: rgb(239, 83, 80);
+$yellowColor: rgb(255, 238, 88);
+$orangeColor: rgb(255, 167, 38);
+$satOrangeColor: rgb(255, 112, 67);
+$light-gray: rgb(224, 224, 224);
+$very-dark-gray: rgb(66, 66, 66);
+$floatBoxSize: 480px;
+$modanWidth: 500px;
+$taskPopupWidth: 700px;
+$project-settings-width: 800px;
+$project-settings-height: 600px;
+$minModernWidth: 350px;
+$buttonHeight: 45px;
+$buttonWidth: 200px;
+$lineTextHeight: 40px;
+$headerHeight: 65px;
+$iconSize: 35px;
+$bigIconSize: 150px;
+
+@function accentColor($alpha) {
+  @return rgba(67, 160, 71, $alpha);
+}
+
+@mixin keyframes($animation-name: animaton) {
+  @-webkit-keyframes #{$animation-name} {
+    @content;
+  }
+  @-moz-keyframes #{$animation-name} {
+    @content;
+  }
+  @keyframes #{$animation-name} {
+    @content;
+  }
+}
+
+@mixin animation($animation-name, $timing) {
+  -webkit-animation: $animation-name;
+  -moz-animation: $animation-name;
+  animation: $animation-name;
+  -webkit-animation-timing-function: $timing;
+  -moz-animation-timing-function: $timing;
+  animation-timing-function: $timing;
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
