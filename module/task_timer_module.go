@@ -4,7 +4,7 @@ import (
 	"../models"
 	"database/sql"
 	"errors"
-	"github.com/labstack/gommon/log"
+	"log"
 )
 
 type TasksTimerModule struct {
