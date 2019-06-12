@@ -1,90 +1,90 @@
 <template>
-	<div>
-		<transition>
-			<div v-if="isShowTaskDetail">
-				<form id="taskPopup" ref="taskPopup" @submit.prevent="submitEdit">
-					<h2 :class="[limitAddClass]">{{ taskStatusText }} Task</h2>
-					<div id="taskPopupActions">
-						<i class="fas fa-history" id="taskPopupHistoryButton" @click="showToggleTaskHistoryList"></i>
-						<i class="fas fa-trash" id="taskPopupTrashButton" @click="showTaskDeleteOrHide"></i>
-						<i class="fas fa-edit" id="taskPopupEditButton" @click="setEditing(!isEditing)"></i>
-						<i class="fas fa-times" id="taskPopupCloseButton" @click="hideTaskDetail"></i>
-					</div>
-					<div class="both"></div>
-					<div class="success" v-show="isSuccess">Update Success.</div>
-					<div class="error" v-show="errorMessage !== undefined && errorMessage.length > 0">{{ errorMessage }}
-					</div>
-					<div id="taskPopupTaskIdTitle">
-						<label id="taskPopupTaskId">#{{ task.taskId }}</label>
-						<input value="TITLE" id="taskPopupTitle" v-model="taskCache.name" :readonly="!isEditing">
-					</div>
-					<div class="both"></div>
-					<div id="taskPopupAssignCreatorLine">
-						<div class="taskPopupAssignCreatorColumn">
-							<p>Assign</p>
-							<div id="taskPopupAssignIcon"
-							     :style="{ 'background-image': `url('${assignIconPath}')` }"></div>
-							<user-select :is-show="true" :is-in-project="true" v-model="selectUser"
-							             :readonly="!isEditing"></user-select>
-						</div>
-						<div class="taskPopupAssignCreatorColumn">
-							<p>Creator</p>
-							<div id="taskPopupCreatorIcon"
-							     :style="{ 'background-image': `url('${creatorIconPath}')` }"></div>
-							<label id="taskPopupCreator">{{ task.creatorName }}</label>
-						</div>
-					</div>
-					<div class="both"></div>
-					<div class="timer-button">
-						<task-timer-simple-controller></task-timer-simple-controller>
-					</div>
-					<div id="taskPopupProgressBar">
-						<div id="taskPopupProgressText" v-show="!isEditing">
-							<i class="fas fa-calendar-alt"></i>
-							<span>{{ task.deadline }}</span>
-							<span v-if="!isCompleted">(あと{{ task.limitDate }}日)</span>
-							<span v-if="isCompleted">(Already Completed!)</span>
-						</div>
-						<input type="date" id="taskPopupDeadlineChange" v-show="isEditing" v-model="taskCache.deadline">
-						<div id="taskPopupProgressCurrent" :style="{'width': `${currentProgress}%`}"
-						     :class="[limitAddClass]">&nbsp;
-						</div>
-					</div>
-					<div>
-						<task-detail-description v-model="taskCache.description"
-						                         :readonly="!isEditing" v-if="isEditing"></task-detail-description>
-						<task-detail-description-rich :task="task" v-if="!isEditing"
-						                              class="task-detail-description-rich"
-						                              @detailUpdate="detailUpdate"></task-detail-description-rich>
-					</div>
-					<div class="input-box" v-show="isEditing" ref="changeActionsBox">
-						<input type="button" value="CANCEL" @click="setEditing(false)">
-						<input type="submit" value="CHANGE">
-					</div>
-				</form>
+    <div>
+        <transition>
+            <div v-if="isShowTaskDetail">
+                <form id="taskPopup" ref="taskPopup" @submit.prevent="submitEdit">
+                    <h2 :class="[limitAddClass]">{{ taskStatusText }} Task</h2>
+                    <div id="taskPopupActions">
+                        <i class="fas fa-history" id="taskPopupHistoryButton" @click="showToggleTaskHistoryList"></i>
+                        <i class="fas fa-trash" id="taskPopupTrashButton" @click="showTaskDeleteOrHide"></i>
+                        <i class="fas fa-edit" id="taskPopupEditButton" @click="setEditing(!isEditing)"></i>
+                        <i class="fas fa-times" id="taskPopupCloseButton" @click="hideTaskDetail"></i>
+                    </div>
+                    <div class="both"></div>
+                    <div class="success" v-show="isSuccess">Update Success.</div>
+                    <div class="error" v-show="errorMessage !== undefined && errorMessage.length > 0">{{ errorMessage }}
+                    </div>
+                    <div id="taskPopupTaskIdTitle">
+                        <label id="taskPopupTaskId">#{{ task.taskId }}</label>
+                        <input value="TITLE" id="taskPopupTitle" v-model="taskCache.name" :readonly="!isEditing">
+                    </div>
+                    <div class="both"></div>
+                    <div id="taskPopupAssignCreatorLine">
+                        <div class="taskPopupAssignCreatorColumn">
+                            <p>Assign</p>
+                            <div id="taskPopupAssignIcon"
+                                 :style="{ 'background-image': `url('${assignIconPath}')` }"></div>
+                            <user-select :is-show="true" :is-in-project="true" v-model="selectUser"
+                                         :readonly="!isEditing"></user-select>
+                        </div>
+                        <div class="taskPopupAssignCreatorColumn">
+                            <p>Creator</p>
+                            <div id="taskPopupCreatorIcon"
+                                 :style="{ 'background-image': `url('${creatorIconPath}')` }"></div>
+                            <label id="taskPopupCreator">{{ task.creatorName }}</label>
+                        </div>
+                    </div>
+                    <div class="both"></div>
+                    <div class="timer-button">
+                        <task-timer-simple-controller></task-timer-simple-controller>
+                    </div>
+                    <div id="taskPopupProgressBar">
+                        <div id="taskPopupProgressText" v-show="!isEditing">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{{ task.deadline }}</span>
+                            <span v-if="!isCompleted">(あと{{ task.limitDate }}日)</span>
+                            <span v-if="isCompleted">(Already Completed!)</span>
+                        </div>
+                        <input type="date" id="taskPopupDeadlineChange" v-show="isEditing" v-model="taskCache.deadline">
+                        <div id="taskPopupProgressCurrent" :style="{'width': `${currentProgress}%`}"
+                             :class="[limitAddClass]">&nbsp;
+                        </div>
+                    </div>
+                    <div>
+                        <task-detail-description v-model="taskCache.description"
+                                                 :readonly="!isEditing" v-if="isEditing"></task-detail-description>
+                        <task-detail-description-rich :task="task" v-if="!isEditing"
+                                                      class="task-detail-description-rich"
+                                                      @detailUpdate="detailUpdate"></task-detail-description-rich>
+                    </div>
+                    <div class="input-box" v-show="isEditing" ref="changeActionsBox">
+                        <input type="button" value="CANCEL" @click="setEditing(false)">
+                        <input type="submit" value="CHANGE">
+                    </div>
+                </form>
 
-				<div class="backView" @click="hideTaskDetail"></div>
-			</div>
-		</transition>
-		<transition name="slide">
-			<div id="taskHistoryList" v-if="isShowTaskDetail && taskHistoryList.isShow"
-			     :style="{top: `calc(${taskHistoryList.topPos})`, height: `calc(${taskHistoryList.height})`}">
-				<div class="title-bar">
-					<p>Task History</p>
-					<i class="fas fa-chevron-left" @click="hideTaskHistoryList"></i>
-				</div>
-				<ul :style="{height: `calc(${taskHistoryList.height} - (45px * 2 + 5px + 10px))` }">
-					<li v-for="i in taskHistoryList.list" :class="{ selected: currentTaskUpdateDate === i.updateDate }"
-					    @click="selectHistory(i.updateDate)">
-						{{ i.updateDateFormat }}
-					</li>
-				</ul>
-				<div class="apply-button" @click="applyClick">APPLY</div>
-			</div>
-		</transition>
-		<task-delete-or-hide @reload="commitLoadTasks"></task-delete-or-hide>
-		<task-delete-confirm @reload="commitLoadTasks"></task-delete-confirm>
-	</div>
+                <div class="backView" @click="hideTaskDetail"></div>
+            </div>
+        </transition>
+        <transition name="slide">
+            <div id="taskHistoryList" v-if="isShowTaskDetail && taskHistoryList.isShow"
+                 :style="{top: `calc(${taskHistoryList.topPos})`, height: `calc(${taskHistoryList.height})`}">
+                <div class="title-bar">
+                    <p>Task History</p>
+                    <i class="fas fa-chevron-left" @click="hideTaskHistoryList"></i>
+                </div>
+                <ul :style="{height: `calc(${taskHistoryList.height} - (45px * 2 + 5px + 10px))` }">
+                    <li v-for="i in taskHistoryList.list" :class="{ selected: currentTaskUpdateDate === i.updateDate }"
+                        @click="selectHistory(i.updateDate)">
+                        {{ i.updateDateFormat }}
+                    </li>
+                </ul>
+                <div class="apply-button" @click="applyClick">APPLY</div>
+            </div>
+        </transition>
+        <task-delete-or-hide @reload="commitLoadTasks"></task-delete-or-hide>
+        <task-delete-confirm @reload="commitLoadTasks"></task-delete-confirm>
+    </div>
 </template>
 
 <script lang="ts">
@@ -245,7 +245,11 @@
         methods: {
             hideTaskDetail() {
                 this.hideTaskHistoryList()
-                this.$router.back()
+                let projectId = 0
+                if (typeof this.task !== "undefined") {
+                    projectId = this.task.projectId
+                }
+                this.$router.push({name: 'taskBoard', params: {projectId: projectId}});
                 this.$store.commit("setCurrentTask", undefined)
                 this.setEditing(false)
             },
@@ -371,7 +375,7 @@
             applyClick(): void {
                 this.$store.commit("incrementLoadingCount")
                 TaskApi.applyHistory(this.currentTaskCreateDate, this.currentTaskUpdateDate).then((res) => {
-                    if(res.success){
+                    if (res.success) {
                         this.$store.commit("setCurrentTask", this.taskCache)
                         this.$set(this.taskHistoryList, 'originTask', undefined)
                         this.$emit("load-tasks")
@@ -384,24 +388,24 @@
 </script>
 
 <style lang="scss" scoped>
-	.v-enter,
-	.v-leave-to {
-		opacity: 0;
-	}
+    .v-enter,
+    .v-leave-to {
+        opacity: 0;
+    }
 
-	.v-enter-active,
-	.v-leave-active {
-		transition: opacity .2s;
-	}
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity .2s;
+    }
 
-	.slide-enter,
-	.slide-leave-to {
-		opacity: 0;
-		transform: translateX(-30px);
-	}
+    .slide-enter,
+    .slide-leave-to {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
 
-	.slide-enter-active,
-	.slide-leave-active {
-		transition: opacity .2s, transform ease .2s;
-	}
+    .slide-enter-active,
+    .slide-leave-active {
+        transition: opacity .2s, transform ease .2s;
+    }
 </style>
