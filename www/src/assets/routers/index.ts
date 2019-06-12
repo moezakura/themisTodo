@@ -11,6 +11,7 @@ import NewAccount from '@components/Admin/Account/NewAccount.vue'
 import TaskHiddenList from '@components/TaskHiddenList.vue'
 
 import NotFound from '@components/Errors/NotFound.vue'
+import TimerBoard from "@components/TimerBoard.vue"
 
 export default [
     {
@@ -52,6 +53,10 @@ export default [
                 name: 'projectSettings',
             }
         ]
+    }, {
+        path: '/project/timer/:projectId',
+        component: TimerBoard,
+        name: 'timerBoard',
     }, {
         path: '/project/hiddenTasks/:projectId',
         component: TaskHiddenList,

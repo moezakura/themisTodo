@@ -8,22 +8,6 @@ body {
     display: flex;
     margin: 10px 20px;
 
-    .project-title {
-        display: block;
-        height: $buttonHeight;
-        line-height: $buttonHeight;
-        font-size: 18px;
-        letter-spacing: 1.2px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        flex-grow: 5;
-
-        i {
-            margin-right: 10px;
-        }
-    }
-
     .project-task-search {
         width: 40%;
         display: flex;
@@ -45,37 +29,6 @@ body {
 
             &:focus {
                 background-color: accentColor(.1);
-            }
-        }
-    }
-
-    .project-actions {
-        display: flex;
-
-        li {
-            display: block;
-            font-size: 16px;
-            height: $buttonHeight;
-            width: 140px;
-            line-height: $buttonHeight;
-            text-align: center;
-            letter-spacing: 1.1px;
-            text-decoration: none;
-            margin: 0 3px;
-            color: $accentColor;
-            cursor: default;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            transition: background-color ease .3s;
-
-            &:hover {
-                background-color: accentColor(.15);
-            }
-
-            i {
-                margin-right: 10px;
             }
         }
     }
