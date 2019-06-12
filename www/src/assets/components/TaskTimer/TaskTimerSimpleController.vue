@@ -97,8 +97,8 @@
                         let todayMin = (res.TodayTime / 60 | 0) - (todayHour * 60)
                         this.todayTime = ("0" + todayHour).slice(-2) + ":" + ("0" + todayMin).slice(-2)
 
-                        let totalHour = res.TodayTime / 3600 | 0
-                        let totalMin = (res.TodayTime / 60 | 0) - (totalHour * 60)
+                        let totalHour = res.TotalTime / 3600 | 0
+                        let totalMin = (res.TotalTime / 60 | 0) - (totalHour * 60)
                         this.totalTime = ("0" + totalHour).slice(-2) + ":" + ("0" + totalMin).slice(-2)
                     }).finally(() => {
                         if (typeof loadingShow === "undefined" || !loadingShow) {
