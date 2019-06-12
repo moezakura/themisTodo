@@ -9,11 +9,12 @@ export default class AccountSearchRequest {
         let queryString = "?"
         for (let key in this) {
             // noinspection JSUnfilteredForInLoop
-            const value = this[key]
+            const value: any = this[key]
             if (typeof value === "object" || typeof value === "function") {
                 continue
             }
-            queryString += key + "=" + encodeURIComponent(value.toString()) + "&"
+            const _value: number = value
+            queryString += key + "=" + encodeURIComponent(_value.toString()) + "&"
         }
         queryString = queryString.slice(0, -1)
 

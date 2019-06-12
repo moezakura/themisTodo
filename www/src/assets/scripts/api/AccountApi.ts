@@ -156,7 +156,7 @@ export default class AccountApi extends BaseApi {
             uploadXhr.open("POST", "/api/account/updateIcon")
             uploadXhr.setRequestHeader("x-access-token", State.getters.getToken)
             uploadXhr.send(uploadData)
-        }).then(json => {
+        }).then((json: Object) => {
             let res = new AccountUpdateImageResult()
 
             res.success = json["success"]
