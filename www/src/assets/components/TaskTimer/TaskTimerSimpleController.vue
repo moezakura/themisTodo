@@ -1,5 +1,5 @@
 <template>
-    <div class="task-timer-simple-controller">
+    <div class="task-timer-simple-controller" :class="{ 'timer-counting': isStart }">
 
         <div class="task-operation-button base-timer-button" @click="toggle" v-if="!this.isStart"><span
                 class="operation-button-text">Start Task</span><i
@@ -124,6 +124,12 @@
     .task-timer-simple-controller {
         $height: 45px;
         display: flex;
+        padding-bottom: 5px;
+        border-bottom: solid 5px transparent;
+
+        &.timer-counting {
+            @include animation(blinkBorderBottomAnimation 1s infinite, linear);
+        }
 
         .base-timer-button {
             border: thin solid rgba($accentColor, 0.5);

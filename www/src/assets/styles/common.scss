@@ -94,3 +94,15 @@
         transform: translate(-50%, -50%) rotate(180deg);
     }
 }
+
+@include keyframes(blinkBorderBottomAnimation) {
+    0% {
+        border-bottom-color: transparent;
+    }
+    50% {
+        border-bottom-color: $accentColor;
+    }
+    100% {
+        border-bottom-color: transparent;
+    }
+}
