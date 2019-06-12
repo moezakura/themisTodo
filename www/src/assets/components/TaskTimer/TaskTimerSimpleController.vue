@@ -20,8 +20,8 @@
                     class="timer-total-text-label">total</span><span>:</span><span class="timer-total-text-content">{{ totalTime }}</span>
             </div>
         </div>
-        <div class="task-timer-edit-button base-timer-button"><i class="fas fa-edit"></i></div>
-        <div class="task-timer-history-button base-timer-button"><i class="fas fa-history"></i></div>
+        <div class="task-timer-edit-button base-timer-button" @click="alert('no implements\r\n'+'coming soon...')"><i class="fas fa-edit"></i></div>
+        <div class="task-timer-history-button base-timer-button" @click="alert('no implements\r\n'+'coming soon...')"><i class="fas fa-history"></i></div>
     </div>
 </template>
 
@@ -104,6 +104,10 @@
                         }
                     })
                 }
+            },
+            // TODO: あとで消す
+            alert(text: string){
+                window.alert(text);
             }
         },
         created(): void {
