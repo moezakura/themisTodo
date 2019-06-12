@@ -52,6 +52,12 @@ func Init(db *sql.DB) *gin.Engine {
 		tasks.POST("/history/:createDate", tasksController.PostApplyHistory)
 		tasks.GET("/search", tasksController.GetSearch)
 		tasks.GET("/my", tasksController.GetMy)
+
+		taskTimer := tasks.Group("/timer")
+		{
+			taskTimerController := &themsController.TaskTimerController{baseController}
+			taskTimer.PATCH("/toggle/:createDate", taskTimerController.PatchToggle)
+		}
 	}
 
 	//アカウント関連

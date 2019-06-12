@@ -5,9 +5,11 @@ CREATE TABLE `todo_timer`
     `assign`     INT      NOT NULL,
     `startDate`  DATETIME NOT NULL,
     `endDate`    DATETIME NOT NULL,
-    `note`       BLOB     NOT NULL,
+    `note`       BLOB     NULL,
     PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  COLLATE = utf8_bin;
 
 ALTER TABLE `todo_timer`
     ADD CONSTRAINT `todo_timer_users_uuid_fk` FOREIGN KEY (`assign`) REFERENCES `users` (`uuid`),
