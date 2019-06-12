@@ -4,7 +4,7 @@ import (
 	"../models"
 	"../module"
 	"github.com/gin-gonic/gin"
-	"github.com/labstack/gommon/log"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
