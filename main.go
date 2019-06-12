@@ -10,6 +10,7 @@ import (
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
 	"log"
+	"net/url"
 	"os"
 	"time"
 )
@@ -23,8 +24,8 @@ func main() {
 		dbErr error
 	)
 	for i := 0; i < 30; i++ {
-		connectText := fmt.Sprintf("%s:%s@tcp(%s)/%s?multiStatements=true",
-			MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DB_NAME)
+		connectText := fmt.Sprintf("%s:%s@tcp(%s)/%s?multiStatements=true&parseTime=true&loc=%s",
+			MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_HOST, MYSQL_DB_NAME, url.QueryEscape("Asia/Tokyo"))
 		_db, dbErr := sql.Open("mysql", connectText)
 		err := _db.Ping()
 		if dbErr != nil || err != nil {

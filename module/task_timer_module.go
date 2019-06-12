@@ -51,6 +51,44 @@ func (t *TasksTimerModule) TimerToggle(createDate int64, userId int) (isStart bo
 	return false, nil
 }
 
+func (t *TasksTimerModule) GetTaskTimerHistory(createDate int64) (history []models.TodoTimer, err error) {
+	tasks := make([]models.TodoTimer, 0)
+
+	rows, err := t.db.Query("SELECT * FROM `todo_timer` WHERE `createDate` = ? ORDER BY `startDate` DESC;", createDate)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("database row close error: %+v\n", err)
+		}
+	}()
+
+	for rows.Next() {
+		task := models.TodoTimer{}
+		if err := rows.Scan(&task.Id, &task.CreateDate, &task.Assign, &task.StartDate, &task.EndDate, &task.Note); err != nil {
+			log.Printf("sql scan error: %+v\n", err)
+			continue
+		}
+		task.StartDateUnix = task.StartDate.Unix()
+		task.EndDateUnix = task.EndDate.Unix()
+		if task.EndDateUnix < 0 {
+			task.EndDateUnix = 0
+		}
+		tasks = append(tasks, task)
+	}
+
+	return tasks, nil
+}
+
+/**
+* -------------
+* private
+* -------------
+ */
+
 func (t *TasksTimerModule) createTimer(createDate int64, userId int) error {
 	tx, err := t.db.Begin()
 	if err != nil {

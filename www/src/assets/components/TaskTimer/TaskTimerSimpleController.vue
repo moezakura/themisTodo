@@ -1,23 +1,23 @@
 <template>
     <div class="task-timer-simple-controller">
 
-        <div class="task-operation-button base-timer-button" @click="toggle" v-if="this.isStart"><span
+        <div class="task-operation-button base-timer-button" @click="toggle" v-if="!this.isStart"><span
                 class="operation-button-text">Start Task</span><i
                 class="fas fa-play operation-button-icon"></i></div>
         <div class="task-operation-button base-timer-button stop-timer-button" @click="toggle" v-else><span
                 class="operation-button-text">Stop Task</span><i class="fas fa-stop operation-button-icon"></i></div>
 
         <div class="timer-start-and-end-text">
-            <div class="timer-start">00:00</div>
+            <div class="timer-start">{{ lastStartTime }}</div>
             <span class="timer-text-splitter">〜</span>
-            <div class="timer-end">00:00</div>
+            <div class="timer-end">{{ lastEndTime }}</div>
         </div>
         <div class="timer-total-texts">
             <div class="timer-today-text"><span
-                    class="timer-today-text-label">today</span><span>:</span><span class="timer-today-text-content">24:00</span>
+                    class="timer-today-text-label">today</span><span>:</span><span class="timer-today-text-content">{{ todayTime }}</span>
             </div>
             <div class="timer-total-text"><span
-                    class="timer-total-text-label">total</span><span>:</span><span class="timer-total-text-content">9999:59</span>
+                    class="timer-total-text-label">total</span><span>:</span><span class="timer-total-text-content">{{ totalTime }}</span>
             </div>
         </div>
         <div class="task-timer-edit-button base-timer-button"><i class="fas fa-edit"></i></div>
@@ -31,23 +31,90 @@
 
     interface TaskTimerSimpleControllerData {
         isStart: boolean
+        lastStartTime: string
+        lastEndTime: string
+        todayTime: string
+        totalTime: string
+        loopTimer: number | undefined
     }
 
     export default {
         name: "TaskTimerSimpleController",
         data(): TaskTimerSimpleControllerData {
             return {
-                isStart: false
+                isStart: false,
+                lastStartTime: "",
+                lastEndTime: "",
+                todayTime: "",
+                totalTime: "",
+                loopTimer: undefined,
+            }
+        },
+        computed: {
+            currentTask(): Task | undefined {
+                return this.$store.getters.getCurrentTask
             }
         },
         methods: {
             toggle() {
-                const task: Task | undefined = this.$store.getters.getCurrentTask
+                const task = this.currentTask;
+                this.$store.commit("incrementLoadingCount")
                 if (typeof task !== "undefined" && typeof task.createDate !== "undefined") {
                     TaskTimerApi.toggleTimer(task.createDate).then(res => {
                         this.isStart = res.start;
+                        this.getTaskTimer()
+                    }).finally(() => {
+                        this.$store.commit("decrementLoadingCount")
                     })
                 }
+            },
+            getTaskTimer(loadingShow?: boolean) {
+                const task = this.currentTask;
+                if (typeof loadingShow === "undefined" || !loadingShow) {
+                    this.$store.commit("incrementLoadingCount")
+                }
+                if (typeof task !== "undefined" && typeof task.createDate !== "undefined") {
+                    TaskTimerApi.getTaskTimer(task.createDate).then(res => {
+                        this.isStart = res.start;
+
+                        if (res.LastStartTime === 0 && res.LastEndTime === 0) {
+                            this.lastStartTime = "--:--"
+                            this.lastEndTime = "--:--"
+                        } else {
+                            let startDate = new Date(res.LastStartTime * 1000)
+                            let endDate = new Date(res.LastEndTime * 1000)
+                            if (this.isStart) {
+                                endDate = new Date()
+                            }
+
+                            this.lastStartTime = ("0" + startDate.getHours()).slice(-2) + ":" + ("0" + startDate.getMinutes()).slice(-2);
+                            this.lastEndTime = ("0" + endDate.getHours()).slice(-2) + ":" + ("0" + endDate.getMinutes()).slice(-2);
+                        }
+
+                        let todayHour = res.TodayTime / 3600 | 0
+                        let todayMin = res.TodayTime / 60 | 0
+                        this.todayTime = ("0" + todayHour).slice(-2) + ":" + ("0" + todayMin).slice(-2)
+
+                        let totalHour = res.TodayTime / 3600 | 0
+                        let totalMin = res.TodayTime / 60 | 0
+                        this.totalTime = ("0" + totalHour).slice(-2) + ":" + ("0" + totalMin).slice(-2)
+                    }).finally(() => {
+                        if (typeof loadingShow === "undefined" || !loadingShow) {
+                            this.$store.commit("decrementLoadingCount")
+                        }
+                    })
+                }
+            }
+        },
+        created(): void {
+            this.getTaskTimer();
+            this.loopTimer = setInterval(() => {
+                this.getTaskTimer(true)
+            }, 1000 * 10);
+        },
+        destroyed(): void {
+            if (typeof this.loopTimer !== "undefined") {
+                clearInterval(this.loopTimer)
             }
         }
     }
@@ -115,13 +182,13 @@
             }
 
             .timer-start, .timer-end {
-                width: 80px;
+                width: 50px;
                 letter-spacing: 1px;
             }
         }
 
         .timer-total-texts {
-            margin: 0 auto 0 5px;
+            margin: 0 auto;
             line-height: $height / 2;
             text-align: left;
             letter-spacing: 1px;
