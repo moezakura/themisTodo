@@ -20,8 +20,10 @@
                     class="timer-total-text-label">total</span><span>:</span><span class="timer-total-text-content">{{ totalTime }}</span>
             </div>
         </div>
-        <div class="task-timer-edit-button base-timer-button" @click="alert('no implements\r\n'+'coming soon...')"><i class="fas fa-edit"></i></div>
-        <div class="task-timer-history-button base-timer-button" @click="alert('no implements\r\n'+'coming soon...')"><i class="fas fa-history"></i></div>
+        <div class="task-timer-edit-button base-timer-button" @click="alert('no implements\r\n'+'coming soon...')"><i
+                class="fas fa-edit"></i></div>
+        <div class="task-timer-history-button base-timer-button" @click="alert('no implements\r\n'+'coming soon...')"><i
+                class="fas fa-history"></i></div>
     </div>
 </template>
 
@@ -92,11 +94,11 @@
                         }
 
                         let todayHour = res.TodayTime / 3600 | 0
-                        let todayMin = res.TodayTime / 60 | 0
+                        let todayMin = (res.TodayTime / 60 | 0) - (todayHour * 60)
                         this.todayTime = ("0" + todayHour).slice(-2) + ":" + ("0" + todayMin).slice(-2)
 
                         let totalHour = res.TodayTime / 3600 | 0
-                        let totalMin = res.TodayTime / 60 | 0
+                        let totalMin = (res.TodayTime / 60 | 0) - (totalHour * 60)
                         this.totalTime = ("0" + totalHour).slice(-2) + ":" + ("0" + totalMin).slice(-2)
                     }).finally(() => {
                         if (typeof loadingShow === "undefined" || !loadingShow) {
@@ -106,7 +108,7 @@
                 }
             },
             // TODO: あとで消す
-            alert(text: string){
+            alert(text: string) {
                 window.alert(text);
             }
         },
