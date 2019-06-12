@@ -2,6 +2,7 @@ package main
 
 import (
 	"./module/database"
+	"./module"
 	"./routers"
 	"database/sql"
 	"fmt"
@@ -60,6 +61,9 @@ func main() {
 	db_migrate(db)
 
 	defer db.Close()
+
+	taskTimerWatcher := module.NewTaskTimerWatcherModule(db)
+	taskTimerWatcher.Start()
 
 	r := routers.Init(db)
 	r.Run(":31204")
