@@ -1,15 +1,27 @@
 <template>
     <div>
+        <project-header>
+            <!--suppress HtmlUnknownBooleanAttribute -->
+            <template v-slot:ex-menu>
+                <li @click=""><i class="fas fa-redo"></i>RELOAD</li>
+            </template>
 
+            <!--suppress HtmlUnknownBooleanAttribute -->
+            <template v-slot:ex-right-menu>
+                <li @click=""><i class="fas fa-plus-circle"></i>ADD TIMER</li>
+            </template>
+        </project-header>
     </div>
 </template>
 
 <script lang="ts">
     import Project from "@scripts/model/api/project/Project";
     import ProjectApi from "@scripts/api/ProjectApi";
+    import ProjectHeader from "@components/Project/ProjectHeader.vue";
 
     export default {
         name: "TimerBoard",
+        components: {ProjectHeader},
         computed: {
             projectId(): number | undefined {
                 if (this.$route.params === undefined) {
