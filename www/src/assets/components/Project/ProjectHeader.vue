@@ -35,6 +35,9 @@
                     return new Project()
                 }
                 return this.$store.getters.getCurrentProject
+            },
+            projectId():number{
+                return this.storeProject.uuid;
             }
         },
         methods: {
