@@ -13,7 +13,8 @@
                     <li @click="moveSettings"><i class="fas fa-cog"></i>SETTING</li>
                 </ul>
             </li>
-            <li @click="moveTimer"><i class="fas fa-stopwatch"></i>TIMERS</li>
+            <li @click="moveTimer" v-if="pageName !== 'timerBoard'"><i class="fas fa-stopwatch"></i>TIMERS</li>
+            <li @click="moveTasks" v-else><i class="fas fa-tasks"></i>TASKS</li>
             <slot name="ex-right-menu"></slot>
         </ul>
     </div>
@@ -36,8 +37,11 @@
                 }
                 return this.$store.getters.getCurrentProject
             },
-            projectId():number{
+            projectId(): number {
                 return this.storeProject.uuid;
+            },
+            pageName(): string {
+                return this.$router.currentRoute.name
             }
         },
         methods: {
@@ -49,6 +53,9 @@
             },
             moveTimer() {
                 this.$router.push({name: "timerBoard", params: {projectId: this.projectId}})
+            },
+            moveTasks() {
+                this.$router.push({name: "taskBoard", params: {projectId: this.projectId}})
             }
         }
     }
