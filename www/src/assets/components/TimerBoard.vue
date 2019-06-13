@@ -189,14 +189,16 @@
                 .label {
                     width: 5px;
                     background-color: red;
-                    margin-right: 5px;
+                    margin-right: 10px;
                     height: $height;
                 }
 
                 .name {
                     width: 40%;
-                    line-height: $height / 2;
+                    line-height: $height;
                     overflow: hidden;
+                    font-weight: bold;
+                    font-size: 16px;
                 }
 
                 .note {
