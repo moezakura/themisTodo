@@ -65,7 +65,7 @@ func main() {
 	taskTimerWatcher := module.NewTaskTimerWatcherModule(db)
 	taskTimerWatcher.Start()
 
-	r := routers.Init(db)
+	r := routers.Init(db, taskTimerWatcher)
 	r.Run(":31204")
 }
 

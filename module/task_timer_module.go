@@ -10,11 +10,15 @@ import (
 )
 
 type TasksTimerModule struct {
-	db *sql.DB
+	db      *sql.DB
+	watcher *TaskTimerWatcherModule
 }
 
-func NewTasksTimerModule(db *sql.DB) *TasksTimerModule {
-	return &TasksTimerModule{db: db}
+func NewTasksTimerModule(db *sql.DB, watcher *TaskTimerWatcherModule) *TasksTimerModule {
+	return &TasksTimerModule{
+		db:      db,
+		watcher: watcher,
+	}
 }
 
 func (t *TasksTimerModule) TimerToggle(createDate int64, userId int) (isStart bool, err error) {

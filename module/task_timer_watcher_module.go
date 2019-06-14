@@ -18,11 +18,11 @@ func NewTaskTimerWatcherModule(db *sql.DB) *TaskTimerWatcherModule {
 
 func (t *TaskTimerWatcherModule) Start() {
 	go func() {
-		tm := time.NewTicker(10 * time.Minute)
+		tm := time.NewTicker(30 * time.Second)
 		for {
 			select {
 			case <-tm.C:
-				t.job()
+				t.Job()
 			}
 		}
 		//noinspection GoUnreachableCode
@@ -30,7 +30,7 @@ func (t *TaskTimerWatcherModule) Start() {
 	}()
 }
 
-func (t *TaskTimerWatcherModule) job() {
+func (t *TaskTimerWatcherModule) Job() {
 	rows, err := t.db.Query("SELECT * FROM `todo_timer` WHERE `startDate` >= DATE_SUB(CURRENT_DATE(),interval 1 day) AND `endDate` = 0;")
 	if err != nil {
 		return

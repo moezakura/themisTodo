@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func Init(db *sql.DB) *gin.Engine {
+func Init(db *sql.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engine {
 	r := gin.New()
 
 	baseController := themsController.NewBaseController(db, r)
@@ -55,7 +55,7 @@ func Init(db *sql.DB) *gin.Engine {
 
 		taskTimer := tasks.Group("/timer")
 		{
-			taskTimerController := &themsController.TaskTimerController{baseController}
+			taskTimerController := themsController.NewTaskTimerController(baseController, taskTimerWatcher)
 			taskTimer.PATCH("/toggle/:createDate", taskTimerController.PatchToggle)
 			taskTimer.GET("/view/:createDate", taskTimerController.GetView)
 			taskTimer.GET("/myList/:projectId", taskTimerController.GetMyList)

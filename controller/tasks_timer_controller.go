@@ -12,7 +12,13 @@ import (
 
 type TaskTimerController struct {
 	*BaseController
+	watcher *module.TaskTimerWatcherModule
 }
+
+func NewTaskTimerController(baseController *BaseController, watcher *module.TaskTimerWatcherModule) *TaskTimerController {
+	return &TaskTimerController{BaseController: baseController, watcher: watcher}
+}
+
 
 func (t *TaskTimerController) PatchToggle(c *gin.Context) {
 	res := models.NewTaskTimerToggleResultJson(false)
@@ -42,7 +48,8 @@ func (t *TaskTimerController) PatchToggle(c *gin.Context) {
 		return
 	}
 
-	taskTimerModule := module.NewTasksTimerModule(t.DB)
+	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
+	t.watcher.Job()
 	isStart := false
 	if isStart, err = taskTimerModule.TimerToggle(createdTime, userUuid); err != nil {
 		log.Printf("%+v\n", err)
@@ -83,7 +90,7 @@ func (t *TaskTimerController) GetView(c *gin.Context) {
 		return
 	}
 
-	taskTimerModule := module.NewTasksTimerModule(t.DB)
+	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
 	histories, err := taskTimerModule.GetTaskTimerHistory(createdTime)
 
 	res.TodayTime = 0
@@ -150,7 +157,7 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 		todayEnd, _ = time.Parse("2006-01-02 15:04:05", endDateString)
 	}
 
-	taskTimerModule := module.NewTasksTimerModule(t.DB)
+	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
 	histories, err := taskTimerModule.SearchTaskTimer([]int{projectId}, []int{userUuid}, &todayStart, &todayEnd)
 
 	res.Success = true
