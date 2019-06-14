@@ -203,7 +203,7 @@
             margin-top: 8px;
 
             .task-timer-entry {
-                $height: 50px;
+                $height: 55px;
                 display: flex;
                 height: $height;
                 border-bottom: solid 1px rgba(white, .3);
