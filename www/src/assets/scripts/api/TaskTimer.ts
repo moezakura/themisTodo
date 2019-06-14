@@ -11,6 +11,9 @@ import BaseApi from "@scripts/api/BaseApi"
 import TaskHistory from "@scripts/model/api/task/TaskHistory"
 import TaskTimerToggleResult from "@scripts/model/api/taskTimer/TaskTimerToggleResult"
 import TaskTimerGetResult from "@scripts/model/api/taskTimer/TaskTimerGetResult"
+import TaskTimerGetMyListRequest from "@scripts/model/api/taskTimer/TaskTimerGetMyListRequest"
+import TaskTimerGetMyListResult from "@scripts/model/api/taskTimer/TaskTimerGetMyListResult"
+import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer"
 
 export default class TaskTimerApi extends BaseApi {
     static toggleTimer(createDate: string): Promise<TaskTimerToggleResult> {
@@ -50,6 +53,29 @@ export default class TaskTimerApi extends BaseApi {
             task.TodayTime = json["today_time"]
 
             return task
+        })
+    }
+
+    static getMyList(projectId: number, searchRequest: TaskTimerGetMyListRequest): Promise<TaskTimerGetMyListResult> {
+        return fetch(`/api/tasks/timer/myList/${projectId}${searchRequest.toQueryString()}`, {
+            method: 'GET',
+            credentials: "same-origin",
+            headers: this.getHeader(),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new TaskTimerGetMyListResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+            res.list = new Array<TaskTimer>();
+            for (const item of json["list"]) {
+                const t = new TaskTimer()
+                t.fromAny(item)
+                res.list.push(t)
+            }
+
+            return res
         })
     }
 }

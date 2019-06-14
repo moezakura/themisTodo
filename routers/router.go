@@ -58,6 +58,7 @@ func Init(db *sql.DB) *gin.Engine {
 			taskTimerController := &themsController.TaskTimerController{baseController}
 			taskTimer.PATCH("/toggle/:createDate", taskTimerController.PatchToggle)
 			taskTimer.GET("/view/:createDate", taskTimerController.GetView)
+			taskTimer.GET("/myList/:projectId", taskTimerController.GetMyList)
 		}
 	}
 

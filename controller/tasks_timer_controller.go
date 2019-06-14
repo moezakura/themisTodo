@@ -117,3 +117,43 @@ func (t *TaskTimerController) GetView(c *gin.Context) {
 	res.Success = true
 	c.JSON(http.StatusOK, res)
 }
+
+func (t *TaskTimerController) GetMyList(c *gin.Context) {
+	res := models.NewTaskTimerListResultJson(false)
+	_projectId, err := strconv.ParseInt(c.Param("projectId"), 10, 64)
+	startDateString := c.Query("start")
+	endDateString := c.Query("end")
+
+	if err != nil {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	projectId := int(_projectId)
+	userUuid := c.GetInt("uuid")
+
+	projectModule := module.NewProjectsModule(t.DB)
+	if isIn := projectModule.IsIn(userUuid, projectId); !isIn {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	now := time.Now()
+	loc, _ := time.LoadLocation("Asia/Tokyo")
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
+	todayEnd := time.Date(now.Year(), now.Month(), now.Day(), 23, 59, 59, 0, loc)
+
+	if startDateString != "" && endDateString != "" {
+		todayStart, _ = time.Parse("2006-01-02 15:04:05", startDateString)
+		todayEnd, _ = time.Parse("2006-01-02 15:04:05", endDateString)
+	}
+
+	taskTimerModule := module.NewTasksTimerModule(t.DB)
+	histories, err := taskTimerModule.SearchTaskTimer([]int{projectId}, []int{userUuid}, &todayStart, &todayEnd)
+
+	res.Success = true
+	res.List = histories
+	c.JSON(http.StatusOK, res)
+}

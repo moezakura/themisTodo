@@ -4,7 +4,9 @@ import (
 	"../models"
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
+	"time"
 )
 
 type TasksTimerModule struct {
@@ -55,6 +57,107 @@ func (t *TasksTimerModule) GetTaskTimerHistory(createDate int64) (history []mode
 	tasks := make([]models.TodoTimer, 0)
 
 	rows, err := t.db.Query("SELECT * FROM `todo_timer` WHERE `createDate` = ? ORDER BY `startDate` DESC;", createDate)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("database row close error: %+v\n", err)
+		}
+	}()
+
+	for rows.Next() {
+		task := models.TodoTimer{}
+		if err := rows.Scan(&task.Id, &task.CreateDate, &task.Assign, &task.StartDate, &task.EndDate, &task.Note); err != nil {
+			log.Printf("sql scan error: %+v\n", err)
+			continue
+		}
+		task.StartDateUnix = task.StartDate.Unix()
+		task.EndDateUnix = task.EndDate.Unix()
+		if task.EndDateUnix < 0 {
+			task.EndDateUnix = 0
+		}
+		tasks = append(tasks, task)
+	}
+
+	return tasks, nil
+}
+
+func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate, endDate *time.Time) (history []models.TodoTimer, err error) {
+	tasks := make([]models.TodoTimer, 0)
+
+	sqlArgs := make([]interface{}, 0)
+	sqlText := ""
+
+	// users
+	{
+		for index, userId := range userIds {
+			sqlArgs = append(sqlArgs, userId)
+
+			if index == 0 {
+				sqlText += "`assign` IN (?"
+			} else {
+				sqlText += ", ?"
+			}
+
+			if index == len(userIds)-1 {
+				sqlText += ") "
+			}
+		}
+	}
+
+	//project
+	{
+		for index, projectId := range projectIds {
+			sqlArgs = append(sqlArgs, projectId)
+
+			if index == 0 {
+				if sqlText != "" {
+					sqlText += " AND "
+				}
+
+				sqlText += "`createDate` IN (SELECT `createDate` FROM `todo_list` WHERE `project` IN (?"
+			} else {
+				sqlText += ", ?"
+			}
+
+			if index == len(projectIds)-1 {
+				sqlText += ")) "
+			}
+		}
+	}
+
+	//start date, end date
+	{
+		if (startDate != nil || endDate != nil) && sqlText != "" {
+			sqlText += " AND ("
+		}
+
+		if startDate != nil {
+			startDateText := startDate.Format("2006-01-02 15:04:05")
+			sqlArgs = append(sqlArgs, startDateText)
+			sqlText += "`startDate` >= ? "
+		}
+
+		if endDate != nil {
+			endDateText := endDate.Format("2006-01-02 15:04:05")
+			sqlArgs = append(sqlArgs, endDateText)
+
+			if startDate != nil {
+				sqlText += " AND "
+			}
+
+			sqlText += "`startDate` <= ? "
+		}
+
+		if startDate != nil || endDate != nil {
+			sqlText += ") "
+		}
+	}
+	sqlText = fmt.Sprintf("SELECT * FROM `todo_timer` WHERE %s ORDER BY `startDate` DESC;", sqlText)
+	rows, err := t.db.Query(sqlText, sqlArgs...)
 
 	if err != nil {
 		return nil, err

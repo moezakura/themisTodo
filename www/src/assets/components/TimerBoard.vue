@@ -3,7 +3,12 @@
         <project-header>
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:ex-menu>
-                <li @click=""><i class="fas fa-redo"></i>RELOAD</li>
+                <li @click="loadPage"><i class="fas fa-redo"></i>RELOAD</li>
+            </template>
+
+            <!--suppress HtmlUnknownBooleanAttribute -->
+            <template v-slot:inner-content>
+
             </template>
 
             <!--suppress HtmlUnknownBooleanAttribute -->
@@ -30,18 +35,18 @@
                 </div>
             </div>
             <ul class="task-timer-entry-container">
-                <li class="task-timer-entry">
+                <li class="task-timer-entry" v-for="i in timeHistories">
                     <div class="label"></div>
                     <div class="name">TASK NAME</div>
-                    <div class="note">NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE  NOTE </div>
+                    <div class="note">{{ i.note }}</div>
                     <div class="date">
                         <div class="time-between">
-                            <span>12:00</span>
+                            <span>{{ i.startDateHM }}</span>
                             <span>〜</span>
-                            <span>12:01</span>
+                            <span>{{ i.endDateHM }}</span>
                         </div>
                         <div class="time-total">
-                            <span class="time-total-text">99:59</span>
+                            <span class="time-total-text">{{ i.totalHM }}</span>
                         </div>
                     </div>
                     <div class="actions">
@@ -59,6 +64,8 @@
     import Project from "@scripts/model/api/project/Project";
     import ProjectApi from "@scripts/api/ProjectApi";
     import ProjectHeader from "@components/Project/ProjectHeader.vue";
+    import TaskTimerApi from "@scripts/api/TaskTimer";
+    import TaskTimerGetMyListRequest from "@scripts/model/api/taskTimer/TaskTimerGetMyListRequest";
 
     export default {
         name: "TimerBoard",
@@ -66,6 +73,7 @@
         data() {
             return {
                 taskTimerTopFocus: false,
+                timeHistories: []
             }
         },
         computed: {
@@ -85,15 +93,29 @@
         methods: {
             addEntryFocus(): void {
                 this.$refs['task-timer-entry-name'].focus()
+            },
+            loadPage(): void {
+                this.$store.commit("incrementLoadingCount")
+                ProjectApi.getProject(this.projectId).then(res => {
+                    this.$store.commit("setCurrentProject", res.project)
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
+
+                this.$store.commit("incrementLoadingCount")
+                const now = new Date()
+                let req = new TaskTimerGetMyListRequest()
+                req.startDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 0, 0, 0)
+                req.endDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 23, 59, 59)
+                TaskTimerApi.getMyList(this.projectId, req).then(res => {
+                    this.timeHistories = res.list
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
             }
         },
         created(): void {
-            this.$store.commit("incrementLoadingCount")
-            ProjectApi.getProject(this.projectId).then(res => {
-                this.$store.commit("setCurrentProject", res.project)
-            }).finally(() => {
-                this.$store.commit("decrementLoadingCount")
-            })
+            this.loadPage()
         }
     }
 </script>
