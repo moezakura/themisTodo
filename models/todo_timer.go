@@ -13,4 +13,5 @@ type TodoTimer struct {
 	EndDateUnix      int64     `json:"end_date_unix"`
 	Note             []byte    `json:"-"`
 	NoteString       string    `json:"note"`
+	Task             *Task     `json:"task"`
 }

@@ -37,7 +37,7 @@
             <ul class="task-timer-entry-container">
                 <li class="task-timer-entry" v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }">
                     <div class="label"></div>
-                    <div class="name">TASK NAME</div>
+                    <div class="name">{{ i.task.name }}</div>
                     <div class="note">{{ i.note }}</div>
                     <div class="date">
                         <div class="time-between">

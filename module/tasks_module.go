@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"log"
+	"strings"
 	"sync"
 	"time"
 )
@@ -244,6 +245,66 @@ WHERE todo.createDate = ?;`, createDate)
 	}
 
 	return false, returnTask
+}
+
+func (self *TasksModule) GetBulk(projectId int, createDates []int64) (tasks []*models.Task, err error) {
+	self.dbLock.Lock()
+	defer self.dbLock.Unlock()
+
+	args := make([]interface{}, 0)
+	args = append(args, projectId)
+	for _, item := range createDates {
+		args = append(args, item)
+	}
+
+	queryString := `SELECT
+  id,
+  project,
+  tlh.name,
+  creator,
+  tlh.assign,
+  tlh.status,
+  tlh.deadline,
+  tlh.description,
+  todo.createDate,
+  todo.adopted,
+  u1.displayName,
+  u1.icon_path,
+  u2.displayName,
+  u2.icon_path
+FROM todo_list todo
+  INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
+  INNER JOIN users u1 ON u1.uuid = todo.creator
+  INNER JOIN users u2 ON u2.uuid = tlh.assign
+WHERE todo.project = ? AND todo.createDate IN (?` + strings.Repeat(", ?", len(createDates)-1) + `);`
+	rows, err := self.db.Query(queryString, args...)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		err := rows.Close()
+		if err != nil {
+			log.Printf("TasksModule.GetBulk Error: (rows close) %+v\n", err)
+		}
+	}()
+
+	tasks = make([]*models.Task, 0)
+	for rows.Next() {
+		returnTask := &models.Task{}
+		if err := rows.Scan(&returnTask.TaskId, &returnTask.ProjectId, &returnTask.Name,
+			&returnTask.Creator, &returnTask.Assign, &returnTask.Status, &returnTask.Deadline,
+			&returnTask.Description, &returnTask.CreateDate, &returnTask.Adopted, &returnTask.CreatorName,
+			&returnTask.CreatorIconPath, &returnTask.AssignName, &returnTask.AssignIconPath); err != nil {
+			log.Printf("TasksModule.GetBulk Error: %+v\n", err)
+			continue
+		}
+
+		tasks = append(tasks, returnTask)
+	}
+
+	return tasks, nil
 }
 
 func (self *TasksModule) Search(searchReq models.TaskSearchRequest) (isErr bool, task []models.Task) {

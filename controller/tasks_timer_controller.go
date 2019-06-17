@@ -3,6 +3,7 @@ package controller
 import (
 	"../models"
 	"../module"
+	"../utils"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -18,7 +19,6 @@ type TaskTimerController struct {
 func NewTaskTimerController(baseController *BaseController, watcher *module.TaskTimerWatcherModule) *TaskTimerController {
 	return &TaskTimerController{BaseController: baseController, watcher: watcher}
 }
-
 
 func (t *TaskTimerController) PatchToggle(c *gin.Context) {
 	res := models.NewTaskTimerToggleResultJson(false)
@@ -159,6 +159,28 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 
 	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
 	histories, err := taskTimerModule.SearchTaskTimer([]int{projectId}, []int{userUuid}, &todayStart, &todayEnd)
+
+	taskIds := make([]int64, 0)
+	for _, history := range histories {
+		if !utils.Int64ArrayContain(taskIds, history.CreateDate) {
+			taskIds = append(taskIds, history.CreateDate)
+		}
+	}
+	taskModule := module.NewTaskModule(t.DB)
+	tasks, err := taskModule.GetBulk(projectId, taskIds)
+	if err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		log.Printf("GetMyList: %+v\n", err)
+		return
+	}
+	for _, task := range tasks {
+		for index, history := range histories {
+			if task.CreateDate == history.CreateDate {
+				histories[index].Task = task
+			}
+		}
+	}
 
 	res.Success = true
 	res.List = histories

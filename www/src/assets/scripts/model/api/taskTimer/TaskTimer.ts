@@ -1,3 +1,5 @@
+import Task from "@scripts/model/api/task/Task"
+
 export default class TaskTimer {
     public id: number
     public createDate: string
@@ -7,6 +9,7 @@ export default class TaskTimer {
     public endDate: Date
     public endDateUnix: number
     public note: string
+    public task: Task
 
     public startDateHM: string
     public endDateHM: string
@@ -34,6 +37,12 @@ export default class TaskTimer {
         const totalHour = Math.floor(this.totalSec / 3600)
         const totalMin = Math.floor(this.totalSec / 60) - totalHour * 60
         this.totalHM = ("0" + totalHour).slice(-2) + ":" + ("0" + totalMin).slice(-2)
+
+        let task = data["task"]
+        if (typeof task !== "undefined" || task !== null) {
+            this.task = new Task()
+            this.task.fromAny(task)
+        }
     }
 
     public toJson(): string {

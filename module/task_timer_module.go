@@ -90,7 +90,7 @@ func (t *TasksTimerModule) GetTaskTimerHistory(createDate int64) (history []mode
 }
 
 func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate, endDate *time.Time) (history []models.TodoTimer, err error) {
-	tasks := make([]models.TodoTimer, 0)
+	history = make([]models.TodoTimer, 0)
 
 	sqlArgs := make([]interface{}, 0)
 	sqlText := ""
@@ -184,10 +184,10 @@ func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate,
 		if task.EndDateUnix < 0 {
 			task.EndDateUnix = 0
 		}
-		tasks = append(tasks, task)
+		history = append(history, task)
 	}
 
-	return tasks, nil
+	return history, nil
 }
 
 /**
