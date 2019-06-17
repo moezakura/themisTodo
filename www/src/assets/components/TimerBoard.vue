@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="task-timer-board">
         <project-header>
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:ex-menu>
@@ -13,7 +13,7 @@
 
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:ex-right-menu>
-                <li @click="addEntryFocus"><i class="fas fa-plus-circle"></i>ADD ENTRY</li>
+                <li @click="addEntryFocus"><i class="fas fa-plus-circle"></i>ADD TIMER</li>
             </template>
         </project-header>
 
@@ -22,7 +22,7 @@
                 <input placeholder="What did you task on?" @focus="taskTimerTopFocus = true"
                        @blur="taskTimerTopFocus = false" ref="task-timer-entry-name">
             </label>
-            <input class="task-timer-entry-submit" type="submit" value="Add entry">
+            <input class="task-timer-entry-submit" type="submit" value="Add timer">
         </form>
 
         <div class="task-timer-history">
@@ -56,6 +56,10 @@
                     </div>
                 </li>
             </ul>
+            <div class="total-task-timer">
+                <div class="total-task-timer-title">Total</div>
+                <div class="total-task-timer-time">{{ totalTimeHM }}</div>
+            </div>
         </div>
     </div>
 </template>
@@ -75,6 +79,7 @@
                 taskTimerTopFocus: false,
                 timeHistories: [],
                 taskReloadTimer: undefined,
+                totalTimeHM: ""
             }
         },
         computed: {
@@ -121,13 +126,21 @@
                 req.endDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 23, 59, 59)
                 TaskTimerApi.getMyList(this.projectId, req).then(res => {
                     this.timeHistories = res.list
+                    let totalTimeSec = 0
                     for (const item of res.list) {
                         if (item.endDateUnix === 0) {
                             this.taskReloadTimer = setInterval(() => {
                                 this.loadPage(false)
                             }, 10 * 1000)
+
+                            totalTimeSec += new Date().getTime() / 1000 - item.startDateUnix
+                        } else {
+                            totalTimeSec += item.endDateUnix - item.startDateUnix
                         }
                     }
+                    let totalTimeH = Math.floor(totalTimeSec / 3600)
+                    let totalTimeM = Math.floor(totalTimeSec / 60 - totalTimeH * 60)
+                    this.totalTimeHM = ("00" + totalTimeH).slice(-2) + ":" + ("00" + totalTimeM).slice(-2)
                 }).finally(() => {
                     if (isLoadingShow) {
                         this.$store.commit("decrementLoadingCount")
@@ -147,6 +160,11 @@
 </script>
 
 <style scoped lang="scss">
+    .task-timer-board {
+        height: calc(100% - #{$headerHeight + 10px});
+        overflow: auto;
+    }
+
     .task-timer-add {
         display: flex;
         width: 75%;
@@ -319,6 +337,16 @@
                         }
                     }
                 }
+            }
+        }
+
+        .total-task-timer {
+            display: flex;
+            font-size: 16px;
+            letter-spacing: 2px;
+
+            .total-task-timer-title {
+                margin: 0 15px 0 auto;
             }
         }
     }
