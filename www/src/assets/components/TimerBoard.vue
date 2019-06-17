@@ -73,7 +73,8 @@
         data() {
             return {
                 taskTimerTopFocus: false,
-                timeHistories: []
+                timeHistories: [],
+                taskReloadTimer: undefined,
             }
         },
         computed: {
@@ -94,28 +95,53 @@
             addEntryFocus(): void {
                 this.$refs['task-timer-entry-name'].focus()
             },
-            loadPage(): void {
-                this.$store.commit("incrementLoadingCount")
+            loadPage(isLoadingShow: boolean = true): void {
+                if (isLoadingShow) {
+                    this.$store.commit("incrementLoadingCount")
+                }
+
+                if (typeof this.taskReloadTimer !== "undefined") {
+                    clearInterval(this.taskReloadTimer)
+                }
+
                 ProjectApi.getProject(this.projectId).then(res => {
                     this.$store.commit("setCurrentProject", res.project)
                 }).finally(() => {
-                    this.$store.commit("decrementLoadingCount")
+                    if (isLoadingShow) {
+                        this.$store.commit("decrementLoadingCount")
+                    }
                 })
 
-                this.$store.commit("incrementLoadingCount")
+                if (isLoadingShow) {
+                    this.$store.commit("incrementLoadingCount")
+                }
                 const now = new Date()
                 let req = new TaskTimerGetMyListRequest()
                 req.startDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 0, 0, 0)
                 req.endDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 23, 59, 59)
                 TaskTimerApi.getMyList(this.projectId, req).then(res => {
                     this.timeHistories = res.list
+                    for (const item of res.list) {
+                        if (item.endDateUnix === 0) {
+                            this.taskReloadTimer = setInterval(() => {
+                                this.loadPage(false)
+                            }, 10 * 1000)
+                        }
+                    }
                 }).finally(() => {
-                    this.$store.commit("decrementLoadingCount")
+                    if (isLoadingShow) {
+                        this.$store.commit("decrementLoadingCount")
+                    }
                 })
             }
         },
         created(): void {
             this.loadPage()
+        },
+        destroyed(): void {
+            if (typeof this.taskReloadTimer !== "undefined") {
+                clearInterval(this.taskReloadTimer)
+            }
         }
     }
 </script>
@@ -221,7 +247,7 @@
                     margin: 3px 0 0 0;
                 }
 
-                &.active::after{
+                &.active::after {
                     @include animation(blinkBorderBottomAnimation 1s infinite, linear);
                 }
 
