@@ -242,6 +242,14 @@ WHERE todo.createDate = ?;`, createDate)
 		&returnTask.CreatorIconPath, &returnTask.AssignName, &returnTask.AssignIconPath); err != nil {
 		log.Printf("TasksModule.Get Error: %+v\n", err)
 		return true, nil
+	} else {
+		deadline, err := time.Parse("2006-01-02T15:04:05-07:00", returnTask.Deadline)
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: %+v\n", err)
+		} else {
+			deadlineFormatted := deadline.Format("2006-01-02")
+			returnTask.Deadline = deadlineFormatted
+		}
 	}
 
 	return false, returnTask
@@ -255,6 +263,10 @@ func (self *TasksModule) GetBulk(projectId int, createDates []int64) (tasks []*m
 	args = append(args, projectId)
 	for _, item := range createDates {
 		args = append(args, item)
+	}
+
+	if len(createDates) == 0 {
+		return make([]*models.Task, 0), nil
 	}
 
 	queryString := `SELECT
@@ -299,6 +311,14 @@ WHERE todo.project = ? AND todo.createDate IN (?` + strings.Repeat(", ?", len(cr
 			&returnTask.CreatorIconPath, &returnTask.AssignName, &returnTask.AssignIconPath); err != nil {
 			log.Printf("TasksModule.GetBulk Error: %+v\n", err)
 			continue
+		}
+
+		deadline, err := time.Parse("2006-01-02T15:04:05-07:00", returnTask.Deadline)
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: %+v\n", err)
+		} else {
+			deadlineFormatted := deadline.Format("2006-01-02")
+			returnTask.Deadline = deadlineFormatted
 		}
 
 		tasks = append(tasks, returnTask)
@@ -367,6 +387,14 @@ WHERE ` + whereString + ";"
 			fmt.Println("SKIP!")
 			continue
 		}
+
+		deadline, err := time.Parse("2006-01-02T15:04:05-07:00", task.Deadline)
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: %+v\n", err)
+		} else {
+			deadlineFormatted := deadline.Format("2006-01-02")
+			task.Deadline = deadlineFormatted
+		}
 		returnTask = append(returnTask, task)
 	}
 
@@ -429,6 +457,14 @@ WHERE `+queryString+";", queryArray...)
 			&task.CreatorIconPath, &task.AssignName, &task.AssignIconPath); err != nil {
 			log.Printf("TasksModule.SearchCreateTimeList Error: %+v\n", err)
 			return true, nil
+		}
+
+		deadline, err := time.Parse("2006-01-02T15:04:05-07:00", task.Deadline)
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: %+v\n", err)
+		} else {
+			deadlineFormatted := deadline.Format("2006-01-02")
+			task.Deadline = deadlineFormatted
 		}
 		returnTask = append(returnTask, task)
 	}
@@ -704,6 +740,13 @@ LIMIT 0, ?;`, userUuid, status, limit)
 			&oneTask.AssignName, &oneTask.AssignIconPath); err != nil {
 			log.Printf("TasksModule.GetTasksFromUser Error: %+v\n", err)
 			return true, nil
+		}
+		deadline, err := time.Parse("2006-01-02T15:04:05-07:00", oneTask.Deadline)
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: %+v\n", err)
+		} else {
+			deadlineFormatted := deadline.Format("2006-01-02")
+			oneTask.Deadline = deadlineFormatted
 		}
 		list = append(list, oneTask)
 	}

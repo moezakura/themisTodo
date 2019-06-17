@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -526,6 +527,13 @@ func (t *TasksController) GetHistoryList(c *gin.Context) {
 	result.Message = ""
 	result.Payload = make([]models.TaskHistoryOfJson, 0)
 	for _, h := range history {
+		deadline, err := time.Parse("2006-01-02T15:04:05-07:00", h.Task.Deadline)
+		if err != nil {
+			log.Printf("TasksModule.GetList Error: %+v\n", err)
+		} else {
+			deadlineFormatted := deadline.Format("2006-01-02")
+			h.Task.Deadline = deadlineFormatted
+		}
 		h.Task = *utils.TaskHistoryItemConvert(&h.Task)
 		result.Payload = append(result.Payload, h.ToJson())
 	}

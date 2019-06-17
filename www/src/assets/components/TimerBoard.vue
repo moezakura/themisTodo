@@ -27,11 +27,11 @@
 
         <div class="task-timer-history">
             <div class="task-timer-history-title-section">
-                <h3 class="task-timer-history-title"><i class="fas fa-calendar-alt"></i>Today</h3>
-                <div class="task-timer-history-title-detail">2019/12/04</div>
+                <h3 class="task-timer-history-title"><i class="fas fa-calendar-alt"></i>{{ displayDate.string }}</h3>
+                <div class="task-timer-history-title-detail" v-if="isStartToday">{{ displayDate.stringMD }}</div>
                 <div class="task-timer-history-title-action">
-                    <i class="fas fa-chevron-left"></i>
-                    <i class="fas fa-chevron-right"></i>
+                    <i class="fas fa-chevron-left" @click="moveDisplayDate(-1)"></i>
+                    <i class="fas fa-chevron-right" @click="moveDisplayDate(1)"></i>
                 </div>
             </div>
             <ul class="task-timer-entry-container">
@@ -76,6 +76,10 @@
         components: {ProjectHeader},
         data() {
             return {
+                displayDate: {
+                    stringMD: "",
+                    string: "",
+                },
                 taskTimerTopFocus: false,
                 timeHistories: [],
                 taskReloadTimer: undefined,
@@ -94,7 +98,43 @@
                     return new Project()
                 }
                 return this.$store.getters.getCurrentProject
+            },
+            startDate(): Date {
+                let startDate = new Date(this.$route.query["start"])
+                if (startDate.toString() === "Invalid Date") {
+                    const now = new Date()
+                    return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 0, 0, 0)
+                }
+                return startDate
+            },
+            endDate(): Date {
+                let endDate = new Date(this.$route.query["end"])
+                if (endDate.toString() === "Invalid Date") {
+                    const now = new Date()
+                    return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 23, 59, 59)
+                }
+                return endDate
+            },
+            isStartToday(): boolean {
+                const startDate: Date = this.startDate
+                const now: Date = new Date()
+                const startDateString = startDate.getFullYear() + "/" + ("0" + startDate.getMonth()).slice(-2) + "/" + ("0" + startDate.getDate()).slice(-2)
+                const nowDateString = now.getFullYear() + "/" + ("0" + (now.getMonth() + 1)).slice(-2) + "/" + ("0" + now.getDate()).slice(-2)
+
+                if (startDateString == nowDateString) {
+                    this.$set(this.displayDate, 'string', 'Today')
+                    this.$set(this.displayDate, 'stringMD', startDateString)
+                    return true
+                } else {
+                    this.$set(this.displayDate, 'string', startDateString)
+                    return false
+                }
             }
+        },
+        watch: {
+            startDate(): void {
+                this.loadPage()
+            },
         },
         methods: {
             addEntryFocus(): void {
@@ -120,10 +160,10 @@
                 if (isLoadingShow) {
                     this.$store.commit("incrementLoadingCount")
                 }
-                const now = new Date()
+
                 let req = new TaskTimerGetMyListRequest()
-                req.startDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 0, 0, 0)
-                req.endDate = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 23, 59, 59)
+                req.startDate = this.startDate
+                req.endDate = this.endDate
                 TaskTimerApi.getMyList(this.projectId, req).then(res => {
                     this.timeHistories = res.list
                     let totalTimeSec = 0
@@ -144,6 +184,20 @@
                 }).finally(() => {
                     if (isLoadingShow) {
                         this.$store.commit("decrementLoadingCount")
+                    }
+                })
+            },
+            moveDisplayDate(diff: number): void {
+                const startDate: Date = this.startDate
+                const endDate: Date = this.endDate
+                startDate.setDate(startDate.getDate() + diff)
+                endDate.setDate(endDate.getDate() + diff)
+
+                this.$router.push({
+                    name: "timerBoard",
+                    query: {
+                        start: startDate.getTime(),
+                        end: endDate.getTime(),
                     }
                 })
             }
