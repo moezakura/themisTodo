@@ -35,7 +35,7 @@
                 </div>
             </div>
             <ul class="task-timer-entry-container">
-                <li class="task-timer-entry" v-for="i in timeHistories">
+                <li class="task-timer-entry" v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }">
                     <div class="label"></div>
                     <div class="name">TASK NAME</div>
                     <div class="note">{{ i.note }}</div>
@@ -206,7 +206,24 @@
                 $height: 55px;
                 display: flex;
                 height: $height;
+                margin-bottom: 5px;
+                padding-bottom: 5px;
                 border-bottom: solid 1px rgba(white, .3);
+                flex-wrap: wrap;
+
+                &::after {
+                    position: relative;
+                    display: block;
+                    content: " ";
+                    border-bottom: solid 3px transparent;
+                    width: 100%;
+                    height: 0;
+                    margin: 3px 0 0 0;
+                }
+
+                &.active::after{
+                    @include animation(blinkBorderBottomAnimation 1s infinite, linear);
+                }
 
                 .label {
                     width: 5px;
