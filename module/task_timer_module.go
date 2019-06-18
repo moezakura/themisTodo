@@ -89,6 +89,36 @@ func (t *TasksTimerModule) GetTaskTimerHistory(createDate int64) (history []mode
 	return tasks, nil
 }
 
+func (t *TasksTimerModule) GetTaskTimerStatus(createDate int64) (isStart bool, err error) {
+	taskTimer := models.TodoTimer{}
+
+	rows, err := t.db.Query("SELECT * FROM `todo_timer` WHERE `createDate` = ? ORDER BY `startDate` DESC;", createDate)
+
+	if err != nil {
+		return false, err
+	}
+
+	defer func() {
+		if err := rows.Close(); err != nil {
+			log.Printf("database row close error: %+v\n", err)
+		}
+	}()
+
+	if !rows.Next() {
+		return false, nil
+	}
+	if err := rows.Scan(&taskTimer.Id, &taskTimer.CreateDate, &taskTimer.Assign, &taskTimer.StartDate, &taskTimer.EndDate, &taskTimer.Note); err != nil {
+		return false, err
+	}
+	taskTimer.StartDateUnix = taskTimer.StartDate.Unix()
+	taskTimer.EndDateUnix = taskTimer.EndDate.Unix()
+	if taskTimer.EndDateUnix < 0 {
+		taskTimer.EndDateUnix = 0
+	}
+
+	return taskTimer.EndDateUnix == 0, nil
+}
+
 func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate, endDate *time.Time) (history []models.TodoTimer, err error) {
 	history = make([]models.TodoTimer, 0)
 

@@ -186,3 +186,42 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 	res.List = histories
 	c.JSON(http.StatusOK, res)
 }
+
+func (t *TaskTimerController) GetStatus(c *gin.Context) {
+	res := models.NewTaskTimerGetStatusResultJson(false)
+	createdTime, err := strconv.ParseInt(c.Param("createDate"), 10, 64)
+
+	if err != nil {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	userUuid := c.GetInt("uuid")
+
+	taskModule := module.NewTaskModule(t.DB)
+	isErr, task := taskModule.Get(createdTime)
+
+	if isErr {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	projectModule := module.NewProjectsModule(t.DB)
+	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
+	if status, err := taskTimerModule.GetTaskTimerStatus(createdTime); err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+	} else {
+		res.Success = true
+		res.Start = status
+		c.JSON(http.StatusOK, res)
+	}
+}

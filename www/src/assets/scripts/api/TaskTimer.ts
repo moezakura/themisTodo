@@ -14,6 +14,7 @@ import TaskTimerGetResult from "@scripts/model/api/taskTimer/TaskTimerGetResult"
 import TaskTimerGetMyListRequest from "@scripts/model/api/taskTimer/TaskTimerGetMyListRequest"
 import TaskTimerGetMyListResult from "@scripts/model/api/taskTimer/TaskTimerGetMyListResult"
 import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer"
+import TaskTimerGetStatusResult from "@scripts/model/api/taskTimer/TaskTimerGetStatusResult"
 
 export default class TaskTimerApi extends BaseApi {
     static toggleTimer(createDate: string): Promise<TaskTimerToggleResult> {
@@ -51,6 +52,24 @@ export default class TaskTimerApi extends BaseApi {
             task.LastEndTime = json["last_end_time"]
             task.TotalTime = json["total_time"]
             task.TodayTime = json["today_time"]
+
+            return task
+        })
+    }
+
+    static getTaskTimerStatus(createDate: string):Promise<TaskTimerGetStatusResult> {
+        return fetch("/api/tasks/timer/status/" + createDate, {
+            method: 'GET',
+            credentials: "same-origin",
+            headers: this.getHeader(),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let task = new TaskTimerGetStatusResult()
+
+            task.success = json["success"]
+            task.message = json["message"]
+            task.start = json["start"]
 
             return task
         })

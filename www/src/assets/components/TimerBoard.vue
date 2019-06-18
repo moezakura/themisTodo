@@ -17,20 +17,26 @@
             </template>
         </project-header>
 
-        <form class="task-timer-add-container basicForm">
-            <div class="task-timer-add" :class="{'active': taskTimerTopFocus}">
+        <form class="task-timer-add-container basicForm" @submit.prevent="startTimer">
+            <div class="task-timer-add" :class="{'active': taskTimerTopFocus > 0}">
                 <label class="task-timer-entry-name">
-                    <input placeholder="What did you task on?" @focus="taskTimerTopFocus = true"
-                           @blur="taskTimerTopFocus = false" ref="task-timer-entry-name">
+                    <input placeholder="What did you task on?" @focus="taskTimerTopFocus++"
+                           @blur="taskTimerTopFocus--" ref="task-timer-entry-name" v-model="search.text">
                 </label>
                 <input class="task-timer-entry-submit" type="submit" value="Add timer">
             </div>
             <div class="task-timer-exclude-done-task-container">
-                <input id="exclude-done-task" type="checkbox">
+                <input id="exclude-done-task" type="checkbox" v-model="search.excludeDone">
                 <label for="exclude-done-task" class="fas fa-check"></label>
                 <label for="exclude-done-task">exclude done task</label>
             </div>
         </form>
+        <ul class="taskList searched-task-list" :style="search.position" @mouseenter="taskTimerTopFocus++"
+            @mouseleave="taskTimerTopFocus--">
+            <li v-for="task in searchedTasks" :data-task-id="task.createDate" @click="selectedSearchTask(task)">
+                <task-line :task="task" :allowShowDetail="false"></task-line>
+            </li>
+        </ul>
 
         <div class="task-timer-history">
             <div class="task-timer-history-title-section">
@@ -77,17 +83,46 @@
     import ProjectHeader from "@components/Project/ProjectHeader.vue";
     import TaskTimerApi from "@scripts/api/TaskTimer";
     import TaskTimerGetMyListRequest from "@scripts/model/api/taskTimer/TaskTimerGetMyListRequest";
+    import Task from "@scripts/model/api/task/Task";
+    import TaskHistory from "@scripts/model/api/task/TaskHistory";
+    import TaskStatusConvert, {TaskStatus} from "@scripts/enums/TaskStatus";
+    import TaskLine from "@components/TaskBoard/TaskLine.vue";
+
+    interface TimerBoardData {
+        displayDate: {
+            stringMD: string,
+            string: string,
+        },
+        tasks: Array<Task>,
+        search: {
+            text: string,
+            selectedTask: undefined | Task
+            excludeDone: boolean,
+            position: object
+        },
+        taskTimerTopFocus: number,
+        timeHistories: Array<TaskHistory>,
+        taskReloadTimer: undefined | number,
+        totalTimeHM: string
+    }
 
     export default {
         name: "TimerBoard",
-        components: {ProjectHeader},
-        data() {
+        components: {TaskLine, ProjectHeader},
+        data(): TimerBoardData {
             return {
                 displayDate: {
                     stringMD: "",
                     string: "",
                 },
-                taskTimerTopFocus: false,
+                tasks: [],
+                search: {
+                    text: "",
+                    selectedTask: undefined,
+                    excludeDone: true,
+                    position: {},
+                },
+                taskTimerTopFocus: 0,
                 timeHistories: [],
                 taskReloadTimer: undefined,
                 totalTimeHM: ""
@@ -136,33 +171,96 @@
                     this.$set(this.displayDate, 'string', startDateString)
                     return false
                 }
-            }
+            },
+            searchedTasks(): Array<Task> {
+                const searchText = this.search.text
+                const excludeDone = this.search.excludeDone
+
+                let taskIdSearch: undefined | number = undefined
+                if (searchText.startsWith("#")) {
+                    let taskIdSearchString = searchText.slice(1)
+                    taskIdSearch = Number(taskIdSearchString)
+                    if (isNaN(taskIdSearch)) {
+                        taskIdSearch = undefined
+                    }
+                }
+
+                let searchedTasks = new Array<Task>()
+                this.tasks.forEach((task: Task) => {
+                    if (excludeDone && task.status === TaskStatusConvert.toNumber(TaskStatus.DONE)) {
+                        return
+                    }
+
+                    if (typeof taskIdSearch !== "undefined" && task.taskId === taskIdSearch) {
+                        searchedTasks.push(task)
+                        return
+                    }
+
+                    if (task.name.includes(searchText) || task.description.includes(searchText)) {
+                        searchedTasks.push(task)
+                        return
+                    }
+                })
+
+                return searchedTasks
+            },
         },
         watch: {
             startDate(): void {
                 this.loadPage()
             },
+            taskTimerTopFocus(value: number): void {
+                if (value < 0) {
+                    this.taskTimerTopFocus = 0
+                }
+
+                if (value > 0) {
+                    const el = this.$refs["task-timer-entry-name"]
+                    const rect = el.getBoundingClientRect()
+                    const pos = {
+                        top: (rect.bottom + 15) + "px",
+                        left: (rect.left - 15) + "px",
+                        width: (rect.right - rect.left) + "px",
+                        display: "block"
+                    }
+                    this.$set(this.search, "position", pos)
+                } else {
+                    this.$set(this.search, "position", {
+                        display: "none"
+                    })
+                }
+            }
         },
         methods: {
             addEntryFocus(): void {
                 this.$refs['task-timer-entry-name'].focus()
             },
+            loadTasks(): void {
+                this.$store.commit("incrementLoadingCount")
+                ProjectApi.getTasks(this.projectId).then(res => {
+                    this.tasks = res.task
+                }).finally(() => {
+                    this.$store.commit("decrementLoadingCount")
+                })
+            },
             loadPage(isLoadingShow: boolean = true): void {
-                if (isLoadingShow) {
-                    this.$store.commit("incrementLoadingCount")
-                }
-
                 if (typeof this.taskReloadTimer !== "undefined") {
                     clearInterval(this.taskReloadTimer)
                 }
 
-                ProjectApi.getProject(this.projectId).then(res => {
-                    this.$store.commit("setCurrentProject", res.project)
-                }).finally(() => {
-                    if (isLoadingShow) {
+                if (isLoadingShow) {
+                    this.$store.commit("incrementLoadingCount")
+
+                    // Project info
+                    ProjectApi.getProject(this.projectId).then(res => {
+                        this.$store.commit("setCurrentProject", res.project)
+                    }).finally(() => {
                         this.$store.commit("decrementLoadingCount")
-                    }
-                })
+                    })
+
+                    // Tasks
+                    this.loadTasks()
+                }
 
                 if (isLoadingShow) {
                     this.$store.commit("incrementLoadingCount")
@@ -207,6 +305,30 @@
                         end: endDate.getTime(),
                     }
                 })
+            },
+            selectedSearchTask(task: Task): void {
+                this.$set(this.search, "text", task.name)
+                this.$set(this.search, "selectedTask", task)
+                this.taskTimerTopFocus--
+            },
+            async startTimer(): Promise<void> {
+                if (typeof this.search.selectedTask === "undefined" || this.$store.getters.isLoadingShow) {
+                    return
+                }
+
+                this.$store.commit("incrementLoadingCount")
+                const task: Task = this.search.selectedTask
+                const res = await TaskTimerApi.getTaskTimerStatus(task.createDate)
+
+                if (!res.start) {
+                    const toggleRes = await TaskTimerApi.toggleTimer(task.createDate)
+                    if (toggleRes.success) {
+                        this.$set(this.search, "selectedTask", undefined)
+                        this.$set(this.search, "text", "")
+                        this.loadPage()
+                    }
+                }
+                this.$store.commit("decrementLoadingCount")
             }
         },
         created(): void {
@@ -278,7 +400,7 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            
+
             #exclude-done-task {
                 display: none;
 
@@ -311,6 +433,17 @@
                 }
             }
         }
+    }
+
+    .searched-task-list {
+        position: absolute;
+        z-index: 20;
+        background-color: $backgroundColor;
+        display: none;
+        border: solid 2px $accentColor;
+        border-top: 0;
+        max-height: 400px;
+        overflow-y: auto;
     }
 
     .task-timer-history {
