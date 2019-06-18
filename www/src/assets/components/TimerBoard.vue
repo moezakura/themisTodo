@@ -244,10 +244,6 @@
                 })
             },
             loadPage(isLoadingShow: boolean = true): void {
-                if (typeof this.taskReloadTimer !== "undefined") {
-                    clearInterval(this.taskReloadTimer)
-                }
-
                 if (isLoadingShow) {
                     this.$store.commit("incrementLoadingCount")
 
@@ -272,16 +268,19 @@
                 TaskTimerApi.getMyList(this.projectId, req).then(res => {
                     this.timeHistories = res.list
                     let totalTimeSec = 0
+                    let startFlag = false
                     for (const item of res.list) {
                         if (item.endDateUnix === 0) {
-                            this.taskReloadTimer = setInterval(() => {
-                                this.loadPage(false)
-                            }, 10 * 1000)
-
                             totalTimeSec += new Date().getTime() / 1000 - item.startDateUnix
+                            startFlag = true
                         } else {
                             totalTimeSec += item.endDateUnix - item.startDateUnix
                         }
+                    }
+                    if (startFlag) {
+                        this.taskReloadTimer = setTimeout(() => {
+                            this.loadPage(false)
+                        }, 10 * 1000)
                     }
                     let totalTimeH = Math.floor(totalTimeSec / 3600)
                     let totalTimeM = Math.floor(totalTimeSec / 60 - totalTimeH * 60)
@@ -336,7 +335,7 @@
         },
         destroyed(): void {
             if (typeof this.taskReloadTimer !== "undefined") {
-                clearInterval(this.taskReloadTimer)
+                clearTimeout(this.taskReloadTimer)
             }
         }
     }
