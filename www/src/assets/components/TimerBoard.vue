@@ -63,9 +63,10 @@
                         </div>
                     </div>
                     <div class="actions">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-stop" v-if="i.endDateUnix === 0"></i>
+                        <i class="fas fa-trash" v-else></i>
                         <i class="fas fa-edit"></i>
-                        <i class="fas fa-caret-down"></i>
+                        <i class="fas fa-info"></i>
                     </div>
                 </li>
             </ul>
