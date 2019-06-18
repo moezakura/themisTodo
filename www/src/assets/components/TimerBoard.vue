@@ -17,12 +17,19 @@
             </template>
         </project-header>
 
-        <form class="task-timer-add basicForm" :class="{'active': taskTimerTopFocus}">
-            <label class="task-timer-entry-name">
-                <input placeholder="What did you task on?" @focus="taskTimerTopFocus = true"
-                       @blur="taskTimerTopFocus = false" ref="task-timer-entry-name">
-            </label>
-            <input class="task-timer-entry-submit" type="submit" value="Add timer">
+        <form class="task-timer-add-container basicForm">
+            <div class="task-timer-add" :class="{'active': taskTimerTopFocus}">
+                <label class="task-timer-entry-name">
+                    <input placeholder="What did you task on?" @focus="taskTimerTopFocus = true"
+                           @blur="taskTimerTopFocus = false" ref="task-timer-entry-name">
+                </label>
+                <input class="task-timer-entry-submit" type="submit" value="Add timer">
+            </div>
+            <div class="task-timer-exclude-done-task-container">
+                <input id="exclude-done-task" type="checkbox">
+                <label for="exclude-done-task" class="fas fa-check"></label>
+                <label for="exclude-done-task">exclude done task</label>
+            </div>
         </form>
 
         <div class="task-timer-history">
@@ -219,43 +226,90 @@
         overflow: auto;
     }
 
-    .task-timer-add {
-        display: flex;
+    .task-timer-add-container {
         width: 75%;
         margin: 10px auto;
-        height: $buttonHeight + 30px;
-        padding: 0 15px;
-        background-color: rgba(black, .4);
-        box-shadow: 2px 1px 3px rgba(black, 0.5);
-        border-bottom: solid 2px transparent;
-        -webkit-transition: border-bottom-color .3s ease;
-        -moz-transition: border-bottom-color .3s ease;
-        -o-transition: border-bottom-color .3s ease;
-        transition: border-bottom-color .3s ease;
-        $task-timer-entry-submit-width: 200px;
 
-        &.active {
-            border-bottom-color: $accentColor;
-        }
+        .task-timer-add {
+            display: flex;
+            height: $buttonHeight + 30px;
+            padding: 0 15px;
+            background-color: rgba(black, .4);
+            box-shadow: 2px 1px 3px rgba(black, 0.5);
+            border-bottom: solid 2px transparent;
+            -webkit-transition: border-bottom-color .3s ease;
+            -moz-transition: border-bottom-color .3s ease;
+            -o-transition: border-bottom-color .3s ease;
+            transition: border-bottom-color .3s ease;
+            $task-timer-entry-submit-width: 200px;
 
-        .task-timer-entry-name {
-            width: calc(100% - #{$task-timer-entry-submit-width + 15px});
-            margin-right: 15px;
-            height: $buttonHeight;
+            &.active {
+                border-bottom-color: $accentColor;
+            }
 
-            input {
-                display: block;
-                width: 100%;
+            .task-timer-entry-name {
+                width: calc(100% - #{$task-timer-entry-submit-width + 15px});
+                margin-right: 15px;
                 height: $buttonHeight;
-                background-color: transparent;
-                border: 0;
-                letter-spacing: 1.5px;
+
+                input {
+                    display: block;
+                    width: 100%;
+                    height: $buttonHeight;
+                    background-color: transparent;
+                    border: 0;
+                    letter-spacing: 1.5px;
+                }
+            }
+
+            .task-timer-entry-submit {
+                width: $task-timer-entry-submit-width;
+                height: $buttonHeight;
             }
         }
 
-        .task-timer-entry-submit {
-            width: $task-timer-entry-submit-width;
-            height: $buttonHeight;
+        .task-timer-exclude-done-task-container {
+            $height: 20px;
+            display: flex;
+            height: $height;
+            line-height: $height;
+            margin: 10px 0 0 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            
+            #exclude-done-task {
+                display: none;
+
+                & + label {
+                    display: block;
+                    width: $height;
+                    height: $height;
+                    box-sizing: border-box;
+                    border: solid thin rgba(white, .5);
+                    margin: 0 8px 0 auto;
+
+                    &::before {
+                        font-size: 14px;
+                        display: block;
+                        text-align: center;
+                        width: $height;
+                        height: $height;
+                        line-height: $height;
+                        opacity: 0;
+                        -webkit-transition: opacity ease .3s;
+                        -moz-transition: opacity ease .3s;
+                        -ms-transition: opacity ease .3s;
+                        -o-transition: opacity ease .3s;
+                        transition: opacity ease .3s;
+                    }
+                }
+
+                &:checked + label::before {
+                    opacity: 1;
+                }
+            }
         }
     }
 
