@@ -244,7 +244,7 @@
                 try {
                     endDate = this.parseStartDate(endUnix)
                 } catch (e) {
-                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
                 }
                 this.endDate = endDate
             },
