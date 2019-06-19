@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <div class="task-timer-board">
         <project-header>
             <!--suppress HtmlUnknownBooleanAttribute -->
@@ -47,29 +47,17 @@
                     <i class="fas fa-chevron-right" @click="moveDisplayDate(1)"></i>
                 </div>
             </div>
+
+            <div class="total-task-timer" v-if="timeHistories.length > 5">
+                <div class="total-task-timer-title">Total</div>
+                <div class="total-task-timer-time">{{ totalTimeHM }}</div>
+            </div>
+
             <ul class="task-timer-entry-container">
-                <li class="task-timer-entry" v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }">
-                    <div class="label"></div>
-                    <div class="name">{{ i.task.name }}</div>
-                    <div class="note">{{ i.note }}</div>
-                    <div class="date">
-                        <div class="time-between">
-                            <span>{{ i.startDateHM }}</span>
-                            <span>〜</span>
-                            <span>{{ i.endDateHM }}</span>
-                        </div>
-                        <div class="time-total">
-                            <span class="time-total-text">{{ i.totalHM }}</span>
-                        </div>
-                    </div>
-                    <div class="actions">
-                        <i class="fas fa-stop" @click="stopTask(i.task)" v-if="i.endDateUnix === 0"></i>
-                        <i class="fas fa-trash" @click="deleteTask(i)" v-else></i>
-                        <i class="fas fa-edit"></i>
-                        <i class="fas fa-info"></i>
-                    </div>
-                </li>
+                <task-timer-line v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }"
+                                 :task-timer="i" :key="i.id"></task-timer-line>
             </ul>
+
             <div class="total-task-timer">
                 <div class="total-task-timer-title">Total</div>
                 <div class="total-task-timer-time">{{ totalTimeHM }}</div>
@@ -85,9 +73,9 @@
     import TaskTimerApi from "@scripts/api/TaskTimer";
     import TaskTimerGetMyListRequest from "@scripts/model/api/taskTimer/TaskTimerGetMyListRequest";
     import Task from "@scripts/model/api/task/Task";
-    import TaskHistory from "@scripts/model/api/task/TaskHistory";
     import TaskStatusConvert, {TaskStatus} from "@scripts/enums/TaskStatus";
-    import TaskLine from "@components/TaskBoard/TaskLine.vue";
+    import TaskTimerLine from "@components/TaskTimer/TaskTimerLine.vue"
+    import TaskLine from "@components/TaskBoard/TaskLine.vue"
     import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer";
 
     interface TimerBoardData {
@@ -103,7 +91,7 @@
             position: object
         },
         taskTimerTopFocus: number,
-        timeHistories: Array<TaskHistory>,
+        timeHistories: Array<TaskTimer>,
         taskReloadTimer: undefined | number,
         totalTimeHM: string,
         startDate: Date,
@@ -112,7 +100,7 @@
 
     export default {
         name: "TimerBoard",
-        components: {TaskLine, ProjectHeader},
+        components: {TaskLine, TaskTimerLine, ProjectHeader},
         data(): TimerBoardData {
             return {
                 displayDate: {
@@ -364,8 +352,8 @@
                 this.$router.push({
                     name: "timerBoard",
                     query: {
-                        start: startDate.getTime(),
-                        end: endDate.getTime(),
+                        start: startDate.getTime().toString(),
+                        end: endDate.getTime().toString(),
                     }
                 })
             },
@@ -393,27 +381,6 @@
                 }
                 this.$store.commit("decrementLoadingCount")
             },
-            async stopTask(task: Task): Promise<void> {
-                this.$store.commit("incrementLoadingCount")
-                const res = await TaskTimerApi.getTaskTimerStatus(task.createDate)
-
-                if (res.start) {
-                    const toggleRes = await TaskTimerApi.toggleTimer(task.createDate)
-                    if (toggleRes.success) {
-                        this.loadPage()
-                    }
-                }
-                this.$store.commit("decrementLoadingCount")
-            },
-            async deleteTask(taskTimer: TaskTimer): Promise<void> {
-                this.$store.commit("incrementLoadingCount")
-
-                const toggleRes = await TaskTimerApi.deleteTaskTimer(taskTimer.id)
-                if (toggleRes.success) {
-                    this.loadPage()
-                }
-                this.$store.commit("decrementLoadingCount")
-            }
         },
         created(): void {
             this.parseQuery()
@@ -571,99 +538,6 @@
 
         .task-timer-entry-container {
             margin-top: 8px;
-
-            .task-timer-entry {
-                $height: 55px;
-                display: flex;
-                height: $height;
-                margin-bottom: 5px;
-                padding-bottom: 5px;
-                border-bottom: solid 1px rgba(white, .3);
-                flex-wrap: wrap;
-
-                &::after {
-                    position: relative;
-                    display: block;
-                    content: " ";
-                    border-bottom: solid 3px transparent;
-                    width: 100%;
-                    height: 0;
-                    margin: 3px 0 0 0;
-                }
-
-                &.active::after {
-                    @include animation(blinkBorderBottomAnimation 1s infinite, linear);
-                }
-
-                .label {
-                    width: 5px;
-                    background-color: red;
-                    margin-right: 10px;
-                    height: $height;
-                }
-
-                .name {
-                    width: 40%;
-                    line-height: $height;
-                    overflow: hidden;
-                    font-weight: bold;
-                    font-size: 16px;
-                }
-
-                .note {
-                    width: 25%;
-                    overflow-y: auto;
-                }
-
-                .date {
-                    margin: 0 auto;
-
-                    .time-between,
-                    .time-total {
-                        height: $height / 2;
-                        line-height: $height / 2;
-                    }
-
-                    .time-total {
-                        text-align: right;
-
-                        .time-total-text::before {
-                            content: "total:";
-                            margin-right: 5px;
-                        }
-                    }
-                }
-
-                .actions {
-                    display: flex;
-                    margin-left: 5px;
-
-                    i {
-                        $margin: 5px;
-                        width: $height;
-                        height: $height - $margin * 2;
-                        line-height: $height - $margin * 2;
-                        margin: $margin 0;
-                        font-size: 16px;
-                        text-align: center;
-                        box-sizing: border-box;
-                        background-color: transparent;
-                        border: solid 1px $accentColor;
-                        color: white;
-                        padding: 0 15px;
-                        letter-spacing: 1px;
-                        transition: ease background-color .3s;
-
-                        &:hover {
-                            background-color: accentColor(.1);
-                        }
-
-                        &:not(:last-child) {
-                            border-right: 0;
-                        }
-                    }
-                }
-            }
         }
 
         .total-task-timer {
