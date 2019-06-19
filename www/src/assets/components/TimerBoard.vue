@@ -54,8 +54,8 @@
             </div>
 
             <ul class="task-timer-entry-container">
-                <task-timer-line v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }"
-                                 :task-timer="i" :key="i.id"></task-timer-line>
+                <li is="task-timer-line" v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }"
+                                 :task-timer="i" :key="i.id"></li>
             </ul>
 
             <div class="total-task-timer">
