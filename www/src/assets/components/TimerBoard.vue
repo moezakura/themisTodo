@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <div class="actions">
-                        <i class="fas fa-stop" v-if="i.endDateUnix === 0"></i>
+                        <i class="fas fa-stop" @click="stopTask(i.task)" v-if="i.endDateUnix === 0"></i>
                         <i class="fas fa-trash" v-else></i>
                         <i class="fas fa-edit"></i>
                         <i class="fas fa-info"></i>
@@ -325,6 +325,18 @@
                     if (toggleRes.success) {
                         this.$set(this.search, "selectedTask", undefined)
                         this.$set(this.search, "text", "")
+                        this.loadPage()
+                    }
+                }
+                this.$store.commit("decrementLoadingCount")
+            },
+            async stopTask(task: Task): Promise<void>{
+                this.$store.commit("incrementLoadingCount")
+                const res = await TaskTimerApi.getTaskTimerStatus(task.createDate)
+
+                if (res.start) {
+                    const toggleRes = await TaskTimerApi.toggleTimer(task.createDate)
+                    if (toggleRes.success) {
                         this.loadPage()
                     }
                 }
