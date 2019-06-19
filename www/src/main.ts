@@ -58,7 +58,7 @@ const router = new VueRouter({
             }
         },
         created() {
-            if (!res.success) {
+            if (!res.success && !this.$route.meta.withoutLogin) {
                 this.$router.push({name: "login"})
             }
             this.headerController()

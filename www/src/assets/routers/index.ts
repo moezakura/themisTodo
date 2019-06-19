@@ -23,12 +23,18 @@ export default [
         path: '/',
         component: Welcome,
         name: 'welcome',
-        meta: {hideHeader: true}
+        meta: {
+            hideHeader: true,
+            withoutLogin: true
+        }
     }, {
         path: '/login',
         component: Login,
         name: 'login',
-        meta: {hideHeader: true}
+        meta: {
+            hideHeader: true,
+            withoutLogin: true
+        }
     }, {
         path: '/home',
         component: DashBoard,
