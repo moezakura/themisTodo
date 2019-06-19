@@ -60,6 +60,7 @@ func Init(db *sql.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engi
 			taskTimer.GET("/view/:createDate", taskTimerController.GetView)
 			taskTimer.GET("/status/:createDate", taskTimerController.GetStatus)
 			taskTimer.GET("/myList/:projectId", taskTimerController.GetMyList)
+			taskTimer.DELETE("/delete/:taskTimerId", taskTimerController.Delete)
 		}
 	}
 

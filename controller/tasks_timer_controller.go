@@ -225,3 +225,50 @@ func (t *TaskTimerController) GetStatus(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	}
 }
+
+func (t *TaskTimerController) Delete(c *gin.Context) {
+	res := models.NewBaseApiResultJson(false)
+	_taskTimerId, err := strconv.ParseInt(c.Param("taskTimerId"), 10, 64)
+	userUuid := c.GetInt("uuid")
+
+	if err != nil {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+	taskTimerId := int(_taskTimerId)
+
+	projectModule := module.NewProjectsModule(t.DB)
+	taskModule := module.NewTaskModule(t.DB)
+	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
+
+	taskTimer, err := taskTimerModule.Get(taskTimerId)
+	if err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	isErr, task := taskModule.Get(taskTimer.CreateDate)
+	if isErr {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	if !projectModule.IsIn(userUuid, task.ProjectId) {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	if err := taskTimerModule.Delete(taskTimerId); err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	} else {
+		res.Success = true
+		c.JSON(http.StatusOK, res)
+		return
+	}
+}

@@ -57,6 +57,23 @@ export default class TaskTimerApi extends BaseApi {
         })
     }
 
+    static deleteTaskTimer(createDate: string): Promise<BaseApiResult> {
+        return fetch("/api/tasks/timer/delete/" + createDate, {
+            method: 'DELETE',
+            credentials: "same-origin",
+            headers: this.getHeader(),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let task = new BaseApiResult()
+
+            task.success = json["success"]
+            task.message = json["message"]
+
+            return task
+        })
+    }
+
     static getTaskTimerStatus(createDate: string):Promise<TaskTimerGetStatusResult> {
         return fetch("/api/tasks/timer/status/" + createDate, {
             method: 'GET',

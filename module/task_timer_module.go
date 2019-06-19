@@ -57,6 +57,45 @@ func (t *TasksTimerModule) TimerToggle(createDate int64, userId int) (isStart bo
 	return false, nil
 }
 
+func (t *TasksTimerModule) Get(taskTimerId int) (taskTimer *models.TodoTimer, err error) {
+	rows, err := t.db.Query("SELECT * FROM `todo_timer` WHERE `id` = ?;", taskTimerId)
+	if err != nil {
+		return nil, err
+	}
+
+	taskTimer = &models.TodoTimer{}
+	if !rows.Next() {
+		return taskTimer, nil
+	}
+
+	err = rows.Scan(&taskTimer.Id, &taskTimer.CreateDate, &taskTimer.Assign, &taskTimer.StartDate, &taskTimer.EndDate, &taskTimer.Note)
+	if err != nil {
+		return nil, err
+	}
+	return taskTimer, nil
+}
+
+func (t *TasksTimerModule) Delete(taskTimerId int) error {
+	tx, err := t.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`DELETE FROM todo_timer WHERE id = ?`, taskTimerId)
+	if err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
+		return err
+	}
+
+	return nil
+}
+
 func (t *TasksTimerModule) GetTaskTimerHistory(createDate int64) (history []models.TodoTimer, err error) {
 	tasks := make([]models.TodoTimer, 0)
 

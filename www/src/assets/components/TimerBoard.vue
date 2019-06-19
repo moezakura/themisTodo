@@ -64,7 +64,7 @@
                     </div>
                     <div class="actions">
                         <i class="fas fa-stop" @click="stopTask(i.task)" v-if="i.endDateUnix === 0"></i>
-                        <i class="fas fa-trash" v-else></i>
+                        <i class="fas fa-trash" @click="deleteTask(i.task)" v-else></i>
                         <i class="fas fa-edit"></i>
                         <i class="fas fa-info"></i>
                     </div>
@@ -330,7 +330,7 @@
                 }
                 this.$store.commit("decrementLoadingCount")
             },
-            async stopTask(task: Task): Promise<void>{
+            async stopTask(task: Task): Promise<void> {
                 this.$store.commit("incrementLoadingCount")
                 const res = await TaskTimerApi.getTaskTimerStatus(task.createDate)
 
@@ -339,6 +339,15 @@
                     if (toggleRes.success) {
                         this.loadPage()
                     }
+                }
+                this.$store.commit("decrementLoadingCount")
+            },
+            async deleteTask(task: Task): Promise<void> {
+                this.$store.commit("incrementLoadingCount")
+
+                const toggleRes = await TaskTimerApi.deleteTaskTimer(task.createDate)
+                if (toggleRes.success) {
+                    this.loadPage()
                 }
                 this.$store.commit("decrementLoadingCount")
             }
