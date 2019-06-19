@@ -64,7 +64,7 @@
                     </div>
                     <div class="actions">
                         <i class="fas fa-stop" @click="stopTask(i.task)" v-if="i.endDateUnix === 0"></i>
-                        <i class="fas fa-trash" @click="deleteTask(i.task)" v-else></i>
+                        <i class="fas fa-trash" @click="deleteTask(i)" v-else></i>
                         <i class="fas fa-edit"></i>
                         <i class="fas fa-info"></i>
                     </div>
@@ -88,6 +88,7 @@
     import TaskHistory from "@scripts/model/api/task/TaskHistory";
     import TaskStatusConvert, {TaskStatus} from "@scripts/enums/TaskStatus";
     import TaskLine from "@components/TaskBoard/TaskLine.vue";
+    import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer";
 
     interface TimerBoardData {
         displayDate: {
@@ -342,10 +343,10 @@
                 }
                 this.$store.commit("decrementLoadingCount")
             },
-            async deleteTask(task: Task): Promise<void> {
+            async deleteTask(taskTimer: TaskTimer): Promise<void> {
                 this.$store.commit("incrementLoadingCount")
 
-                const toggleRes = await TaskTimerApi.deleteTaskTimer(task.createDate)
+                const toggleRes = await TaskTimerApi.deleteTaskTimer(taskTimer.id)
                 if (toggleRes.success) {
                     this.loadPage()
                 }

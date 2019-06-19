@@ -57,8 +57,8 @@ export default class TaskTimerApi extends BaseApi {
         })
     }
 
-    static deleteTaskTimer(createDate: string): Promise<BaseApiResult> {
-        return fetch("/api/tasks/timer/delete/" + createDate, {
+    static deleteTaskTimer(id: number): Promise<BaseApiResult> {
+        return fetch("/api/tasks/timer/delete/" + id, {
             method: 'DELETE',
             credentials: "same-origin",
             headers: this.getHeader(),

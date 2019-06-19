@@ -221,6 +221,7 @@ FROM todo_list todo
 WHERE todo.createDate = ?;`, createDate)
 
 	if err != nil {
+		log.Printf("TasksModule.Get Error: %+v\n", err)
 		return true, nil
 	}
 
@@ -232,6 +233,7 @@ WHERE todo.createDate = ?;`, createDate)
 	}()
 
 	if !rows.Next() {
+		log.Printf("TasksModule.Get Error: No Content.\n")
 		return true, nil
 	}
 

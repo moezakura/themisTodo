@@ -4,6 +4,7 @@ import (
 	"../models"
 	"../module"
 	"../utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -246,6 +247,7 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 	if err != nil {
 		res.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, res)
+		fmt.Printf("error: %+v\n", err)
 		return
 	}
 
@@ -253,6 +255,7 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 	if isErr {
 		res.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, res)
+		fmt.Printf("error: %+v\n", isErr)
 		return
 	}
 
@@ -265,6 +268,7 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 	if err := taskTimerModule.Delete(taskTimerId); err != nil {
 		res.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, res)
+		fmt.Printf("error: %+v\n", err)
 		return
 	} else {
 		res.Success = true
