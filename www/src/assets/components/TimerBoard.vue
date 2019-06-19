@@ -105,7 +105,9 @@
         taskTimerTopFocus: number,
         timeHistories: Array<TaskHistory>,
         taskReloadTimer: undefined | number,
-        totalTimeHM: string
+        totalTimeHM: string,
+        startDate: Date,
+        endDate: Date,
     }
 
     export default {
@@ -127,7 +129,9 @@
                 taskTimerTopFocus: 0,
                 timeHistories: [],
                 taskReloadTimer: undefined,
-                totalTimeHM: ""
+                totalTimeHM: "",
+                startDate: new Date(),
+                endDate: new Date(),
             }
         },
         computed: {
@@ -143,26 +147,10 @@
                 }
                 return this.$store.getters.getCurrentProject
             },
-            startDate(): Date {
-                let startDate = new Date(this.$route.query["start"])
-                if (startDate.toString() === "Invalid Date") {
-                    const now = new Date()
-                    return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 0, 0, 0)
-                }
-                return startDate
-            },
-            endDate(): Date {
-                let endDate = new Date(this.$route.query["end"])
-                if (endDate.toString() === "Invalid Date") {
-                    const now = new Date()
-                    return new Date(now.getFullYear(), now.getMonth() + 1, now.getDate(), 23, 59, 59)
-                }
-                return endDate
-            },
             isStartToday(): boolean {
                 const startDate: Date = this.startDate
                 const now: Date = new Date()
-                const startDateString = startDate.getFullYear() + "/" + ("0" + startDate.getMonth()).slice(-2) + "/" + ("0" + startDate.getDate()).slice(-2)
+                const startDateString = startDate.getFullYear() + "/" + ("0" + (startDate.getMonth() + 1)).slice(-2) + "/" + ("0" + startDate.getDate()).slice(-2)
                 const nowDateString = now.getFullYear() + "/" + ("0" + (now.getMonth() + 1)).slice(-2) + "/" + ("0" + now.getDate()).slice(-2)
 
                 if (startDateString == nowDateString) {
@@ -231,9 +219,75 @@
                         display: "none"
                     })
                 }
+            },
+            '$route'(): void {
+                this.parseQuery()
             }
         },
         methods: {
+            parseQuery(): void {
+                const now = new Date()
+                let startUnix: undefined | string = this.$route.query.start
+                let endUnix: undefined | string = this.$route.query.end
+
+                let startDate: undefined | Date = undefined
+                let endDate: undefined | Date = undefined
+
+                try {
+                    startDate = this.parseStartDate(startUnix)
+                } catch (e) {
+                    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+                }
+                this.startDate = startDate
+
+
+                try {
+                    endDate = this.parseStartDate(endUnix)
+                } catch (e) {
+                    endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)
+                }
+                this.endDate = endDate
+            },
+            parseStartDate(startUnix: string): Date {
+                let startDate: undefined | Date = undefined
+
+                if (typeof startUnix !== "undefined") {
+                    let startUnixNumber = Number(startUnix)
+                    if (!isNaN(startUnixNumber)) {
+                        startDate = new Date(startUnixNumber)
+                    }
+                }
+
+                if (typeof startDate === "undefined" || startDate === null) {
+                    throw "undefined date"
+                }
+
+                if (startDate.toString() === "Invalid Date") {
+                    throw "Invalid date"
+                }
+
+                return startDate
+            },
+            parseEndDate(endUnix: string): Date {
+                let endDate: undefined | Date = undefined
+
+                if (typeof endUnix !== "undefined") {
+                    let startUnixNumber = Number(endUnix)
+                    if (!isNaN(startUnixNumber)) {
+                        endDate = new Date(startUnixNumber)
+                    }
+                }
+
+                if (typeof endDate === "undefined" || endDate === null) {
+                    throw "undefined date"
+                }
+
+                if (endDate.toString() === "Invalid Date") {
+                    throw "Invalid date"
+                }
+
+                return endDate
+            },
             addEntryFocus(): void {
                 this.$refs['task-timer-entry-name'].focus()
             },
@@ -245,7 +299,7 @@
                     this.$store.commit("decrementLoadingCount")
                 })
             },
-            loadPage(isLoadingShow: boolean = true): void {
+            loadPage(isLoadingShow: boolean = true, startDate?: Date, endDate?: Date): void {
                 if (isLoadingShow) {
                     this.$store.commit("incrementLoadingCount")
 
@@ -265,8 +319,16 @@
                 }
 
                 let req = new TaskTimerGetMyListRequest()
-                req.startDate = this.startDate
-                req.endDate = this.endDate
+                if (typeof startDate === "undefined") {
+                    req.startDate = this.startDate
+                } else {
+                    req.startDate = startDate
+                }
+                if (typeof endDate === "undefined") {
+                    req.endDate = this.endDate
+                } else {
+                    req.endDate = endDate
+                }
                 TaskTimerApi.getMyList(this.projectId, req).then(res => {
                     this.timeHistories = res.list
                     let totalTimeSec = 0
@@ -354,7 +416,8 @@
             }
         },
         created(): void {
-            this.loadPage()
+            this.parseQuery()
+            this.loadPage(true)
         },
         destroyed(): void {
             if (typeof this.taskReloadTimer !== "undefined") {
