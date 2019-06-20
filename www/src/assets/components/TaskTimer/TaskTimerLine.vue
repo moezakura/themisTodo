@@ -22,7 +22,7 @@
 
         <transition>
             <div class="timer-edit-modal-container" v-show="isEdit">
-                <form class="timer-edit-modal basicForm">
+                <form class="timer-edit-modal basicForm" @submit.prevent="applyChange">
                     <h2>Task Timer Edit</h2>
                     <div class="timer-inputs">
                         <input type="time" v-model="edit.startDate">
@@ -69,7 +69,18 @@
             }
         },
         watch: {
+            isEdit(value: boolean, oldValue: boolean): void {
+                if (value && !oldValue) {
+                    this.$set(this.edit, "startDate", this.taskTimer.startDateHM)
+                    this.$set(this.edit, "endDate", this.taskTimer.endDateHM)
+                    this.$set(this.edit, "note", this.taskTimer.note)
+                }
+            },
             taskTimer(value: TaskTimer): void {
+                if (this.isEdit) {
+                    return
+                }
+
                 this.$set(this.edit, "startDate", value.startDateHM)
                 this.$set(this.edit, "endDate", value.endDateHM)
                 this.$set(this.edit, "note", value.note)
