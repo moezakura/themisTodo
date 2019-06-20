@@ -55,7 +55,7 @@
 
             <ul class="task-timer-entry-container">
                 <li is="task-timer-line" v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }"
-                    :task-timer="i" :key="i.id"></li>
+                    :task-timer="i" :key="i.id" @load-page="loadPage"></li>
             </ul>
 
             <div class="total-task-timer">

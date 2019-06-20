@@ -16,9 +16,30 @@
         <div class="actions">
             <i class="fas fa-stop" @click="stopTask(task)" v-if="taskTimer.endDateUnix === 0"></i>
             <i class="fas fa-trash" @click="deleteTask(taskTimer)" v-else></i>
-            <i class="fas fa-edit"></i>
+            <i class="fas fa-edit" @click="isEdit=true"></i>
             <i class="fas fa-info"></i>
         </div>
+
+        <transition>
+            <div class="timer-edit-modal-container" v-show="isEdit">
+                <form class="timer-edit-modal basicForm">
+                    <h2>Task Timer Edit</h2>
+                    <div class="timer-inputs">
+                        <input type="time" v-model="edit.startDate">
+                        <div class="split">〜</div>
+                        <input type="time" v-model="edit.endDate">
+                    </div>
+                    <label class="timer-note">
+                        <textarea placeholder="note"></textarea>
+                    </label>
+                    <div class="timer-actions">
+                        <input type="submit" value="CANCEL" @click.prevent="isEdit=false">
+                        <input type="submit" value="CHANGE">
+                    </div>
+                </form>
+                <div class="timer-edit-modal-background" @click="isEdit=false"></div>
+            </div>
+        </transition>
     </li>
 </template>
 
@@ -32,12 +53,32 @@
         props: {
             taskTimer: TaskTimer
         },
+        data() {
+            return {
+                isEdit: false,
+                edit: {
+                    startDate: "",
+                    endDate: "",
+                    note: "",
+                }
+            }
+        },
         computed: {
             task(): Task {
                 return this.taskTimer.task
             }
         },
+        watch: {
+            taskTimer(value: TaskTimer): void {
+                this.$set(this.edit, "startDate", value.startDateHM)
+                this.$set(this.edit, "endDate", value.endDateHM)
+                this.$set(this.edit, "note", value.note)
+            }
+        },
         methods: {
+            loadPage(): void {
+                this.$emit("load-page")
+            },
             async stopTask(task: Task): Promise<void> {
                 this.$store.commit("incrementLoadingCount")
                 const res = await TaskTimerApi.getTaskTimerStatus(task.createDate)
@@ -64,6 +105,16 @@
 </script>
 
 <style scoped lang="scss">
+    .v-enter,
+    .v-leave-to {
+        opacity: 0;
+    }
+
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity .2s;
+    }
+
     .task-timer-entry {
         $height: 55px;
         display: flex;
@@ -153,6 +204,87 @@
                 &:not(:last-child) {
                     border-right: 0;
                 }
+            }
+        }
+
+        .timer-edit-modal-container {
+            .timer-edit-modal {
+                position: fixed;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                padding: 10px 20px;
+                box-sizing: border-box;
+                box-shadow: 0 0 6px rgba(black, .5);
+                background-color: $backgroundColor;
+                width: 500px;
+                z-index: 99;
+
+                h2 {
+                    height: $buttonHeight;
+                    line-height: $buttonHeight;
+                    font-size: 18px;
+                    padding-left: 15px;
+                    background-color: rgba(black, 0.5);
+                    letter-spacing: 1.5px;
+                    margin: -10px -20px 0 -20px;
+                    text-align: left;
+                }
+
+                .timer-inputs,
+                .timer-actions {
+                    display: flex;
+                    height: $lineTextHeight;
+                    line-height: $lineTextHeight;
+                    margin-top: 15px;
+
+                    input {
+                        margin: 0;
+                    }
+
+                    .split {
+                        margin: 0 10px;
+                    }
+                }
+
+                .timer-note {
+                    display: block;
+                    width: 100%;
+                    margin: 10px 0;
+
+                    textarea {
+                        display: block;
+                        width: 100%;
+                        min-width: 100%;
+                        max-width: 100%;
+                        height: 250px;
+                        resize: none;
+                    }
+                }
+
+                .timer-actions {
+                    margin-bottom: 15px;
+
+                    input:first-child {
+                        font-size: 12px;
+                        margin: 0 10px 0 auto;
+                    }
+
+                    input:last-child {
+                        font-size: 12px;
+                        margin: 0 0 0 10px;
+                    }
+                }
+            }
+
+            .timer-edit-modal-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(black, .7);
+                z-index: 98;
             }
         }
     }
