@@ -178,7 +178,8 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 	for _, task := range tasks {
 		for index, history := range histories {
 			if task.CreateDate == history.CreateDate {
-				histories[index].Task = task
+				taskTemp := utils.TaskConvert(task)
+				histories[index].Task = models.NewTaskOfJson(*taskTemp)
 			}
 		}
 	}
