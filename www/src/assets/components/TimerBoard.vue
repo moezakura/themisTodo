@@ -8,7 +8,7 @@
 
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:inner-content>
-
+                <h2 class="task-timer-board-title">Your task timer list</h2>
             </template>
 
             <!--suppress HtmlUnknownBooleanAttribute -->
@@ -398,6 +398,15 @@
     .task-timer-board {
         height: calc(100% - #{$headerHeight + 10px});
         overflow: auto;
+
+        .task-timer-board-title {
+            margin: 0 auto;
+            text-align: center;
+            line-height: $buttonHeight;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
     }
 
     .task-timer-add-container {
