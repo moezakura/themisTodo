@@ -233,7 +233,7 @@
 
         .timer-edit-modal-container {
             z-index: 90;
-            
+
             .timer-edit-modal {
                 position: fixed;
                 left: 50%;
