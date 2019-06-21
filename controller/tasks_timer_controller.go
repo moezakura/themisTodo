@@ -356,6 +356,12 @@ func (t *TaskTimerController) Update(c *gin.Context) {
 		return
 	}
 
+	if taskTimer.StartDate.Unix() >= taskTimer.EndDate.Unix() {
+		res.Message = "The start time must be later than the end time"
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
 	taskTimer.NoteString = updateReq.Note
 
 	if err := taskTimerModule.Update(taskTimerId, taskTimer); err != nil {

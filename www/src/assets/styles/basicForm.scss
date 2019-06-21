@@ -29,7 +29,8 @@
             border-color: accentColor(.8);
         }
 
-        &[type=submit] {
+        &[type=submit],
+        &.fake-submit {
             height: $buttonHeight;
             line-height: $buttonHeight;
             letter-spacing: 1.5px;

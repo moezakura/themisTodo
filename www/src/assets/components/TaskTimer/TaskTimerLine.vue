@@ -24,6 +24,9 @@
             <div class="timer-edit-modal-container" v-show="isEdit">
                 <form class="timer-edit-modal basicForm" @submit.prevent="applyChange">
                     <h2>Task Timer Edit</h2>
+                    <div class="error" v-if="edit.errorMessage" @click="$set(edit, 'errorMessage', '')">{{
+                        edit.errorMessage }}
+                    </div>
                     <div class="timer-inputs">
                         <input type="time" step="1" v-model="edit.startDate">
                         <div class="split">〜</div>
@@ -33,7 +36,7 @@
                         <textarea placeholder="note" v-model="edit.note"></textarea>
                     </label>
                     <div class="timer-actions">
-                        <input type="submit" value="CANCEL" @click.prevent="isEdit=false">
+                        <input type="button" value="CANCEL" class="fake-submit" @click.prevent="isEdit=false">
                         <input type="submit" value="CHANGE">
                     </div>
                 </form>
@@ -61,6 +64,7 @@
                     startDate: "",
                     endDate: "",
                     note: "",
+                    errorMessage: "",
                 }
             }
         },
@@ -122,6 +126,8 @@
                 const result = await TaskTimerApi.updateTaskTimer(this.taskTimer.id, updateReq)
                 if (result.success) {
                     this.loadPage()
+                } else {
+                    this.$set(this.edit, "errorMessage", result.message)
                 }
                 this.$store.commit("decrementLoadingCount")
             }
@@ -254,6 +260,10 @@
                     letter-spacing: 1.5px;
                     margin: -10px -20px 0 -20px;
                     text-align: left;
+                }
+
+                .error {
+                    margin: 10px 0;
                 }
 
                 .timer-inputs,
