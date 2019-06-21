@@ -1,6 +1,5 @@
 <template>
     <li class="task-timer-entry">
-        <div class="label"></div>
         <div class="name">{{ task.name }}</div>
         <div class="note">{{ taskTimer.note }}</div>
         <div class="date">
@@ -169,19 +168,13 @@
             @include animation(blinkBorderBottomAnimation 1s infinite, linear);
         }
 
-        .label {
-            width: 5px;
-            background-color: red;
-            margin-right: 10px;
-            height: $height;
-        }
-
         .name {
             width: 40%;
             line-height: $height;
             overflow: hidden;
             font-weight: bold;
             font-size: 16px;
+            margin-left: 10px;
         }
 
         .note {
@@ -239,6 +232,8 @@
         }
 
         .timer-edit-modal-container {
+            z-index: 90;
+            
             .timer-edit-modal {
                 position: fixed;
                 left: 50%;
