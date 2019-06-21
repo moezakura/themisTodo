@@ -15,6 +15,7 @@ import TaskTimerGetMyListRequest from "@scripts/model/api/taskTimer/TaskTimerGet
 import TaskTimerGetMyListResult from "@scripts/model/api/taskTimer/TaskTimerGetMyListResult"
 import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer"
 import TaskTimerGetStatusResult from "@scripts/model/api/taskTimer/TaskTimerGetStatusResult"
+import TaskTimerUpdateRequest from "@scripts/model/api/taskTimer/TaskTimerUpdateRequest"
 
 export default class TaskTimerApi extends BaseApi {
     static toggleTimer(createDate: string): Promise<TaskTimerToggleResult> {
@@ -74,7 +75,25 @@ export default class TaskTimerApi extends BaseApi {
         })
     }
 
-    static getTaskTimerStatus(createDate: string):Promise<TaskTimerGetStatusResult> {
+    static updateTaskTimer(id: number, updateRequest: TaskTimerUpdateRequest): Promise<BaseApiResult> {
+        return fetch("/api/tasks/timer/update/" + id, {
+            method: 'POST',
+            body: updateRequest.toJson(),
+            credentials: "same-origin",
+            headers: this.getHeader(),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let task = new BaseApiResult()
+
+            task.success = json["success"]
+            task.message = json["message"]
+
+            return task
+        })
+    }
+
+    static getTaskTimerStatus(createDate: string): Promise<TaskTimerGetStatusResult> {
         return fetch("/api/tasks/timer/status/" + createDate, {
             method: 'GET',
             credentials: "same-origin",

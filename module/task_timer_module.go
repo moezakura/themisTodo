@@ -72,6 +72,11 @@ func (t *TasksTimerModule) Get(taskTimerId int) (taskTimer *models.TodoTimer, er
 	if err != nil {
 		return nil, err
 	}
+
+	taskTimer.StartDateUnix = taskTimer.StartDate.Unix()
+	taskTimer.EndDateUnix = taskTimer.EndDate.Unix()
+	taskTimer.NoteString = string(taskTimer.Note)
+
 	return taskTimer, nil
 }
 
@@ -82,6 +87,31 @@ func (t *TasksTimerModule) Delete(taskTimerId int) error {
 	}
 
 	_, err = tx.Exec(`DELETE FROM todo_timer WHERE id = ?`, taskTimerId)
+	if err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (t *TasksTimerModule) Update(taskTimerId int, taskTimer *models.TodoTimer) error {
+	tx, err := t.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`UPDATE todo_timer SET startDate = ?, endDate = ?, note = ? WHERE id = ?`,
+		taskTimer.StartDate,
+		taskTimer.EndDate,
+		taskTimer.NoteString,
+		taskTimerId)
 	if err != nil {
 		return err
 	}
@@ -151,6 +181,7 @@ func (t *TasksTimerModule) GetTaskTimerStatus(createDate int64) (isStart bool, e
 	}
 	taskTimer.StartDateUnix = taskTimer.StartDate.Unix()
 	taskTimer.EndDateUnix = taskTimer.EndDate.Unix()
+	taskTimer.NoteString = string(taskTimer.Note)
 	if taskTimer.EndDateUnix < 0 {
 		taskTimer.EndDateUnix = 0
 	}
@@ -250,6 +281,7 @@ func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate,
 		}
 		task.StartDateUnix = task.StartDate.Unix()
 		task.EndDateUnix = task.EndDate.Unix()
+		task.NoteString = string(task.Note)
 		if task.EndDateUnix < 0 {
 			task.EndDateUnix = 0
 		}

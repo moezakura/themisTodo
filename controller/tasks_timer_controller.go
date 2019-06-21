@@ -276,3 +276,96 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 		return
 	}
 }
+
+func (t *TaskTimerController) Update(c *gin.Context) {
+	res := models.NewBaseApiResultJson(false)
+	_taskTimerId, err := strconv.ParseInt(c.Param("taskTimerId"), 10, 64)
+	userUuid := c.GetInt("uuid")
+
+	if err != nil {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+	taskTimerId := int(_taskTimerId)
+
+	projectModule := module.NewProjectsModule(t.DB)
+	taskModule := module.NewTaskModule(t.DB)
+	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
+
+	taskTimer, err := taskTimerModule.Get(taskTimerId)
+	if err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		fmt.Printf("error: %+v\n", err)
+		return
+	}
+
+	isErr, task := taskModule.Get(taskTimer.CreateDate)
+	if isErr {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		fmt.Printf("error: %+v\n", isErr)
+		return
+	}
+
+	if !projectModule.IsIn(userUuid, task.ProjectId) {
+		res.Message = "invalid task createdTime"
+		c.JSON(http.StatusServiceUnavailable, res)
+		return
+	}
+
+	var updateReq *models.TaskTimerUpdateRequestJson
+	if c.ShouldBindJSON(&updateReq) != nil {
+		res.Message = "bad request"
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	location, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		fmt.Printf("error: %+v\n", err)
+		return
+	}
+
+	startDateString := taskTimer.StartDate.Format("2006-01-02")
+	if updateReq.StartDateHMS != "" {
+		startDateString += " " + updateReq.StartDateHMS
+	} else {
+		startDateString = taskTimer.StartDate.Format("2006-01-02 15:04:05")
+	}
+	taskTimer.StartDate, err = time.ParseInLocation("2006-01-02 15:04:05", startDateString, location)
+	if err != nil {
+		res.Message = "bad request"
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	endDateString := taskTimer.EndDate.Format("2006-01-02")
+	if updateReq.StartDateHMS != "" {
+		endDateString += " " + updateReq.EndDateHMS
+	} else {
+		endDateString = taskTimer.EndDate.Format("2006-01-02 15:04:05")
+	}
+	taskTimer.EndDate, err = time.ParseInLocation("2006-01-02 15:04:05", endDateString, location)
+	if err != nil {
+		res.Message = "bad request"
+		c.JSON(http.StatusBadRequest, res)
+		return
+	}
+
+	taskTimer.NoteString = updateReq.Note
+
+	if err := taskTimerModule.Update(taskTimerId, taskTimer); err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		fmt.Printf("error: %+v\n", err)
+		return
+	} else {
+		res.Success = true
+		c.JSON(http.StatusOK, res)
+		return
+	}
+}

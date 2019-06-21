@@ -25,12 +25,12 @@
                 <form class="timer-edit-modal basicForm" @submit.prevent="applyChange">
                     <h2>Task Timer Edit</h2>
                     <div class="timer-inputs">
-                        <input type="time" v-model="edit.startDate">
+                        <input type="time" step="1" v-model="edit.startDate">
                         <div class="split">〜</div>
-                        <input type="time" v-model="edit.endDate">
+                        <input type="time" step="1" v-model="edit.endDate">
                     </div>
                     <label class="timer-note">
-                        <textarea placeholder="note"></textarea>
+                        <textarea placeholder="note" v-model="edit.note"></textarea>
                     </label>
                     <div class="timer-actions">
                         <input type="submit" value="CANCEL" @click.prevent="isEdit=false">
@@ -47,6 +47,7 @@
     import Task from "@scripts/model/api/task/Task";
     import TaskTimerApi from "@scripts/api/TaskTimer";
     import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer";
+    import TaskTimerUpdateRequest from "@scripts/model/api/taskTimer/TaskTimerUpdateRequest";
 
     export default {
         name: "TaskTimerLine",
@@ -71,20 +72,19 @@
         watch: {
             isEdit(value: boolean, oldValue: boolean): void {
                 if (value && !oldValue) {
-                    this.$set(this.edit, "startDate", this.taskTimer.startDateHM)
-                    this.$set(this.edit, "endDate", this.taskTimer.endDateHM)
+                    const startDate = ("00" + this.taskTimer.startDate.getHours()).slice(-2) + ":" +
+                        ("00" + this.taskTimer.startDate.getMinutes()).slice(-2) + ":" +
+                        ("00" + this.taskTimer.startDate.getSeconds()).slice(-2)
+
+                    const endDate = ("00" + this.taskTimer.endDate.getHours()).slice(-2) + ":" +
+                        ("00" + this.taskTimer.endDate.getMinutes()).slice(-2) + ":" +
+                        ("00" + this.taskTimer.endDate.getSeconds()).slice(-2)
+
+                    this.$set(this.edit, "startDate", startDate)
+                    this.$set(this.edit, "endDate", endDate)
                     this.$set(this.edit, "note", this.taskTimer.note)
                 }
             },
-            taskTimer(value: TaskTimer): void {
-                if (this.isEdit) {
-                    return
-                }
-
-                this.$set(this.edit, "startDate", value.startDateHM)
-                this.$set(this.edit, "endDate", value.endDateHM)
-                this.$set(this.edit, "note", value.note)
-            }
         },
         methods: {
             loadPage(): void {
@@ -107,6 +107,20 @@
 
                 const toggleRes = await TaskTimerApi.deleteTaskTimer(taskTimer.id)
                 if (toggleRes.success) {
+                    this.loadPage()
+                }
+                this.$store.commit("decrementLoadingCount")
+            },
+            async applyChange(): Promise<void> {
+                this.$store.commit("incrementLoadingCount")
+
+                let updateReq = new TaskTimerUpdateRequest()
+                updateReq.startDateHMS = this.edit.startDate
+                updateReq.endDateHMS = this.edit.endDate
+                updateReq.note = this.edit.note
+
+                const result = await TaskTimerApi.updateTaskTimer(this.taskTimer.id, updateReq)
+                if (result.success) {
                     this.loadPage()
                 }
                 this.$store.commit("decrementLoadingCount")
