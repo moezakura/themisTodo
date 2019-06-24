@@ -48,11 +48,6 @@
                 </div>
             </div>
 
-            <div class="total-task-timer" v-if="timeHistories.length > 5">
-                <div class="total-task-timer-title">Total</div>
-                <div class="total-task-timer-time">{{ totalTimeHM }}</div>
-            </div>
-
             <ul class="task-timer-entry-container">
                 <li is="task-timer-line" v-for="i in timeHistories" :class="{ active: i.endDateUnix === 0 }"
                     :task-timer="i" :key="i.id" @load-page="loadPage"></li>
@@ -397,7 +392,6 @@
 <style scoped lang="scss">
     .task-timer-board {
         height: calc(100% - #{$headerHeight + 10px});
-        overflow: auto;
 
         .task-timer-board-title {
             margin: 0 auto;
@@ -411,6 +405,7 @@
 
     .task-timer-add-container {
         width: 75%;
+        height: 110px;
         margin: 10px auto;
 
         .task-timer-add {
@@ -510,6 +505,7 @@
     .task-timer-history {
         width: 85%;
         margin: 15px auto;
+        height: calc(100% - #{45px + 110px + (15px * 2) + 10px});
 
         .task-timer-history-title-section {
             $height: 40px;
@@ -547,12 +543,16 @@
 
         .task-timer-entry-container {
             margin-top: 8px;
+            height: calc(100% - #{40px + 35px});
+            overflow-y: auto;
         }
 
         .total-task-timer {
             display: flex;
             font-size: 16px;
             letter-spacing: 2px;
+            height: 35px;
+            line-height: 35px;
 
             .total-task-timer-title {
                 margin: 0 15px 0 auto;
