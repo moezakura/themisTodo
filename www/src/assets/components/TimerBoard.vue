@@ -4,6 +4,7 @@
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:ex-menu>
                 <li @click="loadPage"><i class="fas fa-redo"></i>RELOAD</li>
+                <li @click="loadPage"><i class="fas fa-user-clock"></i>OTHER TIMERS</li>
             </template>
 
             <!--suppress HtmlUnknownBooleanAttribute -->
@@ -362,8 +363,13 @@
                     return
                 }
 
-                this.$store.commit("incrementLoadingCount")
                 const task: Task = this.search.selectedTask
+
+                if (task.name !== this.search.text) {
+                    return
+                }
+
+                this.$store.commit("incrementLoadingCount")
                 const res = await TaskTimerApi.getTaskTimerStatus(task.createDate)
 
                 if (!res.start) {
