@@ -12,6 +12,7 @@ import TaskHiddenList from '@components/TaskHiddenList.vue'
 
 import NotFound from '@components/Errors/NotFound.vue'
 import TimerBoard from "@components/TimerBoard.vue"
+import TimerSearch from "@components/TimerSearch.vue"
 
 export default [
     {
@@ -63,6 +64,10 @@ export default [
         path: '/project/timer/:projectId',
         component: TimerBoard,
         name: 'timerBoard',
+    }, {
+        path: '/project/timerSearch/:projectId',
+        component: TimerSearch,
+        name: 'timerSearch',
     }, {
         path: '/project/hiddenTasks/:projectId',
         component: TaskHiddenList,

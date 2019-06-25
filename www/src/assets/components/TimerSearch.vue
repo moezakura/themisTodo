@@ -4,17 +4,16 @@
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:ex-menu>
                 <li @click="loadPage"><i class="fas fa-redo"></i>RELOAD</li>
-                <li @click="moveSearch"><i class="fas fa-user-clock"></i>OTHER TIMERS</li>
             </template>
 
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:inner-content>
-                <h2 class="task-timer-board-title">Your task timer list</h2>
+                <h2 class="task-timer-board-title">Task timer search</h2>
             </template>
 
             <!--suppress HtmlUnknownBooleanAttribute -->
             <template v-slot:ex-right-menu>
-                <li @click="addEntryFocus"><i class="fas fa-plus-circle"></i>ADD TIMER</li>
+                <li @click="moveTasks"><i class="fas fa-tasks"></i>TASKS</li>
             </template>
         </project-header>
 
@@ -95,7 +94,7 @@
     }
 
     export default {
-        name: "TimerBoard",
+        name: "TimerSearch",
         components: {TaskLine, TaskTimerLine, ProjectHeader},
         data(): TimerBoardData {
             return {
@@ -209,8 +208,8 @@
             }
         },
         methods: {
-            moveSearch(): void {
-                this.$router.push({name: "timerSearch", params: {projectId: this.projectId}})
+            moveTasks(): void {
+                this.$router.push({name: "taskBoard", params: {projectId: this.projectId}})
             },
             parseQuery(): void {
                 const now = new Date()
