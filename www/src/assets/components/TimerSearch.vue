@@ -17,35 +17,22 @@
             </template>
         </project-header>
 
-        <form class="task-timer-add-container basicForm" @submit.prevent="startTimer">
-            <div class="task-timer-add" :class="{'active': taskTimerTopFocus > 0}">
-                <label class="task-timer-entry-name">
-                    <input placeholder="What did you task on?" @focus="taskTimerTopFocus++"
-                           @blur="taskTimerTopFocus--" ref="task-timer-entry-name" v-model="search.text">
-                </label>
-                <input class="task-timer-entry-submit" type="submit" value="Add timer">
-            </div>
-            <div class="task-timer-exclude-done-task-container">
-                <input id="exclude-done-task" type="checkbox" v-model="search.excludeDone">
-                <label for="exclude-done-task" class="fas fa-check"></label>
-                <label for="exclude-done-task">exclude done task</label>
+        <form class="task-timer-search-box basicForm" @submit.prevent="startTimer">
+            <div class="user-select-container">
+                <ul class="selected-user-icons">
+                    <li v-for="(user, index) in search.user" :key="user.uuid"
+                        :style="{'background-image': `url(/api/account/icon/${user.iconPath})`}"
+                        v-if="index < 5"></li>
+                    <li v-if="search.user.length > 5" class="user-icon-more">...</li>
+                </ul>
+                <user-multi-select :isInProject="true" v-model="search.user"></user-multi-select>
             </div>
         </form>
-        <ul class="taskList searched-task-list" :style="search.position" @mouseenter="taskTimerTopFocus++"
-            @mouseleave="taskTimerTopFocus--">
-            <li v-for="task in searchedTasks" :data-task-id="task.createDate" @click="selectedSearchTask(task)">
-                <task-line :task="task" :allowShowDetail="false"></task-line>
-            </li>
-        </ul>
 
         <div class="task-timer-history">
             <div class="task-timer-history-title-section">
-                <h3 class="task-timer-history-title"><i class="fas fa-calendar-alt"></i>{{ displayDate.string }}</h3>
-                <div class="task-timer-history-title-detail" v-if="isStartToday">{{ displayDate.stringMD }}</div>
-                <div class="task-timer-history-title-action">
-                    <i class="fas fa-chevron-left" @click="moveDisplayDate(-1)"></i>
-                    <i class="fas fa-chevron-right" @click="moveDisplayDate(1)"></i>
-                </div>
+                <h3 class="task-timer-history-title"><i class="fas fa-calendar-alt"></i>{{ displayDate.start }} 〜 {{
+                    displayDate.end }}</h3>
             </div>
 
             <ul class="task-timer-entry-container">
@@ -72,18 +59,17 @@
     import TaskTimerLine from "@components/TaskTimer/TaskTimerLine.vue"
     import TaskLine from "@components/TaskBoard/TaskLine.vue"
     import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer";
+    import User from "@scripts/model/api/user/User";
+    import UserMultiSelect from "@components/Common/UserMultiSelect.vue";
 
     interface TimerBoardData {
         displayDate: {
-            stringMD: string,
-            string: string,
+            start: string,
+            end: string,
         },
         tasks: Array<Task>,
         search: {
-            text: string,
-            selectedTask: undefined | Task
-            excludeDone: boolean,
-            position: object
+            user: Array<User>
         },
         taskTimerTopFocus: number,
         timeHistories: Array<TaskTimer>,
@@ -95,19 +81,16 @@
 
     export default {
         name: "TimerSearch",
-        components: {TaskLine, TaskTimerLine, ProjectHeader},
+        components: {UserMultiSelect, TaskLine, TaskTimerLine, ProjectHeader},
         data(): TimerBoardData {
             return {
                 displayDate: {
-                    stringMD: "",
-                    string: "",
+                    start: "",
+                    end: "",
                 },
                 tasks: [],
                 search: {
-                    text: "",
-                    selectedTask: undefined,
-                    excludeDone: true,
-                    position: {},
+                    user: new Array<User>()
                 },
                 taskTimerTopFocus: 0,
                 timeHistories: [],
@@ -129,21 +112,6 @@
                     return new Project()
                 }
                 return this.$store.getters.getCurrentProject
-            },
-            isStartToday(): boolean {
-                const startDate: Date = this.startDate
-                const now: Date = new Date()
-                const startDateString = startDate.getFullYear() + "/" + ("0" + (startDate.getMonth() + 1)).slice(-2) + "/" + ("0" + startDate.getDate()).slice(-2)
-                const nowDateString = now.getFullYear() + "/" + ("0" + (now.getMonth() + 1)).slice(-2) + "/" + ("0" + now.getDate()).slice(-2)
-
-                if (startDateString == nowDateString) {
-                    this.$set(this.displayDate, 'string', 'Today')
-                    this.$set(this.displayDate, 'stringMD', startDateString)
-                    return true
-                } else {
-                    this.$set(this.displayDate, 'string', startDateString)
-                    return false
-                }
             },
             searchedTasks(): Array<Task> {
                 const searchText = this.search.text
@@ -179,7 +147,24 @@
             },
         },
         watch: {
-            startDate(): void {
+            startDate(startDate: Date): void {
+                const startDateString = startDate.getFullYear() + "/" +
+                    ("00" + (startDate.getMonth() + 1)).slice(-2) + "/" +
+                    ("00" + startDate.getDate()).slice(-2) + " " +
+                    ("00" + startDate.getHours()).slice(-2) + ":" +
+                    ("00" + startDate.getMinutes()).slice(-2) + ":" +
+                    ("00" + startDate.getSeconds()).slice(-2)
+                this.$set(this.displayDate, "start", startDateString)
+                this.loadPage()
+            },
+            endDate(endDate: Date): void {
+                const endDateString = endDate.getFullYear() + "/" +
+                    ("00" + (endDate.getMonth() + 1)).slice(-2) + "/" +
+                    ("00" + endDate.getDate()).slice(-2) + " " +
+                    ("00" + endDate.getHours()).slice(-2) + ":" +
+                    ("00" + endDate.getMinutes()).slice(-2) + ":" +
+                    ("00" + endDate.getSeconds()).slice(-2)
+                this.$set(this.displayDate, "end", endDateString)
                 this.loadPage()
             },
             taskTimerTopFocus(value: number): void {
@@ -277,14 +262,6 @@
             addEntryFocus(): void {
                 this.$refs['task-timer-entry-name'].focus()
             },
-            loadTasks(): void {
-                this.$store.commit("incrementLoadingCount")
-                ProjectApi.getTasks(this.projectId).then(res => {
-                    this.tasks = res.task
-                }).finally(() => {
-                    this.$store.commit("decrementLoadingCount")
-                })
-            },
             loadPage(isLoadingShow: boolean = true, startDate?: Date, endDate?: Date): void {
                 if (isLoadingShow) {
                     this.$store.commit("incrementLoadingCount")
@@ -295,9 +272,6 @@
                     }).finally(() => {
                         this.$store.commit("decrementLoadingCount")
                     })
-
-                    // Tasks
-                    this.loadTasks()
                 }
 
                 if (isLoadingShow) {
@@ -338,20 +312,6 @@
                 }).finally(() => {
                     if (isLoadingShow) {
                         this.$store.commit("decrementLoadingCount")
-                    }
-                })
-            },
-            moveDisplayDate(diff: number): void {
-                const startDate: Date = this.startDate
-                const endDate: Date = this.endDate
-                startDate.setDate(startDate.getDate() + diff)
-                endDate.setDate(endDate.getDate() + diff)
-
-                this.$router.push({
-                    name: "timerBoard",
-                    query: {
-                        start: startDate.getTime().toString(),
-                        end: endDate.getTime().toString(),
                     }
                 })
             },
@@ -411,89 +371,30 @@
         }
     }
 
-    .task-timer-add-container {
-        width: 75%;
-        height: 110px;
+    .task-timer-search-box {
+        width: 85%;
+        height: 105px;
         margin: 10px auto;
 
-        .task-timer-add {
-            display: flex;
-            height: $buttonHeight + 30px;
-            padding: 0 15px;
-            background-color: rgba(black, .4);
-            box-shadow: 2px 1px 3px rgba(black, 0.5);
-            border-bottom: solid 2px transparent;
-            -webkit-transition: border-bottom-color .3s ease;
-            -moz-transition: border-bottom-color .3s ease;
-            -o-transition: border-bottom-color .3s ease;
-            transition: border-bottom-color .3s ease;
-            $task-timer-entry-submit-width: 200px;
+        .user-select-container {
+            width: 200px;
 
-            &.active {
-                border-bottom-color: $accentColor;
-            }
+            .selected-user-icons {
+                display: flex;
+                height: 30px;
 
-            .task-timer-entry-name {
-                width: calc(100% - #{$task-timer-entry-submit-width + 15px});
-                margin-right: 15px;
-                height: $buttonHeight;
+                li {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    margin: 0 2px;
 
-                input {
-                    display: block;
-                    width: 100%;
-                    height: $buttonHeight;
-                    background-color: transparent;
-                    border: 0;
-                    letter-spacing: 1.5px;
-                }
-            }
-
-            .task-timer-entry-submit {
-                width: $task-timer-entry-submit-width;
-                height: $buttonHeight;
-            }
-        }
-
-        .task-timer-exclude-done-task-container {
-            $height: 20px;
-            display: flex;
-            height: $height;
-            line-height: $height;
-            margin: 10px 0 0 0;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-
-            #exclude-done-task {
-                display: none;
-
-                & + label {
-                    display: block;
-                    width: $height;
-                    height: $height;
-                    box-sizing: border-box;
-                    border: solid thin rgba(white, .5);
-                    margin: 0 8px 0 auto;
-
-                    &::before {
-                        font-size: 14px;
-                        display: block;
-                        text-align: center;
-                        width: $height;
-                        height: $height;
-                        line-height: $height;
-                        opacity: 0;
-                        -webkit-transition: opacity ease .3s;
-                        -moz-transition: opacity ease .3s;
-                        -ms-transition: opacity ease .3s;
-                        -o-transition: opacity ease .3s;
-                        transition: opacity ease .3s;
+                    &.user-icon-more {
+                        width: 20px;
                     }
-                }
-
-                &:checked + label::before {
-                    opacity: 1;
                 }
             }
         }
