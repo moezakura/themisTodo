@@ -1,1 +1,1 @@
-DROP TABLE `todo_list_history`;
+SELECT SLEEP(0);

@@ -1,7 +1,7 @@
 package view
 
 import (
-	"../models"
+	"themis.mox.si/themis/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

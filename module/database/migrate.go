@@ -17,31 +17,32 @@ func Migrate(db *sql.DB, migrate *migrate.Migrate) {
 		db: db,
 	}
 
-	v, _, err := migrate.Version()
-	if err != nil {
-		panic(err.Error())
-	}
-	log.Printf("current database version: %d\n", v)
+	//v, _, err := migrate.Version()
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//log.Printf("current database version: %d\n", v)
 
+	_ = m
 	// migrate v4
-	if v < 4 {
-		log.Printf("migrate %d => 4\n", v)
-		err := migrate.Steps(4 - int(v))
-		if err != nil {
-			log.Fatalf("migrate faild (%d => 4). %+v\n", v, err)
-		}
-		m.ToV4()
-		v = 4
-	}
-
-	if v < 6 {
-		log.Printf("migrate %d => 6\n", v)
-		err := migrate.Steps(6 - int(v))
-		if err != nil {
-			log.Fatalf("migrate faild (%d => 6). %+v\n", v, err)
-		}
-		m.ToV6()
-	}
+	//if v > 2 && v < 4 {
+	//	log.Printf("migrate %d => 4\n", v)
+	//	err := migrate.Steps(4 - int(v))
+	//	if err != nil {
+	//		log.Fatalf("migrate faild (%d => 4). %+v\n", v, err)
+	//	}
+	//	m.ToV4()
+	//	v = 4
+	//}
+	//
+	//if v > 2 && v < 6 {
+	//	log.Printf("migrate %d => 6\n", v)
+	//	err := migrate.Steps(6 - int(v))
+	//	if err != nil {
+	//		log.Fatalf("migrate faild (%d => 6). %+v\n", v, err)
+	//	}
+	//	m.ToV6()
+	//}
 }
 
 func (m *dbMigrate) ToV6() {

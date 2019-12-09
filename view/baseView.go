@@ -2,7 +2,7 @@ package view
 
 import (
 	"github.com/gin-gonic/gin"
-	"../module"
+	"themis.mox.si/themis/module"
 )
 
 type BaseView struct {

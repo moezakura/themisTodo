@@ -3,7 +3,7 @@ package view
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"../models"
+	"themis.mox.si/themis/models"
 )
 
 type AccountView struct {

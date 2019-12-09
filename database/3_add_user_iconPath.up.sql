@@ -1,1 +1,1 @@
-ALTER TABLE `users` ADD `icon_path` VARCHAR(48) NOT NULL DEFAULT 'noIcon' AFTER `name`;
+SELECT SLEEP(0);
