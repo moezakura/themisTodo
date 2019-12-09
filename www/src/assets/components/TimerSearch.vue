@@ -27,6 +27,16 @@
                 </ul>
                 <user-multi-select :isInProject="true" v-model="search.user"></user-multi-select>
             </div>
+
+            <div class="date-select-input">
+                <input type="date">
+                <input type="time" step="1">
+            </div>
+            <div class="date-select-sep">〜</div>
+            <div class="date-select-input">
+                <input type="date">
+                <input type="time" step="1">
+            </div>
         </form>
 
         <div class="task-timer-history">
@@ -372,6 +382,7 @@
     }
 
     .task-timer-search-box {
+        display: flex;
         width: 85%;
         height: 105px;
         margin: 10px auto;
@@ -397,6 +408,22 @@
                     }
                 }
             }
+        }
+
+        .date-select-input {
+            width: 200px;
+            margin: 0 10px;
+
+            input {
+                margin: 5px 0;
+                width: 100%;
+            }
+        }
+
+        .date-select-sep {
+            height: 105px;
+            line-height: 105px;
+            margin: 0 10px;
         }
     }
 
