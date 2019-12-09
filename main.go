@@ -54,7 +54,7 @@ func main() {
 	}
 	if !schema_rows.Next() {
 		db.Exec("CREATE TABLE `schema_migrations` (`version` bigint(20) NOT NULL,`dirty` tinyint(1) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;")
-		db.Exec("INSERT INTO `schema_migrations` (`version`, `dirty`) VALUES (7, 0);")
+		db.Exec("INSERT INTO `schema_migrations` (`version`, `dirty`) VALUES (6, 0);")
 		db.Exec("ALTER TABLE `schema_migrations` ADD PRIMARY KEY (`version`); COMMIT;")
 	}
 
