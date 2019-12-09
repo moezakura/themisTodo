@@ -1,14 +1,14 @@
 package controller
 
 import (
-	"themis.mox.si/themis/models"
-	"themis.mox.si/themis/module"
-	"themis.mox.si/themis/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+	"themis.mox.si/themis/models"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/utils"
 	"time"
 )
 
@@ -375,4 +375,39 @@ func (t *TaskTimerController) Update(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 		return
 	}
+}
+
+func (t *TaskTimerController) GetByUser(c *gin.Context) {
+	res := models.NewTaskTimerListResultJson(false)
+	userUuid := c.GetInt("uuid")
+
+	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
+	histories, err := taskTimerModule.GetByUserId(userUuid)
+
+	taskIds := make([]int64, 0)
+	for _, history := range histories {
+		if !utils.Int64ArrayContain(taskIds, history.CreateDate) {
+			taskIds = append(taskIds, history.CreateDate)
+		}
+	}
+	taskModule := module.NewTaskModule(t.DB)
+	tasks, err := taskModule.GetBulk(0, taskIds)
+	if err != nil {
+		res.Message = "server error"
+		c.JSON(http.StatusServiceUnavailable, res)
+		log.Printf("GetByUser: %+v\n", err)
+		return
+	}
+	for _, task := range tasks {
+		for index, history := range histories {
+			if task.CreateDate == history.CreateDate {
+				taskTemp := utils.TaskConvert(task)
+				histories[index].Task = models.NewTaskOfJson(*taskTemp)
+			}
+		}
+	}
+
+	res.Success = true
+	res.List = histories
+	c.JSON(http.StatusOK, res)
 }

@@ -1,11 +1,11 @@
 package module
 
 import (
-	"themis.mox.si/themis/models"
 	"database/sql"
 	"errors"
 	"fmt"
 	"log"
+	"themis.mox.si/themis/models"
 	"time"
 )
 
@@ -78,6 +78,31 @@ func (t *TasksTimerModule) Get(taskTimerId int) (taskTimer *models.TodoTimer, er
 	taskTimer.NoteString = string(taskTimer.Note)
 
 	return taskTimer, nil
+}
+
+func (t *TasksTimerModule) GetByUserId(userId int) (taskTimers []models.TodoTimer, err error) {
+	rows, err := t.db.Query("SELECT * FROM `todo_timer` WHERE `assign` = ? AND `endDate` IS NULL;", userId)
+	if err != nil {
+		return nil, err
+	}
+
+	taskTimers = make([]models.TodoTimer, 0)
+	for rows.Next() {
+		taskTimer := models.TodoTimer{}
+
+		err = rows.Scan(&taskTimer.Id, &taskTimer.CreateDate, &taskTimer.Assign, &taskTimer.StartDate, &taskTimer.EndDate, &taskTimer.Note)
+		if err != nil {
+			return nil, err
+		}
+
+		taskTimer.StartDateUnix = taskTimer.StartDate.Unix()
+		taskTimer.EndDateUnix = taskTimer.EndDate.Unix()
+		taskTimer.NoteString = string(taskTimer.Note)
+
+		taskTimers = append(taskTimers, taskTimer)
+	}
+
+	return taskTimers, nil
 }
 
 func (t *TasksTimerModule) Delete(taskTimerId int) error {

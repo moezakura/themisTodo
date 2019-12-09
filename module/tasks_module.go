@@ -1,13 +1,13 @@
 package module
 
 import (
-	"themis.mox.si/themis/models"
 	"database/sql"
 	"fmt"
 	"github.com/pkg/errors"
 	"log"
 	"strings"
 	"sync"
+	"themis.mox.si/themis/models"
 	"time"
 )
 
@@ -262,7 +262,9 @@ func (self *TasksModule) GetBulk(projectId int, createDates []int64) (tasks []*m
 	defer self.dbLock.Unlock()
 
 	args := make([]interface{}, 0)
-	args = append(args, projectId)
+	if projectId > 0 {
+		args = append(args, projectId)
+	}
 	for _, item := range createDates {
 		args = append(args, item)
 	}
@@ -290,7 +292,14 @@ FROM todo_list todo
   INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
   INNER JOIN users u1 ON u1.uuid = todo.creator
   INNER JOIN users u2 ON u2.uuid = tlh.assign
-WHERE todo.project = ? AND todo.createDate IN (?` + strings.Repeat(", ?", len(createDates)-1) + `);`
+  `
+	queryString += " WHERE "
+
+	if projectId > 0 {
+		queryString += " todo.project = ? AND "
+	}
+	queryString += " todo.createDate IN (?" + strings.Repeat(", ?", len(createDates)-1) + `);`
+
 	rows, err := self.db.Query(queryString, args...)
 
 	if err != nil {
