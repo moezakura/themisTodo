@@ -2,7 +2,7 @@
     <div id="home">
         <div id="home-container">
             <section class="home-left-section">
-                <div class="sectionTitle">Your Projects</div>
+                <div class="sectionTitle taskListTitle">Your Projects</div>
                 <ul class="joinProject">
                     <project-line v-for="project in projects" :key="project.uuid" :project="project"></project-line>
                 </ul>
