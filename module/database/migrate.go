@@ -1,7 +1,7 @@
 package database
 
 import (
-	model "../../models"
+	model "themis.mox.si/themis/models"
 	"database/sql"
 	"github.com/golang-migrate/migrate"
 	"log"

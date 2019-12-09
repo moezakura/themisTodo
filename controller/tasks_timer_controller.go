@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"../models"
-	"../module"
-	"../utils"
+	"themis.mox.si/themis/models"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/utils"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"

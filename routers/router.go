@@ -1,8 +1,8 @@
 package routers
 
 import (
-	themsController "../controller"
-	"../module"
+	themsController "themis.mox.si/themis/controller"
+	"themis.mox.si/themis/module"
 	"database/sql"
 	"github.com/gin-gonic/gin"
 	"net/http"

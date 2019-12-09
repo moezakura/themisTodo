@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./module/database"
-	"./module"
-	"./routers"
+	"themis.mox.si/themis/module/database"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/routers"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"

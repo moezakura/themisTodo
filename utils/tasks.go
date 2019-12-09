@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"../models"
+	"themis.mox.si/themis/models"
 	"log"
 )
 

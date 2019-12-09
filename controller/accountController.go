@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"../models"
-	"../module"
-	"../utils"
-	themisView "../view"
+	"themis.mox.si/themis/models"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/utils"
+	themisView "themis.mox.si/themis/view"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/olahol/go-imageupload"

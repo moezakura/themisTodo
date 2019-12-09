@@ -2,8 +2,8 @@ package controller
 
 import (
 	"database/sql"
-	"../module"
-	"../view"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/view"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,8 +1,8 @@
 package module
 
 import (
-	"../models"
-	"../utils"
+	"themis.mox.si/themis/models"
+	"themis.mox.si/themis/utils"
 	"database/sql"
 	"log"
 )

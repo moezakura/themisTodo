@@ -3,7 +3,7 @@ package module
 import (
 	"time"
 	jwt "github.com/dgrijalva/jwt-go"
-	"../utils"
+	"themis.mox.si/themis/utils"
 	"log"
 	"fmt"
 	"os"
