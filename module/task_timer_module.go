@@ -97,6 +97,9 @@ func (t *TasksTimerModule) GetByUserId(userId int) (taskTimers []models.TodoTime
 
 		taskTimer.StartDateUnix = taskTimer.StartDate.Unix()
 		taskTimer.EndDateUnix = taskTimer.EndDate.Unix()
+		if taskTimer.EndDateUnix < 0 {
+			taskTimer.EndDateUnix = 0
+		}
 		taskTimer.NoteString = string(taskTimer.Note)
 
 		taskTimers = append(taskTimers, taskTimer)

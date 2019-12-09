@@ -16,6 +16,7 @@ import TaskTimerGetMyListResult from "@scripts/model/api/taskTimer/TaskTimerGetM
 import TaskTimer from "@scripts/model/api/taskTimer/TaskTimer"
 import TaskTimerGetStatusResult from "@scripts/model/api/taskTimer/TaskTimerGetStatusResult"
 import TaskTimerUpdateRequest from "@scripts/model/api/taskTimer/TaskTimerUpdateRequest"
+import TaskTimerGetMyDoingResult from "@scripts/model/api/taskTimer/TaskTimerGetMyDoingListResult"
 
 export default class TaskTimerApi extends BaseApi {
     static toggleTimer(createDate: string): Promise<TaskTimerToggleResult> {
@@ -120,6 +121,29 @@ export default class TaskTimerApi extends BaseApi {
             return res.json()
         }).then(json => {
             let res = new TaskTimerGetMyListResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+            res.list = new Array<TaskTimer>();
+            for (const item of json["list"]) {
+                const t = new TaskTimer()
+                t.fromAny(item)
+                res.list.push(t)
+            }
+
+            return res
+        })
+    }
+
+    static getMyDoingList(): Promise<TaskTimerGetMyDoingResult> {
+        return fetch(`/api/tasks/timer/myDoing`, {
+            method: 'GET',
+            credentials: "same-origin",
+            headers: this.getHeader(),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new TaskTimerGetMyDoingResult()
 
             res.success = json["success"]
             res.message = json["message"]
