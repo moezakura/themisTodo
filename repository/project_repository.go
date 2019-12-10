@@ -2,7 +2,6 @@ package repository
 
 import (
 	"github.com/jinzhu/gorm"
-	"log"
 	"themis.mox.si/themis/models"
 	"themis.mox.si/themis/models/db"
 )
@@ -96,12 +95,6 @@ func (p *ProjectRepository) Delete(projectId int) (err error) {
 	return nil
 }
 
-func (p *ProjectRepository) Leave(projectId int, userId int) (isError bool) {
-	_, err := p.db.Exec("DELETE FROM users_in_projects WHERE project_id = ? AND user_id = ?;", projectId, userId)
-
-	if err != nil {
-		log.Printf("ProjectsModule.Delete Error (users_in_projects): %+v\n", err)
-		return true
-	}
-	return false
+func (p *ProjectRepository) Leave(projectId int, userId int) (err error) {
+	return p.db.Delete(&db.UsersInProject{}, "project_id = ? user_id = ?", projectId, userId).Error
 }
