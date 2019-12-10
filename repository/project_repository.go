@@ -25,28 +25,17 @@ func (p *ProjectRepository) Add(name, description string) (uuid int, error error
 	return addData.Uuid, nil
 }
 
-func (p *ProjectRepository) AddUser(userId, projectId int) bool {
-
-
-	stmt, err := p.db.Prepare("INSERT INTO `users_in_projects` (`user_id`, `project_id`, `enable`, `expiration`) VALUES(?, ?, TRUE, NULL);")
-
-	if err != nil {
-		log.Printf("ProjectsModule.AddUser Error: %+v", err)
-		return true
+func (p *ProjectRepository) AddUser(userId, projectId int) error {
+	addData := db.UsersInProject{
+		UserId:     userId,
+		ProjectId:  projectId,
+		Enable:     true,
+		Expiration: nil,
 	}
-
-	defer stmt.Close()
-
-	_, err = stmt.Exec(userId, projectId)
-	if err != nil {
-		log.Printf("ProjectsModule.AddUser Error: %+v", err)
-		return true
-	}
-
-	return false
+	return p.db.Save(&addData).Error
 }
 
-func (p *ProjectRepository) GetProjects(userId int) (error bool, project []models.Project) {
+func (p *ProjectRepository) GetProjects(userId int) (project []models.Project, error bool) {
 	project = []models.Project{}
 
 	rows, err := p.db.Query("SELECT `uuid`,`name`,`description` FROM `projects` WHERE `projects`.`uuid` IN (SELECT `project_id` FROM `users_in_projects` WHERE `user_id` = ? ORDER BY `user_id`);", userId)
