@@ -60,26 +60,11 @@ func (p *ProjectRepository) Update(project *db.Project) error {
 	return p.db.Save(project).Error
 }
 
-func (p *ProjectRepository) IsIn(userUuid, projectId int) (isIn bool) {
-	rows, err := p.db.Query("SELECt count(`user_id`) FROM `users_in_projects` WHERE `user_id` = ? AND `project_id` = ?;",
-		userUuid, projectId)
+func (p *ProjectRepository) IsIn(userUuid, projectId int) (isIn bool, err error) {
+	c := 0
+	err = p.db.Model(&db.UsersInProject{}).Where("`user_id` = ? AND `project_id` = ?", userUuid, projectId).Count(&c).Error
 
-	if err != nil {
-		return false
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var inCount int
-		if err := rows.Scan(&inCount); err != nil {
-			log.Printf("ProjectsModule.IsIn Error: %+v\n", err)
-			return false
-		}
-		return inCount > 0
-	}
-
-	return false
+	return c > 0, err
 }
 
 func (p *ProjectRepository) IsInBulk(userUuid, projectId []int) (isIn bool) {
