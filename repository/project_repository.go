@@ -74,29 +74,26 @@ func (p *ProjectRepository) IsInBulk(userUuid int, projectId []int) (isIn bool, 
 	return c > 0, err
 }
 
-func (p *ProjectRepository) Delete(projectId int) (isError bool) {
-	_, err := p.db.Exec("DELETE FROM todo_list WHERE project = ?;", projectId)
+func (p *ProjectRepository) Delete(projectId int) (err error) {
+	err = p.db.Exec("DELETE FROM todo_list WHERE project = ?;", projectId).Error
 
 	if err != nil {
-		log.Printf("ProjectsModule.Delete Error (todo_list): %+v\n", err)
-		return true
+		return err
 	}
 
-	_, err = p.db.Exec("DELETE FROM users_in_projects WHERE project_id = ?;", projectId)
+	err = p.db.Exec("DELETE FROM users_in_projects WHERE project_id = ?;", projectId).Error
 
 	if err != nil {
-		log.Printf("ProjectsModule.Delete Error (users_in_projects): %+v\n", err)
-		return true
+		return err
 	}
 
-	_, err = p.db.Exec("DELETE FROM projects WHERE uuid = ?;", projectId)
+	err = p.db.Exec("DELETE FROM projects WHERE uuid = ?;", projectId).Error
 
 	if err != nil {
-		log.Printf("ProjectsModule.Delete Error (projects): %+v\n", err)
-		return true
+		return err
 	}
 
-	return false
+	return nil
 }
 
 func (p *ProjectRepository) Leave(projectId int, userId int) (isError bool) {
