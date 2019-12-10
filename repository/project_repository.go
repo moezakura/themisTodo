@@ -67,49 +67,11 @@ func (p *ProjectRepository) IsIn(userUuid, projectId int) (isIn bool, err error)
 	return c > 0, err
 }
 
-func (p *ProjectRepository) IsInBulk(userUuid, projectId []int) (isIn bool) {
-	queryString := ""
-	queryArray := make([]interface{}, 0)
+func (p *ProjectRepository) IsInBulk(userUuid int, projectId []int) (isIn bool, err error) {
+	c := 0
+	err = p.db.Where("user_id = ? AND project_id IN (?)", userUuid, projectId).Count(&c).Error
 
-	queryString += "("
-	queryStringUser := ""
-	for _, user := range userUuid {
-		if len(queryStringUser) > 0 {
-			queryStringUser += " OR "
-		}
-		queryStringUser += " `user_id` = ? "
-		queryArray = append(queryArray, user)
-	}
-	queryString += queryStringUser + ") AND ("
-	queryStringProject := ""
-	for _, project := range projectId {
-		if len(queryStringProject) > 0 {
-			queryStringProject += " OR "
-		}
-		queryStringProject += " `project_id` = ? "
-		queryArray = append(queryArray, project)
-	}
-	queryString += queryStringProject + ")"
-
-	rows, err := p.db.Query("SELECT count(`user_id`) FROM `users_in_projects` WHERE "+queryString+";",
-		queryArray...)
-
-	if err != nil {
-		return false
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var inCount int
-		if err := rows.Scan(&inCount); err != nil {
-			log.Printf("ProjectsModule.IsIn Error: %+v\n", err)
-			return false
-		}
-		return inCount > 0
-	}
-
-	return false
+	return c > 0, err
 }
 
 func (p *ProjectRepository) Delete(projectId int) (isError bool) {
