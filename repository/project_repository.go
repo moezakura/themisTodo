@@ -35,27 +35,12 @@ func (p *ProjectRepository) AddUser(userId, projectId int) error {
 	return p.db.Save(&addData).Error
 }
 
-func (p *ProjectRepository) GetProjects(userId int) (project []models.Project, error bool) {
-	project = []models.Project{}
+func (p *ProjectRepository) GetProjectsByUserId(userId int) (projects []db.Project, err error) {
+	projects = make([]db.Project, 0)
 
-	rows, err := p.db.Query("SELECT `uuid`,`name`,`description` FROM `projects` WHERE `projects`.`uuid` IN (SELECT `project_id` FROM `users_in_projects` WHERE `user_id` = ? ORDER BY `user_id`);", userId)
-
-	if err != nil {
-		return true, nil
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		projectOne := models.Project{}
-		if err := rows.Scan(&projectOne.Uuid, &projectOne.Name, &projectOne.Description); err != nil {
-			log.Printf("ProjectsModule.GetProject Error: %+v\n", err)
-			return true, nil
-		}
-		project = append(project, projectOne)
-	}
-
-	return false, project
+	subQuery := p.db.Table("users_in_projects").Select("project_id").Where("user_id = ?", userId).Order("user_id")
+	err = p.db.Where("uuid = ?", subQuery.QueryExpr()).Find(&projects).Error
+	return projects, err
 }
 
 func (p *ProjectRepository) GetProject(userId int) (error bool, project *models.Project) {
