@@ -217,7 +217,7 @@ func (t *TasksTimerModule) GetTaskTimerStatus(createDate int64) (isStart bool, e
 	return taskTimer.EndDateUnix == 0, nil
 }
 
-func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate, endDate *time.Time) (history []models.TodoTimer, err error) {
+func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate, endDate *time.Time, isDoing bool) (history []models.TodoTimer, err error) {
 	history = make([]models.TodoTimer, 0)
 
 	sqlArgs := make([]interface{}, 0)
@@ -286,6 +286,15 @@ func (t *TasksTimerModule) SearchTaskTimer(projectIds, userIds []int, startDate,
 
 		if startDate != nil || endDate != nil {
 			sqlText += ") "
+		}
+	}
+
+	{
+		if isDoing {
+			if len(sqlText) > 0 {
+				sqlText += " AND "
+			}
+			sqlText += " `endDate` IS NULL "
 		}
 	}
 	sqlText = fmt.Sprintf("SELECT * FROM `todo_timer` WHERE %s ORDER BY `startDate` DESC;", sqlText)

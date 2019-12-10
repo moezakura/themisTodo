@@ -15,6 +15,7 @@ export default class Task {
     public description: string
     public createDate: string
     public updateDate: string
+    public isDoing: boolean
 
     public fromAny(data: any) {
         this.taskId = data["taskId"]
@@ -33,6 +34,7 @@ export default class Task {
         this.description = data["description"]
         this.createDate = data["createDate"]
         this.updateDate = data["updateDate"]
+        this.isDoing = data["is_doing"]
     }
 
     public toJson(): string {

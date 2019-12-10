@@ -152,11 +152,27 @@ func (self *TasksModule) Add(task *models.Task) *models.Task {
 func (self *TasksModule) GetList(projectId int) (error bool, list []models.Task) {
 	list = []models.Task{}
 
-	rows, err := self.db.Query(`SELECT id, tlh.name, creator, tlh.assign, tlh.status, tlh.deadline, tlh.description, todo.createDate, todo.adopted, u1.displayName, u1.icon_path, u2.displayName, u2.icon_path FROM todo_list todo
-  INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
-  INNER JOIN users u1 ON u1.uuid = todo.creator
-  INNER JOIN users u2 ON u2.uuid = tlh.assign
-WHERE project = ? ORDER BY id ASC;`, projectId)
+	rows, err := self.db.Query(`
+SELECT todo.id,
+       tlh.name,
+       creator,
+       tlh.assign,
+       tlh.status,
+       tlh.deadline,
+       tlh.description,
+       todo.createDate,
+       todo.adopted,
+       u1.displayName,
+       u1.icon_path,
+       u2.displayName,
+       u2.icon_path
+FROM todo_list todo
+         INNER JOIN todo_list_history tlh on todo.adopted = tlh.updateDate
+         INNER JOIN users u1 ON u1.uuid = todo.creator
+         INNER JOIN users u2 ON u2.uuid = tlh.assign
+WHERE project = ?
+ORDER BY id;
+`, projectId)
 
 	if err != nil && err != sql.ErrNoRows {
 		log.Printf("TasksModule.GetList Error: %+v\n", err)
@@ -190,7 +206,30 @@ WHERE project = ? ORDER BY id ASC;`, projectId)
 			deadlineFormatted := deadline.Format("2006-01-02")
 			listOne.Deadline = deadlineFormatted
 		}
+
 		list = append(list, listOne)
+	}
+
+	timer := NewTasksTimerModule(self.db, nil)
+
+	historys, err := timer.SearchTaskTimer(
+		[]int{projectId},
+		[]int{},
+		nil,
+		nil,
+		true,
+	)
+	if err != nil {
+		log.Printf("TaskTimerModule.SearchTaskTimer Error: %+v\n", err)
+		return true, nil
+	}
+	for _, h := range historys {
+		for k, t := range list {
+			if t.CreateDate == h.CreateDate {
+				list[k].IsDoing = true
+				break
+			}
+		}
 	}
 
 	return false, list

@@ -19,6 +19,7 @@ type TaskOfJson struct {
 	Description     string     `json:"description"`
 	CreateDate      string     `json:"createDate"`
 	Adopted         string     `json:"updateDate"`
+	IsDoing         bool       `json:"is_doing"`
 }
 
 func NewTaskOfJson(task Task) *TaskOfJson {
@@ -39,6 +40,7 @@ func NewTaskOfJson(task Task) *TaskOfJson {
 		task.Description,
 		strconv.FormatInt(task.CreateDate, 10),
 		strconv.FormatInt(task.Adopted, 10),
+		task.IsDoing,
 	}
 }
 

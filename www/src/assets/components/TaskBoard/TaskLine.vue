@@ -14,6 +14,7 @@
                 <span class="deadlineDate deadline-limit" v-if="isCompleted">DONE!</span>
             </div>
         </div>
+        <div v-if="task.isDoing" class="active"></div>
     </div>
 </template>
 
@@ -51,14 +52,11 @@
                 }
                 if (this.task.limitDate <= 0) {
                     return "over"
-                }
-                else if (this.task.limitDate <= 1) {
+                } else if (this.task.limitDate <= 1) {
                     return "limit1"
-                }
-                else if (this.task.limitDate <= 2) {
+                } else if (this.task.limitDate <= 2) {
                     return "limit2"
-                }
-                else if (this.task.limitDate <= 3) {
+                } else if (this.task.limitDate <= 3) {
                     return "limit3"
                 }
 
@@ -79,3 +77,12 @@
         }
     }
 </script>
+<style lang="scss">
+    .active {
+        width: calc(100% + 22px);
+        height: 0;
+        margin: 7px 0 -12px -17px;
+        border-bottom: solid 5px transparent;
+        @include animation(blinkBorderBottomAnimation 1s infinite, linear);
+    }
+</style>

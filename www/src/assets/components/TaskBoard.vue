@@ -75,6 +75,7 @@
     import TaskAdd from "./TaskBoard/TaskAdd"
     import ProjectSettings from "./TaskBoard/ProjectSettings"
     import ProjectHeader from "@components/Project/ProjectHeader.vue";
+    import TaskTimerApi from "@scripts/api/TaskTimer";
 
     export default {
         name: "TaskBoard",

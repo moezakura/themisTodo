@@ -135,6 +135,29 @@ export default class TaskTimerApi extends BaseApi {
         })
     }
 
+    static getDoingTimerByProjectId(projectId: number){
+        return fetch(`/api/tasks/timer/project/${projectId}`, {
+            method: 'GET',
+            credentials: "same-origin",
+            headers: this.getHeader(),
+        }).then(res => {
+            return res.json()
+        }).then(json => {
+            let res = new TaskTimerGetMyListResult()
+
+            res.success = json["success"]
+            res.message = json["message"]
+            res.list = new Array<TaskTimer>();
+            for (const item of json["list"]) {
+                const t = new TaskTimer()
+                t.fromAny(item)
+                res.list.push(t)
+            }
+
+            return res
+        })
+    }
+
     static getMyDoingList(): Promise<TaskTimerGetMyDoingResult> {
         return fetch(`/api/tasks/timer/myDoing`, {
             method: 'GET',

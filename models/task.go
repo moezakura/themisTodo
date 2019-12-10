@@ -17,4 +17,5 @@ type Task struct {
 	Description     string     `json:"description"`
 	CreateDate      int64      `json:"createDate"`
 	Adopted         int64      `json:"updateDate"`
+	IsDoing         bool       `json:"is_doing"`
 }

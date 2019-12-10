@@ -159,7 +159,7 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 	}
 
 	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
-	histories, err := taskTimerModule.SearchTaskTimer([]int{projectId}, []int{userUuid}, &todayStart, &todayEnd)
+	histories, err := taskTimerModule.SearchTaskTimer([]int{projectId}, []int{userUuid}, &todayStart, &todayEnd, false)
 
 	taskIds := make([]int64, 0)
 	for _, history := range histories {
