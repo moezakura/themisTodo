@@ -39,7 +39,7 @@ func (p *ProjectRepository) GetProjectsByUserId(userId int) (projects []db.Proje
 	projects = make([]db.Project, 0)
 
 	subQuery := p.db.Table("users_in_projects").Select("project_id").Where("user_id = ?", userId).Order("user_id")
-	err = p.db.Where("uuid = ?", subQuery.QueryExpr()).Find(&projects).Error
+	err = p.db.Where("projects.uuid = ?", subQuery.QueryExpr()).Find(&projects).Error
 	return projects, err
 }
 
@@ -48,28 +48,12 @@ func (p *ProjectRepository) GetProjectById(id int) (project *db.Project, err err
 	return project, err
 }
 
-func (p *ProjectRepository) GetUser(projectId int) (error bool, accounts []models.Account) {
+func (p *ProjectRepository) GetUserListInProject(projectId int) (accounts []models.Account, err error) {
 	accounts = make([]models.Account, 0)
 
-	rows, err := p.db.Query("SELECT `uuid`, `name`, `displayName`, `icon_path` FROM `users` WHERE `users`.`uuid` IN (SELECT `user_id` FROM `users_in_projects` WHERE `project_id` = ?);",
-		projectId)
-
-	if err != nil {
-		return true, nil
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		accountOne := models.Account{}
-		if err := rows.Scan(&accountOne.Uuid, &accountOne.Name, &accountOne.DisplayName, &accountOne.IconPath); err != nil {
-			log.Printf("ProjectsModule.GetUser Error: %+v\n", err)
-			return true, nil
-		}
-		accounts = append(accounts, accountOne)
-	}
-
-	return false, accounts
+	subQuery := p.db.Table("users_in_projects").Select("user_id").Where("project = ?", projectId)
+	err = p.db.Where("users.uuid IN (?)", subQuery.QueryExpr()).Find(&accounts).Error
+	return accounts, err
 }
 
 func (p *ProjectRepository) Update(project *models.Project) bool {
