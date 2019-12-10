@@ -56,22 +56,8 @@ func (p *ProjectRepository) GetUserListInProject(projectId int) (accounts []mode
 	return accounts, err
 }
 
-func (p *ProjectRepository) Update(project *models.Project) bool {
-	result, err := p.db.Exec("UPDATE `projects` SET `name` = ?, `description` = ? WHERE `uuid` = ?;",
-		project.Name, project.Description, project.Uuid)
-
-	if err != nil {
-		log.Printf("ProjectsModule.Update Error: %+v\n", err)
-		return true
-	}
-
-	_, err = result.RowsAffected()
-	if err != nil {
-		log.Printf("ProjectsModule.Update Error: %+v\n", err)
-		return true
-	}
-
-	return false
+func (p *ProjectRepository) Update(project *db.Project) error {
+	return p.db.Save(project).Error
 }
 
 func (p *ProjectRepository) IsIn(userUuid, projectId int) (isIn bool) {
