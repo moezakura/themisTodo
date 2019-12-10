@@ -43,27 +43,9 @@ func (p *ProjectRepository) GetProjectsByUserId(userId int) (projects []db.Proje
 	return projects, err
 }
 
-func (p *ProjectRepository) GetProject(userId int) (error bool, project *models.Project) {
-	project = &models.Project{}
-
-	rows, err := p.db.Query("SELECT `uuid`,`name`,`description` FROM `projects` WHERE `uuid` = ?;", userId)
-
-	if err != nil {
-		return true, nil
-	}
-
-	defer rows.Close()
-
-	if !rows.Next() {
-		return true, nil
-	}
-
-	if err := rows.Scan(&project.Uuid, &project.Name, &project.Description); err != nil {
-		log.Printf("ProjectsModule.GetProject Error: %+v\n", err)
-		return true, nil
-	}
-
-	return false, project
+func (p *ProjectRepository) GetProjectById(id int) (project *db.Project, err error) {
+	err = p.db.First(project, "uuid = ?", id).Error
+	return project, err
 }
 
 func (p *ProjectRepository) GetUser(projectId int) (error bool, accounts []models.Account) {
