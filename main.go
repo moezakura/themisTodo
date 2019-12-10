@@ -1,18 +1,19 @@
 package main
 
 import (
-	"themis.mox.si/themis/module/database"
-	"themis.mox.si/themis/module"
-	"themis.mox.si/themis/routers"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
+	"github.com/jinzhu/gorm"
 	"log"
 	"net/url"
 	"os"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/module/database"
+	"themis.mox.si/themis/routers"
 	"time"
 )
 
@@ -22,6 +23,7 @@ func main() {
 
 	var (
 		db    *sql.DB
+		gdb   *gorm.DB
 		dbErr error
 	)
 	for i := 0; i < 30; i++ {
@@ -37,6 +39,7 @@ func main() {
 			time.Sleep(1 * time.Second)
 		} else {
 			db = _db
+			gdb, _ = gorm.Open("mysql", connectText)
 			break
 		}
 	}
@@ -65,7 +68,7 @@ func main() {
 	taskTimerWatcher := module.NewTaskTimerWatcherModule(db)
 	taskTimerWatcher.Start()
 
-	r := routers.Init(db, taskTimerWatcher)
+	r := routers.Init(db, gdb, taskTimerWatcher)
 	r.Run(":31204")
 }
 

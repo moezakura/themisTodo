@@ -5,17 +5,23 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"themis.mox.si/themis/repository"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"themis.mox.si/themis/models"
 	"themis.mox.si/themis/module"
 	"themis.mox.si/themis/utils"
 	themisView "themis.mox.si/themis/view"
-	"github.com/gin-gonic/gin"
 )
 
 type TasksController struct {
 	*BaseController
+	projectRepo *repository.ProjectRepository
+}
+
+func NewTasksController(baseController *BaseController, projectRepo *repository.ProjectRepository) *TasksController {
+	return &TasksController{BaseController: baseController, projectRepo: projectRepo}
 }
 
 func (t *TasksController) PostUpdate(c *gin.Context) {
@@ -44,7 +50,6 @@ func (t *TasksController) PostUpdate(c *gin.Context) {
 	}
 
 	taskModule := module.NewTaskModule(t.DB)
-	projectModule := module.NewProjectsModule(t.DB)
 	isErr, task := taskModule.Get(createdTime)
 
 	if len(updateRequest.Deadline) > 0 {
@@ -94,7 +99,12 @@ func (t *TasksController) PostUpdate(c *gin.Context) {
 	}
 
 	if updateRequest.Assign > 0 {
-		if !projectModule.IsIn(updateRequest.Assign, task.ProjectId) {
+		isIn, err := t.projectRepo.IsIn(updateRequest.Assign, task.ProjectId)
+		if err != nil {
+			// TODO: エラーをログに出力する
+			// TODO: エラーを返す
+		}
+		if !isIn {
 			updateResult.Message = "invalid assign id"
 			themisView.TasksView{}.PostUpdate(c, updateResult)
 			return
@@ -134,7 +144,7 @@ func (t *TasksController) PostBulkUpdate(c *gin.Context) {
 	}
 
 	taskModule := module.NewTaskModule(t.DB)
-	projectModule := module.NewProjectsModule(t.DB)
+
 	isErr, tasks := taskModule.SearchCreateTimeList(updateRequest.BulkList)
 
 	if isErr {
@@ -173,7 +183,12 @@ func (t *TasksController) PostBulkUpdate(c *gin.Context) {
 	}
 
 	if updateRequest.Assign > 0 {
-		if !projectModule.IsInBulk([]int{updateRequest.Assign}, projectsTarget) {
+		isIn, err := t.projectRepo.IsInBulk(updateRequest.Assign, projectsTarget)
+		if err != nil {
+			// TODO: エラーをログに出力する
+			// TODO: エラーを返す
+		}
+		if !isIn {
 			updateResult.Message = "invalid assign id"
 			themisView.TasksView{}.PostUpdate(c, updateResult)
 			return
@@ -209,8 +224,12 @@ func (t *TasksController) PostDelete(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(t.DB)
-	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		deleteResult.Message = "invalid task createdTime"
 		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
 		return
@@ -272,8 +291,12 @@ func (t *TasksController) DeleteBulkDelete(c *gin.Context) {
 		projectsTarget = append(projectsTarget, task.ProjectId)
 	}
 
-	projectModule := module.NewProjectsModule(t.DB)
-	if !projectModule.IsInBulk([]int{userUuid}, projectsTarget) {
+	isIn, err := t.projectRepo.IsInBulk(userUuid, projectsTarget)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		deleteResult.Message = "invalid token"
 		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
 		return
@@ -316,8 +339,12 @@ func (t *TasksController) PostTaskCreate(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(t.DB)
-	if !projectModule.IsIn(addRequest.Assign, addRequest.ProjectId) {
+	isIn, err := t.projectRepo.IsIn(addRequest.Assign, addRequest.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		addResult.Message = "invalid assign user id"
 		themisView.ProjectsView{}.PostTaskBoard(c, addResult)
 		return
@@ -383,8 +410,11 @@ func (t *TasksController) GetView(c *gin.Context) {
 		return
 	}
 
-	projectsModule := module.NewProjectsModule(t.DB)
-	isIn := projectsModule.IsIn(userUuid, task.ProjectId)
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
 	if !isIn {
 		getResult.Message = "permission denied"
 		themisView.TasksView{}.GetView(c, http.StatusForbidden, getResult)
@@ -437,8 +467,11 @@ func (t *TasksController) GetSearch(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	projectsModule := module.NewProjectsModule(t.DB)
-	isIn := projectsModule.IsIn(userUuid, searchRequest.ProjectId)
+	isIn, err := t.projectRepo.IsIn(userUuid, searchRequest.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
 	if !isIn {
 		getResult.Message = "permission denied"
 		themisView.TasksView{}.GetSearch(c, http.StatusForbidden, getResult)
@@ -501,7 +534,6 @@ func (t *TasksController) GetHistoryList(c *gin.Context) {
 		return
 	}
 
-	pm := module.NewProjectsModule(t.DB)
 	tm := module.NewTaskModule(t.DB)
 
 	isErr, task := tm.Get(createDate)
@@ -511,7 +543,12 @@ func (t *TasksController) GetHistoryList(c *gin.Context) {
 		return
 	}
 
-	if !pm.IsIn(userUuid, task.ProjectId) {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		result.Message = "invalid taskId"
 		c.JSON(http.StatusBadRequest, result)
 		return
@@ -566,7 +603,6 @@ func (t *TasksController) PostApplyHistory(c *gin.Context) {
 		return
 	}
 
-	pm := module.NewProjectsModule(t.DB)
 	tm := module.NewTaskModule(t.DB)
 
 	isErr, task := tm.Get(createDate)
@@ -576,7 +612,12 @@ func (t *TasksController) PostApplyHistory(c *gin.Context) {
 		return
 	}
 
-	if !pm.IsIn(userUuid, task.ProjectId) {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		res.Message = "not found createDate"
 		c.JSON(http.StatusNotFound, res)
 		return

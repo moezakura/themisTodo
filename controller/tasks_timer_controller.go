@@ -8,17 +8,25 @@ import (
 	"strconv"
 	"themis.mox.si/themis/models"
 	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/repository"
 	"themis.mox.si/themis/utils"
 	"time"
 )
 
 type TaskTimerController struct {
 	*BaseController
+
+	projectRepo *repository.ProjectRepository
+
 	watcher *module.TaskTimerWatcherModule
 }
 
-func NewTaskTimerController(baseController *BaseController, watcher *module.TaskTimerWatcherModule) *TaskTimerController {
-	return &TaskTimerController{BaseController: baseController, watcher: watcher}
+func NewTaskTimerController(baseController *BaseController, watcher *module.TaskTimerWatcherModule, projectRepo *repository.ProjectRepository) *TaskTimerController {
+	return &TaskTimerController{
+		BaseController: baseController,
+		watcher:        watcher,
+		projectRepo:    projectRepo,
+	}
 }
 
 func (t *TaskTimerController) PatchToggle(c *gin.Context) {
@@ -42,8 +50,12 @@ func (t *TaskTimerController) PatchToggle(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(t.DB)
-	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -84,8 +96,12 @@ func (t *TaskTimerController) GetView(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(t.DB)
-	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -141,8 +157,12 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 	projectId := int(_projectId)
 	userUuid := c.GetInt("uuid")
 
-	projectModule := module.NewProjectsModule(t.DB)
-	if isIn := projectModule.IsIn(userUuid, projectId); !isIn {
+	isIn, err := t.projectRepo.IsIn(userUuid, projectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -210,8 +230,12 @@ func (t *TaskTimerController) GetStatus(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(t.DB)
-	if isIn := projectModule.IsIn(userUuid, task.ProjectId); !isIn {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -240,7 +264,6 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 	}
 	taskTimerId := int(_taskTimerId)
 
-	projectModule := module.NewProjectsModule(t.DB)
 	taskModule := module.NewTaskModule(t.DB)
 	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
 
@@ -260,7 +283,12 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 		return
 	}
 
-	if !projectModule.IsIn(userUuid, task.ProjectId) {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -290,7 +318,6 @@ func (t *TaskTimerController) Update(c *gin.Context) {
 	}
 	taskTimerId := int(_taskTimerId)
 
-	projectModule := module.NewProjectsModule(t.DB)
 	taskModule := module.NewTaskModule(t.DB)
 	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
 
@@ -310,7 +337,12 @@ func (t *TaskTimerController) Update(c *gin.Context) {
 		return
 	}
 
-	if !projectModule.IsIn(userUuid, task.ProjectId) {
+	isIn, err := t.projectRepo.IsIn(userUuid, task.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+	if !isIn {
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return

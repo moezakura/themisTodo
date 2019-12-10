@@ -1,15 +1,19 @@
 package routers
 
 import (
-	themsController "themis.mox.si/themis/controller"
-	"themis.mox.si/themis/module"
 	"database/sql"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"net/http"
+	themsController "themis.mox.si/themis/controller"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/repository"
 )
 
-func Init(db *sql.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engine {
+func Init(db *sql.DB, gdb *gorm.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engine {
 	r := gin.New()
+
+	projectRepo := repository.NewProjectRepository(gdb)
 
 	baseController := themsController.NewBaseController(db, r)
 
@@ -22,7 +26,7 @@ func Init(db *sql.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engi
 	projects := r.Group("/project")
 	projects.Use(authCheck(db))
 	{
-		projectsController := &themsController.ProjectsController{baseController}
+		projectsController := themsController.NewProjectsController(baseController, projectRepo)
 
 		projects.POST("/add", projectsController.PostAdd)
 		projects.POST("/delete/:projectId", projectsController.PostDeleteProject)
@@ -40,7 +44,7 @@ func Init(db *sql.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engi
 	tasks := r.Group("/tasks")
 	tasks.Use(authCheck(db))
 	{
-		tasksController := &themsController.TasksController{baseController}
+		tasksController := themsController.NewTasksController(baseController, projectRepo)
 
 		tasks.POST("/create", tasksController.PostTaskCreate)
 		tasks.POST("/update/:createDate", tasksController.PostUpdate)
@@ -55,7 +59,7 @@ func Init(db *sql.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engi
 
 		taskTimer := tasks.Group("/timer")
 		{
-			taskTimerController := themsController.NewTaskTimerController(baseController, taskTimerWatcher)
+			taskTimerController := themsController.NewTaskTimerController(baseController, taskTimerWatcher, projectRepo)
 			taskTimer.PATCH("/toggle/:createDate", taskTimerController.PatchToggle)
 			taskTimer.GET("/view/:createDate", taskTimerController.GetView)
 			taskTimer.GET("/myDoing", taskTimerController.GetByUser)

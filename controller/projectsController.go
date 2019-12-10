@@ -1,17 +1,24 @@
 package controller
 
 import (
-	"themis.mox.si/themis/models"
-	"themis.mox.si/themis/module"
-	"themis.mox.si/themis/utils"
-	themisView "themis.mox.si/themis/view"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"themis.mox.si/themis/models"
+	"themis.mox.si/themis/models/db"
+	"themis.mox.si/themis/module"
+	"themis.mox.si/themis/repository"
+	"themis.mox.si/themis/utils"
+	themisView "themis.mox.si/themis/view"
 )
 
 type ProjectsController struct {
 	*BaseController
+	projectRepo *repository.ProjectRepository
+}
+
+func NewProjectsController(baseController *BaseController, projectRepo *repository.ProjectRepository) *ProjectsController {
+	return &ProjectsController{BaseController: baseController, projectRepo: projectRepo}
 }
 
 func (p *ProjectsController) PostAdd(c *gin.Context) {
@@ -39,15 +46,19 @@ func (p *ProjectsController) PostAdd(c *gin.Context) {
 		return
 	}
 
-	projectsModule := module.NewProjectsModule(p.DB)
-	err2, id := projectsModule.Add(addRequest.Name, addRequest.Description)
+	id, err := p.projectRepo.Add(addRequest.Name, addRequest.Description)
 
-	if err2 {
+	if err != nil {
+		// TODO: Logにエラーを残す
 		addResult.Message = "server error"
 		themisView.ProjectsView{}.PostAdd(c, addResult)
 		return
 	}
-	projectsModule.AddUser(userUuid, id)
+	err = p.projectRepo.AddUser(userUuid, id)
+	if err != nil {
+		// TODO: Logにエラーを残す
+		// TODO: エラーを返す
+	}
 
 	addResult.Success = true
 	addResult.Id = id
@@ -88,16 +99,15 @@ func (p *ProjectsController) PostUpdate(c *gin.Context) {
 
 	//TODO: ユーザーがProjectに参加してるかチェック
 
-	project := &models.Project{
-		projectId,
-		addRequest.Name,
-		addRequest.Description,
+	project := &db.Project{
+		Uuid:        projectId,
+		Name:        addRequest.Name,
+		Description: addRequest.Description,
 	}
+	err = p.projectRepo.Update(project)
 
-	projectsModule := module.NewProjectsModule(p.DB)
-	err2 := projectsModule.Update(project)
-
-	if err2 {
+	if err != nil {
+		// TODO: Logにエラーを残す
 		addResult.Message = "server error"
 		themisView.ProjectsView{}.PostAdd(c, addResult)
 		return
@@ -154,9 +164,9 @@ func (p *ProjectsController) PostAddUser(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(p.DB)
-	isErrorProjectAdd := projectModule.AddUser(addRequest.Uuid, projectId)
-	if isErrorProjectAdd {
+	err = p.projectRepo.AddUser(addRequest.Uuid, projectId)
+	if err != nil {
+		// TODO: Logにエラーを残す
 		addResult.Message = "server error"
 		themisView.ProjectsView{}.PostAddUser(c, addResult)
 	}
@@ -184,16 +194,18 @@ func (p *ProjectsController) PostDeleteProject(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(p.DB)
-	isIn := projectModule.IsIn(userUuid, projectId)
+	isIn, err := p.projectRepo.IsIn(userUuid, projectId)
+	// TODO: Logにエラーを残す
+	// TODO: エラーを返す
 	if !isIn {
 		resultJson.Message = "invalid user"
 		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusBadRequest, &resultJson)
 		return
 	}
 
-	isError := projectModule.Delete(projectId)
-	if isError {
+	err = p.projectRepo.Delete(projectId)
+	if err != nil {
+		// TODO: Logにエラーを残す
 		resultJson.Message = "failed delete"
 		themisView.ProjectsView{}.PostDeleteProject(c, http.StatusInternalServerError, &resultJson)
 		return
@@ -217,16 +229,18 @@ func (p *ProjectsController) GetInfo(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(p.DB)
-	isIn := projectModule.IsIn(userUuid, projectId)
+	isIn, err := p.projectRepo.IsIn(userUuid, projectId)
+	// TODO: Logにエラーを残す
+	// TODO: エラーを返す
 	if !isIn {
 		resultJson.Message = "not found project"
 		themisView.ProjectsView{}.GetInfo(c, http.StatusNotFound, resultJson)
 		return
 	}
 
-	isError, project := projectModule.GetProject(projectId)
-	if isError {
+	project, err := p.projectRepo.GetProjectById(projectId)
+	if err != nil {
+		// TODO: Logにエラーを残す
 		resultJson.Message = "not found project"
 		themisView.ProjectsView{}.GetInfo(c, http.StatusNotFound, resultJson)
 		return
@@ -250,23 +264,25 @@ func (p *ProjectsController) GetTasks(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(p.DB)
-	isIn := projectModule.IsIn(userUuid, projectId)
+	isIn, err := p.projectRepo.IsIn(userUuid, projectId)
+	// TODO: Logにエラーを残す
+	// TODO: エラーを返す
 	if !isIn {
 		resultJson.Message = "not found project"
 		themisView.ProjectsView{}.GetTasks(c, http.StatusNotFound, resultJson)
 		return
 	}
 
-	isError, _ := projectModule.GetProject(projectId)
-	if isError {
+	_, err = p.projectRepo.GetProjectById(projectId)
+	if err != nil {
+		// TODO: Logにエラーを残す
 		resultJson.Message = "not found project"
 		themisView.ProjectsView{}.GetTasks(c, http.StatusNotFound, resultJson)
 		return
 	}
 
 	tasksModule := module.NewTaskModule(p.DB)
-	isError, tasks := tasksModule.GetList(projectId)
+	_, tasks := tasksModule.GetList(projectId)
 	tasks = utils.TasksConvert(tasks)
 
 	resultJson.Success = true
@@ -288,16 +304,18 @@ func (p *ProjectsController) GetMembers(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(p.DB)
-	isIn := projectModule.IsIn(userUuid, projectId)
+	isIn, err := p.projectRepo.IsIn(userUuid, projectId)
+	// TODO: Logにエラーを残す
+	// TODO: エラーを返す
 	if !isIn {
 		resultJson.Message = "not found project or not found users"
 		themisView.ProjectsView{}.GetMembers(c, http.StatusNotFound, resultJson)
 		return
 	}
 
-	isError, users := projectModule.GetUser(projectId)
-	if isError {
+	users, err := p.projectRepo.GetUserListInProject(projectId)
+	if err != nil {
+		// TODO: Logにエラーを残す
 		resultJson.Message = "not found project or not found users"
 		themisView.ProjectsView{}.GetMembers(c, http.StatusNotFound, resultJson)
 		return
@@ -322,8 +340,9 @@ func (p *ProjectsController) DeleteMembers(c *gin.Context) {
 		return
 	}
 
-	projectModule := module.NewProjectsModule(p.DB)
-	isIn := projectModule.IsIn(userUuid, projectId)
+	isIn, err := p.projectRepo.IsIn(userUuid, projectId)
+	// TODO: Logにエラーを残す
+	// TODO: エラーを返す
 	if !isIn {
 		resultJson.Message = "not found project or not found users"
 		themisView.ProjectsView{}.DeleteMember(c, http.StatusNotFound, resultJson)
@@ -339,15 +358,18 @@ func (p *ProjectsController) DeleteMembers(c *gin.Context) {
 		return
 	}
 
-	isInTarget := projectModule.IsIn(deleteRequest.Uuid, projectId)
+	isInTarget, err := p.projectRepo.IsIn(deleteRequest.Uuid, projectId)
+	// TODO: Logにエラーを残す
+	// TODO: エラーを返す
 	if !isInTarget {
 		resultJson.Message = "not found project or not found users"
 		themisView.ProjectsView{}.DeleteMember(c, http.StatusNotFound, resultJson)
 		return
 	}
 
-	isError := projectModule.Leave(projectId, deleteRequest.Uuid)
-	if isError {
+	err = p.projectRepo.Leave(projectId, deleteRequest.Uuid)
+	if err != nil {
+		// TODO: Logにエラーを残す
 		resultJson.Message = "failed leave"
 		themisView.ProjectsView{}.DeleteMember(c, http.StatusInternalServerError, resultJson)
 		return
@@ -360,12 +382,12 @@ func (p *ProjectsController) DeleteMembers(c *gin.Context) {
 
 func (p *ProjectsController) GetMy(c *gin.Context) {
 	getResult := &models.ProjectGetResultJson{}
-	projectsModule := module.NewProjectsModule(p.DB)
 
 	userUuid := c.GetInt("uuid")
 
-	isError, projects := projectsModule.GetProjects(userUuid)
-	if isError {
+	projects, err := p.projectRepo.GetProjectsByUserId(userUuid)
+	if err != nil {
+		// TODO: Logにエラーを残す
 		getResult.Message = "unknown project"
 		themisView.ProjectsView{}.GetMy(c, http.StatusBadRequest, getResult)
 		return

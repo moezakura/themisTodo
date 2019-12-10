@@ -1,7 +1,9 @@
 package models
 
+import "themis.mox.si/themis/models/db"
+
 type ProjectInfoResultJson struct {
-	Project
-	Success bool      `json:"success"`
-	Message string    `json:"message"`
+	db.Project
+	Success bool   `json:"success"`
+	Message string `json:"message"`
 }

@@ -52,11 +52,14 @@
                 }
                 if (this.task.limitDate <= 0) {
                     return "over"
-                } else if (this.task.limitDate <= 1) {
+                }
+                else if (this.task.limitDate <= 1) {
                     return "limit1"
-                } else if (this.task.limitDate <= 2) {
+                }
+                else if (this.task.limitDate <= 2) {
                     return "limit2"
-                } else if (this.task.limitDate <= 3) {
+                }
+                else if (this.task.limitDate <= 3) {
                     return "limit3"
                 }
 
@@ -77,7 +80,7 @@
         }
     }
 </script>
-<style lang="scss">
+<style scoped lang="scss">
     .active {
         width: calc(100% + 22px);
         height: 0;

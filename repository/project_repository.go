@@ -10,13 +10,16 @@ type ProjectRepository struct {
 	db *gorm.DB
 }
 
+func NewProjectRepository(db *gorm.DB) *ProjectRepository {
+	return &ProjectRepository{db: db}
+}
+
 func (p *ProjectRepository) Add(name, description string) (uuid int, error error) {
 	addData := db.Project{
-		Uuid:        0,
 		Name:        name,
 		Description: description,
 	}
-	err := p.db.Save(&addData).Error
+	err := p.db.Create(&addData).Error
 	if err != nil {
 		return 0, err
 	}
@@ -26,23 +29,23 @@ func (p *ProjectRepository) Add(name, description string) (uuid int, error error
 
 func (p *ProjectRepository) AddUser(userId, projectId int) error {
 	addData := db.UsersInProject{
-		UserId:     userId,
-		ProjectId:  projectId,
-		Enable:     true,
-		Expiration: nil,
+		UserId:    userId,
+		ProjectId: projectId,
+		Enable:    true,
 	}
-	return p.db.Save(&addData).Error
+	return p.db.Create(&addData).Error
 }
 
 func (p *ProjectRepository) GetProjectsByUserId(userId int) (projects []db.Project, err error) {
 	projects = make([]db.Project, 0)
 
 	subQuery := p.db.Table("users_in_projects").Select("project_id").Where("user_id = ?", userId).Order("user_id")
-	err = p.db.Where("projects.uuid = ?", subQuery.QueryExpr()).Find(&projects).Error
+	err = p.db.Where("projects.uuid IN (?)", subQuery.QueryExpr()).Find(&projects).Error
 	return projects, err
 }
 
 func (p *ProjectRepository) GetProjectById(id int) (project *db.Project, err error) {
+	project = &db.Project{}
 	err = p.db.First(project, "uuid = ?", id).Error
 	return project, err
 }
