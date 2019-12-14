@@ -32,7 +32,7 @@ func (t TaskHistory) ToJson() TaskHistoryOfJson {
 
 type TaskHistoryItemJson struct {
 	Name           string     `json:"name"`
-	Editor         string     `json:"editor"`
+	Editor         int        `json:"editor"`
 	EditorName     string     `json:"editor_name"`
 	EditorIconPath string     `json:"editor_icon_path"`
 	Status         TaskStatus `json:"status"`
@@ -49,7 +49,7 @@ type TaskHistoryItemJson struct {
 
 type TaskHistoryItem struct {
 	Name           string     `json:"name"`
-	Editor         string     `json:"editor"`
+	Editor         int        `json:"editor"`
 	EditorName     string     `json:"editor_name"`
 	EditorIconPath string     `json:"editor_icon_path"`
 	Status         TaskStatus `json:"status"`

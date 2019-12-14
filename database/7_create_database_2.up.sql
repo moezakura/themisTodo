@@ -237,7 +237,7 @@ ALTER TABLE `todo_list`
 -- テーブルの制約 `todo_list_history`
 --
 ALTER TABLE `todo_list_history`
-    ADD CONSTRAINT `todo_list_history_createDate_fk` FOREIGN KEY (`createDate`) REFERENCES `todo_list` (`createDate`),
+    ADD CONSTRAINT `todo_list_history_createDate_fk` FOREIGN KEY (`createDate`) REFERENCES `todo_list` (`createDate`) ON DELETE SET NULL ON UPDATE CASCADE,
     ADD CONSTRAINT `todo_list_history_ibfk_1` FOREIGN KEY (`editor`) REFERENCES `users` (`uuid`),
     ADD CONSTRAINT `todo_list_history_users_uuid_fk` FOREIGN KEY (`assign`) REFERENCES `users` (`uuid`);
 

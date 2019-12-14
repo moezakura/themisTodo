@@ -1,4 +1,4 @@
-package models
+package json
 
 import "themis.mox.si/themis/models/db"
 

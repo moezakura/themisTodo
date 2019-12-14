@@ -17,15 +17,17 @@ type TaskTimerController struct {
 	*BaseController
 
 	projectRepo *repository.ProjectRepository
+	taskRepo    *repository.TaskRepository
 
 	watcher *module.TaskTimerWatcherModule
 }
 
-func NewTaskTimerController(baseController *BaseController, watcher *module.TaskTimerWatcherModule, projectRepo *repository.ProjectRepository) *TaskTimerController {
+func NewTaskTimerController(baseController *BaseController, watcher *module.TaskTimerWatcherModule, projectRepo *repository.ProjectRepository, taskRepo *repository.TaskRepository) *TaskTimerController {
 	return &TaskTimerController{
 		BaseController: baseController,
 		watcher:        watcher,
 		projectRepo:    projectRepo,
+		taskRepo:       taskRepo,
 	}
 }
 
@@ -41,10 +43,10 @@ func (t *TaskTimerController) PatchToggle(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, task := taskModule.Get(createdTime)
+	task, err := t.taskRepo.Get(createdTime)
 
-	if isErr {
+	if err != nil {
+		// TODO: エラーをログに出力する
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -87,10 +89,10 @@ func (t *TaskTimerController) GetView(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, task := taskModule.Get(createdTime)
+	task, err := t.taskRepo.Get(createdTime)
 
-	if isErr {
+	if err != nil {
+		// TODO: エラーをログに出力する
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -187,8 +189,8 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 			taskIds = append(taskIds, history.CreateDate)
 		}
 	}
-	taskModule := module.NewTaskModule(t.DB)
-	tasks, err := taskModule.GetBulk(projectId, taskIds)
+
+	tasks, err := t.taskRepo.GetBulk(projectId, taskIds)
 	if err != nil {
 		res.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, res)
@@ -198,7 +200,7 @@ func (t *TaskTimerController) GetMyList(c *gin.Context) {
 	for _, task := range tasks {
 		for index, history := range histories {
 			if task.CreateDate == history.CreateDate {
-				taskTemp := utils.TaskConvert(task)
+				taskTemp := utils.TaskConvert(&task)
 				histories[index].Task = models.NewTaskOfJson(*taskTemp)
 			}
 		}
@@ -221,10 +223,10 @@ func (t *TaskTimerController) GetStatus(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, task := taskModule.Get(createdTime)
+	task, err := t.taskRepo.Get(createdTime)
 
-	if isErr {
+	if err != nil {
+		// TODO: エラーをログに出力する
 		res.Message = "invalid task createdTime"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return
@@ -264,7 +266,6 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 	}
 	taskTimerId := int(_taskTimerId)
 
-	taskModule := module.NewTaskModule(t.DB)
 	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
 
 	taskTimer, err := taskTimerModule.Get(taskTimerId)
@@ -275,11 +276,11 @@ func (t *TaskTimerController) Delete(c *gin.Context) {
 		return
 	}
 
-	isErr, task := taskModule.Get(taskTimer.CreateDate)
-	if isErr {
+	task, err := t.taskRepo.Get(taskTimer.CreateDate)
+	if err != nil {
 		res.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, res)
-		fmt.Printf("error: %+v\n", isErr)
+		fmt.Printf("error: %+v\n", err)
 		return
 	}
 
@@ -318,7 +319,6 @@ func (t *TaskTimerController) Update(c *gin.Context) {
 	}
 	taskTimerId := int(_taskTimerId)
 
-	taskModule := module.NewTaskModule(t.DB)
 	taskTimerModule := module.NewTasksTimerModule(t.DB, t.watcher)
 
 	taskTimer, err := taskTimerModule.Get(taskTimerId)
@@ -329,11 +329,11 @@ func (t *TaskTimerController) Update(c *gin.Context) {
 		return
 	}
 
-	isErr, task := taskModule.Get(taskTimer.CreateDate)
-	if isErr {
+	task, err := t.taskRepo.Get(taskTimer.CreateDate)
+	if err != nil {
 		res.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, res)
-		fmt.Printf("error: %+v\n", isErr)
+		fmt.Printf("error: %+v\n", err)
 		return
 	}
 
@@ -422,8 +422,8 @@ func (t *TaskTimerController) GetByUser(c *gin.Context) {
 			taskIds = append(taskIds, history.CreateDate)
 		}
 	}
-	taskModule := module.NewTaskModule(t.DB)
-	tasks, err := taskModule.GetBulk(0, taskIds)
+
+	tasks, err := t.taskRepo.GetBulk(0, taskIds)
 	if err != nil {
 		res.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, res)
@@ -433,7 +433,7 @@ func (t *TaskTimerController) GetByUser(c *gin.Context) {
 	for _, task := range tasks {
 		for index, history := range histories {
 			if task.CreateDate == history.CreateDate {
-				taskTemp := utils.TaskConvert(task)
+				taskTemp := utils.TaskConvert(&task)
 				histories[index].Task = models.NewTaskOfJson(*taskTemp)
 			}
 		}

@@ -10,7 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"themis.mox.si/themis/models"
-	"themis.mox.si/themis/module"
 	"themis.mox.si/themis/utils"
 	themisView "themis.mox.si/themis/view"
 )
@@ -18,10 +17,15 @@ import (
 type TasksController struct {
 	*BaseController
 	projectRepo *repository.ProjectRepository
+	taskRepo    *repository.TaskRepository
 }
 
-func NewTasksController(baseController *BaseController, projectRepo *repository.ProjectRepository) *TasksController {
-	return &TasksController{BaseController: baseController, projectRepo: projectRepo}
+func NewTasksController(baseController *BaseController, projectRepo *repository.ProjectRepository, taskRepo *repository.TaskRepository) *TasksController {
+	return &TasksController{
+		BaseController: baseController,
+		projectRepo:    projectRepo,
+		taskRepo:       taskRepo,
+	}
 }
 
 func (t *TasksController) PostUpdate(c *gin.Context) {
@@ -49,8 +53,12 @@ func (t *TasksController) PostUpdate(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, task := taskModule.Get(createdTime)
+	task, err := t.taskRepo.Get(createdTime)
+	if err != nil {
+		updateResult.Message = "invalid task id"
+		themisView.TasksView{}.PostUpdate(c, updateResult)
+		return
+	}
 
 	if len(updateRequest.Deadline) > 0 {
 		timeSplits := strings.Split(updateRequest.Deadline, "-")
@@ -73,12 +81,6 @@ func (t *TasksController) PostUpdate(c *gin.Context) {
 			themisView.TasksView{}.PostUpdate(c, updateResult)
 			return
 		}
-	}
-
-	if isErr {
-		updateResult.Message = "invalid task id"
-		themisView.TasksView{}.PostUpdate(c, updateResult)
-		return
 	}
 
 	if len(updateRequest.Name) > 0 {
@@ -113,7 +115,11 @@ func (t *TasksController) PostUpdate(c *gin.Context) {
 	}
 
 	uuid, _ := c.Get("uuid")
-	taskModule.Update(createdTime, uuid.(int), task)
+	err = t.taskRepo.Update(createdTime, uuid.(int), task)
+	if err != nil {
+		// TODO: エラーを返す
+		// TODO: エラーをログに出力する
+	}
 
 	updateResult.Success = true
 	themisView.TasksView{}.PostUpdate(c, updateResult)
@@ -143,11 +149,11 @@ func (t *TasksController) PostBulkUpdate(c *gin.Context) {
 		taskStatusTarget = &taskStatus
 	}
 
-	taskModule := module.NewTaskModule(t.DB)
+	tasks, err := t.taskRepo.SearchCreateTimeList(updateRequest.BulkList)
 
-	isErr, tasks := taskModule.SearchCreateTimeList(updateRequest.BulkList)
+	if err != nil {
+		// TODO: エラーをログに出力する
 
-	if isErr {
 		updateResult.Message = "server error"
 		themisView.TasksView{}.PostUpdate(c, updateResult)
 		return
@@ -197,7 +203,11 @@ func (t *TasksController) PostBulkUpdate(c *gin.Context) {
 	}
 
 	uuid, _ := c.Get("uuid")
-	taskModule.UpdateAll(tasks, uuid.(int), taskStatusTarget, taskAssignTarget, taskDeadlineTarget)
+	err = t.taskRepo.UpdateAll(tasks, uuid.(int), taskStatusTarget, taskAssignTarget, taskDeadlineTarget)
+	if err != nil {
+		// TODO: エラーを返す
+		// TODO: エラーをログに出力する
+	}
 
 	updateResult.Success = true
 	themisView.TasksView{}.PostUpdate(c, updateResult)
@@ -215,10 +225,10 @@ func (t *TasksController) PostDelete(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, task := taskModule.Get(createdTime)
+	task, err := t.taskRepo.Get(createdTime)
 
-	if isErr {
+	if err != nil {
+		// TODO: エラーをログに出力する
 		deleteResult.Message = "invalid task createdTime"
 		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
 		return
@@ -236,7 +246,8 @@ func (t *TasksController) PostDelete(c *gin.Context) {
 	}
 
 	var statusCode int
-	if isErr := taskModule.Delete(createdTime); isErr {
+	if err := t.taskRepo.Delete(createdTime); err != nil {
+		// TODO: エラーをログに出力する
 		deleteResult.Message = "delete failed"
 		statusCode = http.StatusBadRequest
 	} else {
@@ -274,16 +285,16 @@ func (t *TasksController) DeleteBulkDelete(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, tasks := taskModule.SearchCreateTimeList(deleteRequest.BulkList)
+	tasks, err := t.taskRepo.SearchCreateTimeList(deleteRequest.BulkList)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		deleteResult.Message = "server error"
+		themisView.TasksView{}.PostDelete(c, http.StatusInternalServerError, deleteResult)
+		return
+	}
 	if len(tasks) != len(deleteRequest.BulkList) {
 		deleteResult.Message = "invalid task createdTime"
 		themisView.TasksView{}.PostDelete(c, http.StatusBadRequest, deleteResult)
-		return
-	}
-	if isErr {
-		deleteResult.Message = "server error"
-		themisView.TasksView{}.PostDelete(c, http.StatusInternalServerError, deleteResult)
 		return
 	}
 
@@ -303,7 +314,8 @@ func (t *TasksController) DeleteBulkDelete(c *gin.Context) {
 	}
 
 	var statusCode int
-	if isErr := taskModule.DeleteAll(deleteList); isErr {
+	if err := t.taskRepo.DeleteAll(deleteList); err != nil {
+		// TODO: エラーをログに出力する
 		deleteResult.Message = "delete failed"
 		statusCode = http.StatusBadRequest
 	} else {
@@ -371,9 +383,14 @@ func (t *TasksController) PostTaskCreate(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(t.DB)
+	taskId, err := t.taskRepo.GetLastId(addRequest.ProjectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
+
 	newTask := &models.Task{
-		TaskId:      taskModule.GetLastId(addRequest.ProjectId) + 1,
+		TaskId:      taskId + 1,
 		ProjectId:   addRequest.ProjectId,
 		Name:        addRequest.Name,
 		Creator:     userUuid,
@@ -384,7 +401,11 @@ func (t *TasksController) PostTaskCreate(c *gin.Context) {
 		CreateDate:  0,
 	}
 
-	newTask = taskModule.Add(newTask)
+	newTask, err = t.taskRepo.Add(newTask)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
 
 	addResult.CreateDate = strconv.FormatInt(newTask.CreateDate, 10)
 	addResult.Success = true
@@ -402,9 +423,9 @@ func (t *TasksController) GetView(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, task := taskModule.Get(createdTime)
-	if isErr {
+	task, err := t.taskRepo.Get(createdTime)
+	if err != nil {
+		// TODO: エラーをログに出力する
 		getResult.Message = "unknown taskId"
 		themisView.TasksView{}.GetView(c, http.StatusBadRequest, getResult)
 		return
@@ -478,9 +499,9 @@ func (t *TasksController) GetSearch(c *gin.Context) {
 		return
 	}
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, tasks := taskModule.Search(searchRequest)
-	if isErr {
+	tasks, err := t.taskRepo.Search(searchRequest)
+	if err != nil {
+		// TODO: エラーをログに出力する
 		getResult.Message = "unknown taskId"
 		themisView.TasksView{}.GetSearch(c, http.StatusBadRequest, getResult)
 		return
@@ -507,9 +528,9 @@ func (t *TasksController) GetMy(c *gin.Context) {
 
 	userUuid := c.GetInt("uuid")
 
-	taskModule := module.NewTaskModule(t.DB)
-	isErr, tasks := taskModule.GetTasksFromUser(userUuid, 20, taskStatus)
-	if isErr {
+	tasks, err := t.taskRepo.GetTasksFromUser(userUuid, 20, taskStatus)
+	if err != nil {
+		// TODO: エラーをログに出力する
 		getResult.Message = "unknown taskId"
 		themisView.TasksView{}.GetMy(c, http.StatusBadRequest, getResult)
 		return
@@ -534,10 +555,9 @@ func (t *TasksController) GetHistoryList(c *gin.Context) {
 		return
 	}
 
-	tm := module.NewTaskModule(t.DB)
-
-	isErr, task := tm.Get(createDate)
-	if isErr {
+	task, err := t.taskRepo.Get(createDate)
+	if err != nil {
+		// TODO: エラーをログに出力する
 		result.Message = "invalid taskId"
 		c.JSON(http.StatusBadRequest, result)
 		return
@@ -554,8 +574,9 @@ func (t *TasksController) GetHistoryList(c *gin.Context) {
 		return
 	}
 
-	history, err := tm.GetHistoryList(task.CreateDate)
+	history, err := t.taskRepo.GetHistoryList(task.CreateDate)
 	if err != nil {
+		// TODO: エラーをログに出力する
 		result.Message = "server error"
 		c.JSON(http.StatusServiceUnavailable, result)
 		return
@@ -603,10 +624,9 @@ func (t *TasksController) PostApplyHistory(c *gin.Context) {
 		return
 	}
 
-	tm := module.NewTaskModule(t.DB)
-
-	isErr, task := tm.Get(createDate)
-	if isErr {
+	task, err := t.taskRepo.Get(createDate)
+	if err != nil {
+		// TODO: エラーをログに出力する
 		res.Message = "not found createDate"
 		c.JSON(http.StatusNotFound, res)
 		return
@@ -623,7 +643,8 @@ func (t *TasksController) PostApplyHistory(c *gin.Context) {
 		return
 	}
 
-	if err := tm.ApplyHistory(createDate, updateDate); err != nil {
+	if err := t.taskRepo.ApplyHistory(createDate, updateDate); err != nil {
+		// TODO: エラーをログに出力する
 		res.Message = "history apply failed"
 		c.JSON(http.StatusServiceUnavailable, res)
 		return

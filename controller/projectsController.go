@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"themis.mox.si/themis/models"
 	"themis.mox.si/themis/models/db"
+	"themis.mox.si/themis/models/json"
 	"themis.mox.si/themis/module"
 	"themis.mox.si/themis/repository"
 	"themis.mox.si/themis/utils"
@@ -15,10 +16,15 @@ import (
 type ProjectsController struct {
 	*BaseController
 	projectRepo *repository.ProjectRepository
+	taskRepo    *repository.TaskRepository
 }
 
-func NewProjectsController(baseController *BaseController, projectRepo *repository.ProjectRepository) *ProjectsController {
-	return &ProjectsController{BaseController: baseController, projectRepo: projectRepo}
+func NewProjectsController(baseController *BaseController, projectRepo *repository.ProjectRepository, taskRepo *repository.TaskRepository) *ProjectsController {
+	return &ProjectsController{
+		BaseController: baseController,
+		projectRepo:    projectRepo,
+		taskRepo:       taskRepo,
+	}
 }
 
 func (p *ProjectsController) PostAdd(c *gin.Context) {
@@ -218,7 +224,7 @@ func (p *ProjectsController) PostDeleteProject(c *gin.Context) {
 
 func (p *ProjectsController) GetInfo(c *gin.Context) {
 	userUuid := c.GetInt("uuid")
-	resultJson := &models.ProjectInfoResultJson{}
+	resultJson := &json.ProjectInfoResultJson{}
 
 	projectIdStr := c.Param("projectId")
 	projectId64, err := strconv.ParseInt(projectIdStr, 10, 32)
@@ -281,8 +287,11 @@ func (p *ProjectsController) GetTasks(c *gin.Context) {
 		return
 	}
 
-	tasksModule := module.NewTaskModule(p.DB)
-	_, tasks := tasksModule.GetList(projectId)
+	tasks, err := p.taskRepo.GetList(projectId)
+	if err != nil {
+		// TODO: エラーをログに出力する
+		// TODO: エラーを返す
+	}
 	tasks = utils.TasksConvert(tasks)
 
 	resultJson.Success = true
@@ -381,7 +390,7 @@ func (p *ProjectsController) DeleteMembers(c *gin.Context) {
 }
 
 func (p *ProjectsController) GetMy(c *gin.Context) {
-	getResult := &models.ProjectGetResultJson{}
+	getResult := &json.ProjectGetResultJson{}
 
 	userUuid := c.GetInt("uuid")
 

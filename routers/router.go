@@ -13,7 +13,10 @@ import (
 func Init(db *sql.DB, gdb *gorm.DB, taskTimerWatcher *module.TaskTimerWatcherModule) *gin.Engine {
 	r := gin.New()
 
+	gdb.LogMode(true)
+
 	projectRepo := repository.NewProjectRepository(gdb)
+	taskRepo := repository.NewTaskRepository(gdb)
 
 	baseController := themsController.NewBaseController(db, r)
 
@@ -26,7 +29,7 @@ func Init(db *sql.DB, gdb *gorm.DB, taskTimerWatcher *module.TaskTimerWatcherMod
 	projects := r.Group("/project")
 	projects.Use(authCheck(db))
 	{
-		projectsController := themsController.NewProjectsController(baseController, projectRepo)
+		projectsController := themsController.NewProjectsController(baseController, projectRepo, taskRepo)
 
 		projects.POST("/add", projectsController.PostAdd)
 		projects.POST("/delete/:projectId", projectsController.PostDeleteProject)
@@ -44,7 +47,7 @@ func Init(db *sql.DB, gdb *gorm.DB, taskTimerWatcher *module.TaskTimerWatcherMod
 	tasks := r.Group("/tasks")
 	tasks.Use(authCheck(db))
 	{
-		tasksController := themsController.NewTasksController(baseController, projectRepo)
+		tasksController := themsController.NewTasksController(baseController, projectRepo, taskRepo)
 
 		tasks.POST("/create", tasksController.PostTaskCreate)
 		tasks.POST("/update/:createDate", tasksController.PostUpdate)
@@ -59,7 +62,7 @@ func Init(db *sql.DB, gdb *gorm.DB, taskTimerWatcher *module.TaskTimerWatcherMod
 
 		taskTimer := tasks.Group("/timer")
 		{
-			taskTimerController := themsController.NewTaskTimerController(baseController, taskTimerWatcher, projectRepo)
+			taskTimerController := themsController.NewTaskTimerController(baseController, taskTimerWatcher, projectRepo, taskRepo)
 			taskTimer.PATCH("/toggle/:createDate", taskTimerController.PatchToggle)
 			taskTimer.GET("/view/:createDate", taskTimerController.GetView)
 			taskTimer.GET("/myDoing", taskTimerController.GetByUser)

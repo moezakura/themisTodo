@@ -1,9 +1,10 @@
 package view
 
 import (
-	"themis.mox.si/themis/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"themis.mox.si/themis/models"
+	"themis.mox.si/themis/models/json"
 )
 
 type ProjectsView struct {
@@ -31,7 +32,7 @@ func (self ProjectsView) PostDeleteProject(c *gin.Context, statusCode int, json 
 	c.JSON(statusCode, json)
 }
 
-func (self ProjectsView) GetInfo(c *gin.Context, statusCode int, json *models.ProjectInfoResultJson) {
+func (self ProjectsView) GetInfo(c *gin.Context, statusCode int, json *json.ProjectInfoResultJson) {
 	c.JSON(statusCode, json)
 }
 
@@ -47,6 +48,6 @@ func (self ProjectsView) DeleteMember(c *gin.Context, statusCode int, json *mode
 	c.JSON(statusCode, json)
 }
 
-func (self ProjectsView) GetMy(c *gin.Context, statusCode int, json *models.ProjectGetResultJson) {
+func (self ProjectsView) GetMy(c *gin.Context, statusCode int, json *json.ProjectGetResultJson) {
 	c.JSON(statusCode, json)
 }
